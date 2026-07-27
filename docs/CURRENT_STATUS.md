@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **667 Python tests**; eslint, tsc, and **243 web
+curriculum validation, **667 Python tests**; eslint, tsc, and **260 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -352,6 +352,13 @@ The strongest evidence the system can hold was a category with no producer.
   satisfy the model's breadth requirement alone.
 - Productive benchmarking waits for a judged deployment: writing and speaking
   stay provisional, and a provisional benchmark is not one.
+- **The screen offers no hint control, no per-item feedback, and no way to
+  start one that is not due.** Being told item three was wrong changes how
+  item four is answered, and the measurement is of the whole set. A fall is
+  reported as the benchmark working rather than as failure.
+- The dashboard shows the invitation **only when one is due**. A permanent
+  button would let a learner take one whenever they felt ready, which is the
+  single thing the feature is arranged to avoid.
 
 ### Accessibility gate (new)
 
@@ -452,9 +459,10 @@ The strongest evidence the system can hold was a category with no producer.
 
 ## Next three tasks
 
-1. **A benchmark screen.** The endpoints exist and are tested; no UI opens
-   them yet, so the measurement is reachable only through the API. It also
-   needs a place in the daily plan, which currently cannot offer one.
+1. **Put a due benchmark in the daily plan.** The screen and the dashboard
+   invitation exist, but the planner has no benchmark slot, so a benchmark
+   competes with nothing and is scheduled by nothing. It should displace
+   practice on the day it is due rather than sitting beside it.
 2. **Run a provider against a real model.** Both `cloud` and `local` are
    built and tested against stub transports, which proves they handle every
    way the outside world can misbehave and proves nothing about whether a

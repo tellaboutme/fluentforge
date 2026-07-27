@@ -743,3 +743,88 @@ export async function completeDiagnostic(
     },
   );
 }
+
+// --- Benchmarks ------------------------------------------------------------
+
+export interface BenchmarkEligibility {
+  due: boolean;
+  /** Always says what has to happen next, never "you are not allowed". */
+  reason: string;
+  nextDueAt: string | null;
+}
+
+export interface BenchmarkItem {
+  key: string;
+  itemType: string;
+  skillKey: string;
+  cefrLevel: string;
+  prompt: string;
+  instructions: string;
+  options: string[];
+}
+
+export interface BenchmarkSession {
+  sessionId: string;
+  band: string;
+  items: BenchmarkItem[];
+  /** Always true. The UI must not present a benchmark as ordinary practice. */
+  unaided: true;
+}
+
+export interface BenchmarkAnswerOutcome {
+  itemKey: string;
+  correct: boolean;
+  score: number;
+  remaining: number;
+}
+
+export interface BenchmarkResult {
+  sessionId: string;
+  band: string;
+  answered: number;
+  correct: number;
+  score: number;
+  /** Skills this benchmark moved *down*. Shown, never buried. */
+  lowered: string[];
+}
+
+export async function fetchBenchmarkEligibility(
+  token: string,
+): Promise<BenchmarkEligibility> {
+  return request<BenchmarkEligibility>("/api/v1/benchmarks/eligibility", {
+    token,
+  });
+}
+
+export async function startBenchmark(token: string): Promise<BenchmarkSession> {
+  return request<BenchmarkSession>("/api/v1/benchmarks", {
+    method: "POST",
+    token,
+  });
+}
+
+/** No `hintsUsed`, and its absence is the contract. See `docs/API_CONTRACTS.md`. */
+export async function answerBenchmarkItem(
+  token: string,
+  sessionId: string,
+  input: { itemKey: string; response: string },
+): Promise<BenchmarkAnswerOutcome> {
+  return request<BenchmarkAnswerOutcome>(
+    `/api/v1/benchmarks/${sessionId}/responses`,
+    {
+      method: "POST",
+      token,
+      body: { item_key: input.itemKey, response: input.response },
+    },
+  );
+}
+
+export async function completeBenchmark(
+  token: string,
+  sessionId: string,
+): Promise<BenchmarkResult> {
+  return request<BenchmarkResult>(`/api/v1/benchmarks/${sessionId}/complete`, {
+    method: "POST",
+    token,
+  });
+}

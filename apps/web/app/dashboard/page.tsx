@@ -15,6 +15,7 @@ import {
 } from "@/lib/labels";
 import { useSession } from "@/lib/session";
 import { Empty, ErrorNotice, Loading } from "@/components/Status";
+import { BenchmarkInvitation } from "@/components/BenchmarkInvitation";
 import { TodayPlan } from "@/components/TodayPlan";
 
 export default function DashboardPage() {
@@ -111,6 +112,8 @@ export default function DashboardPage() {
       </header>
 
       {token ? <TodayPlan token={token} /> : null}
+
+      {token ? <BenchmarkInvitation token={token} /> : null}
 
       {observed.length === 0 ? (
         <section className="panel">
