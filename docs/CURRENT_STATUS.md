@@ -1,7 +1,7 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–6 are complete; 7 and 8 have started.** The core learning loop now
-closes, and **no modality is evidenced by self-report any more**: a learner
+Last updated: 2026-07-27. **Milestones 0–6 are complete; 7 and 8 have
+started.** The core learning loop now closes, and **no modality is evidenced by self-report any more**: a learner
 registers, takes an adaptive diagnostic including a written task, receives a
 daily plan that explains itself, opens and completes reading, listening,
 focused study, written output, **and spoken output** from that plan, works
@@ -23,6 +23,15 @@ The newest lab is multi-source mediation, which is the advanced work
 it warns against: several sources go in, one account comes out, and the
 learner has to notice that the sources disagree.
 
+Rubric judgement now has both a hosted and a self-hosted provider, so a
+deployment can grade writing without a learner's text leaving it. The default
+is still no AI at all, which is the path every test suite runs against.
+
+The app is installable and readable offline. Submitting is not: everything is
+scored on the server, and the honest thing to do without a network is refuse
+and say so rather than queue work that would be recorded at a moment the
+learner was not present for.
+
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
@@ -30,7 +39,7 @@ curriculum validation, **636 Python tests**; eslint, tsc, and **243 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
-**All six CI jobs pass on `a2e66b0`** — Python 3.10 and 3.12, the web app,
+**All six CI jobs pass on `f630cb5`** — Python 3.10 and 3.12, the web app,
 PostgreSQL migrations, fixture drift, and the Playwright browser suite.
 
 Version control starts at commit `d503861`, which captures this passing state
@@ -47,7 +56,8 @@ documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
 The Playwright suite has now **actually run and passed**: 26 tests across
-desktop and mobile viewports, including an automated accessibility gate, on the development machine via the runner. Its
+desktop and mobile viewports, including an automated accessibility gate, on
+the development machine via the runner. Its
 first-ever execution found four real defects — a bash-only launcher that
 failed on Windows, hydration blocked by Next 16's cross-origin default (which
 made the register form fall back to a native GET submit, password in the URL),
@@ -420,12 +430,18 @@ browser does not have and by a mastery model it does not run. So:
 
 ## Next three tasks
 
-1. **Finish Milestone 7.** Mediation has landed and the speaking bank now
-   reaches C2. The academic and professional tracks, literature and advanced
-   media, and advanced benchmark portfolios have not been started.
+1. **Benchmark portfolios**, the last unbuilt item in Milestone 7 and the
+   largest hole in the assessment model: `EvidenceType.BENCHMARK` exists,
+   the mastery model weights it, and nothing in the product ever writes one.
+   A benchmark has to be scheduled rather than chosen — a learner who takes
+   one when they feel ready measures their confidence — and has to be able
+   to *lower* an estimate, which nothing currently does.
 2. **Run a provider against a real model.** Both `cloud` and `local` are
    built and tested against stub transports, which proves they handle every
    way the outside world can misbehave and proves nothing about whether a
    real model produces judgements worth having. The abstention rate on a
    small local model is the number to look at first.
-3. **Offline/PWA** (Milestone 8), the last unstarted milestone.
+3. **The worker and deployment.** `services/worker` is still a stub and
+   there are no container images. Nothing in the product needs asynchronous
+   work yet, which is why it has stayed a stub honestly rather than
+   accidentally — but audio upload, generation and imports all land there.
