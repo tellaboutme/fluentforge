@@ -163,3 +163,80 @@ tasks:
       - discourse.reference.given_new
       - pragmatics.register.formality
       - lexis.precision.approximation
+
+  # --- C2 -----------------------------------------------------------------
+  #
+  # The bank stopped at C1, which `docs/ROADMAP.md` Milestone 7 names as
+  # exactly the gap: the top band is where meetings, debates and
+  # presentations live, and none of them is a longer version of describing
+  # your weekend.
+  #
+  # Both tasks below are roleplays with a listener who is not in the room.
+  # That is a real limitation and it is what shapes them: a transcript
+  # cannot evidence turn-taking or repair, so neither task claims to. What
+  # they do evidence is what a C2 speaker does *while* holding the floor --
+  # conceding a point without losing it, and keeping an argument alive under
+  # a constraint the speaker states out loud.
+  - key: speak.c2.concede_and_hold
+    level: C2
+    skill: speaking.precise_spontaneous
+    title: "Concede the strongest point against you"
+    format: opinion
+    minutes: 12
+    preparation_seconds: 90
+    min_seconds: 100
+    max_seconds: 240
+    min_words: 180
+    prompt: |
+      You are arguing in a meeting that your team should keep its shared
+      office. Someone has just made the strongest argument against you: most
+      of the team commute over an hour, and the office costs more than
+      anything except salaries.
+
+      Answer them. Concede that point properly -- not as a formality -- and
+      then say why you still hold your position.
+    guidance:
+      - "Concede the actual point, in your own words, before you answer it."
+      - "A concession you take back in the next clause is not a concession."
+      - "Separate what you can show from what you believe, and mark which is which."
+      - "Stay on your position. Answering a weaker argument instead is the
+        commonest way this goes wrong."
+    required_elements: ["position"]
+    target_features:
+      - pragmatics.stance.hedging
+      - pragmatics.attribution.source
+      - discourse.organisation.information_flow
+      - grammar.clause.subordination
+
+  - key: speak.c2.brief_under_a_constraint
+    level: C2
+    skill: mediation.reconstruct_multisource
+    title: "Brief someone in ninety seconds"
+    format: summary
+    minutes: 12
+    preparation_seconds: 120
+    min_seconds: 90
+    max_seconds: 180
+    min_words: 170
+    prompt: |
+      Someone is about to walk into a decision you have been following and
+      they have ninety seconds. Three things are true: the finance case is
+      strong, the staff survey is mixed, and the people closest to the work
+      disagree with both.
+
+      Brief them. Say what is at issue, what each position rests on, and what
+      you would need to know to settle it.
+    guidance:
+      - "Order it for them, not for you. What do they need first?"
+      - "Attribute every claim: they cannot tell your reasoning from a
+        source's unless you say."
+      - "Say plainly what is not known. A confident briefing that hides a gap
+        is worse than a hesitant one."
+      - "Ninety seconds is the constraint. Leaving something out on purpose
+        is part of the task."
+    required_elements: ["issue"]
+    target_features:
+      - pragmatics.attribution.source
+      - pragmatics.stance.hedging
+      - discourse.organisation.information_flow
+      - lexis.precision.approximation

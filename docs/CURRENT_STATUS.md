@@ -81,8 +81,8 @@ defaults. Tests run in parallel.
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
 C1; **22 study units with 95 practice items spanning A1–C2**; 9 written output
-tasks across 8 genres reaching C2; 7 listening clips reaching C2; 5
-spoken output tasks reaching C1; and **4 multi-source mediation tasks
+tasks across 8 genres reaching C2; 7 listening clips reaching C2; **7
+spoken output tasks reaching C2**; and **4 multi-source mediation tasks
 reaching C2, across 6 kinds of source**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
@@ -343,9 +343,9 @@ is enforced in more than one place.
 
 ## Next three tasks
 
-1. **Finish Milestone 7.** Mediation has landed; long-form argument,
-   meetings and debates, and the academic and professional tracks have not.
-   The speaking bank still stops at C1.
+1. **Finish Milestone 7.** Mediation has landed and the speaking bank now
+   reaches C2. The academic and professional tracks, literature and advanced
+   media, and advanced benchmark portfolios have not been started.
 2. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
    judged without sending a learner's text to a third party. `cloud` exists
    and works; `local` still raises at startup. This matters more now: a
