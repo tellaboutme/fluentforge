@@ -1,6 +1,6 @@
 # Current Status
 
-Last updated: 2026-07-26. **Milestones 0–3 are complete.** The core learning loop now closes,
+Last updated: 2026-07-27. **Milestones 0–4 are complete.** The core learning loop now closes,
 and **every plan-item kind that has an activity behind it can be opened**: a
 learner registers, takes an adaptive diagnostic including a written task,
 receives a daily plan that explains itself, opens and completes reading,
@@ -11,18 +11,25 @@ produced.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **420 Python tests**; eslint, tsc, and **188 web
+curriculum validation, **460 Python tests**; eslint, tsc, and **192 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
+
+**All six CI jobs pass on `01e48c6`** — Python 3.10 and 3.12, the web app,
+PostgreSQL migrations, fixture drift, and the Playwright browser suite.
 
 Version control starts at commit `d503861`, which captures this passing state
 as the baseline. 221 files tracked; `.venv`, `node_modules`, and `local-data`
 correctly excluded. `scripts/git-init.ps1` created it.
 
-CI runs on every push to `github.com/tellaboutme/fluentforge`: six jobs
-covering Python on 3.10 and 3.12, the web app, PostgreSQL migrations, fixture
-drift, and the Playwright browser suite. The first push exposed a real defect
-in the `fixtures` job — see "Fixed by CI" below.
+CI runs on every push to `github.com/tellaboutme/fluentforge`. The first push
+exposed a real defect in the `fixtures` job — see "Fixed by CI" below.
+
+Because the sandbox this work is written in cannot reach PyPI or npm,
+verification goes through `scripts/runner.ps1`: a job runner on the
+development machine, driven through the shared project folder. The protocol is
+documented in `CLAUDE.md`. Every slice since it existed has been gated before
+being committed.
 
 The Playwright suite has now **actually run and passed**: 14 tests across
 desktop and mobile viewports, on the development machine via the runner. Its
