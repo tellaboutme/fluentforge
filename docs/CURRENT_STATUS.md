@@ -80,7 +80,7 @@ defaults. Tests run in parallel.
 (105 prerequisite, 14 supporting), each carrying a written reason; a 36-item diagnostic
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
-C1; **17 study units with 75 practice items spanning A1–C2**; 9 written output
+C1; **22 study units with 95 practice items spanning A1–C2**; 9 written output
 tasks across 8 genres reaching C2; 7 listening clips reaching C2; 5
 spoken output tasks reaching C1; and **4 multi-source mediation tasks
 reaching C2, across 6 kinds of source**. All content-hashed
@@ -161,6 +161,11 @@ behind them. They now have the hardest task in the product.
 - **Five C-level features added to the taxonomy**: hedging, source
   attribution, irony, figurative language, and information flow. The
   original 36 had nothing between "wrong tense" and "wrong register".
+- **And five study units to answer them.** A feature with no unit behind it
+  is a category the error log can name and the plan can never answer, so the
+  gap closed in the same milestone that opened it: 39 of 41 features are now
+  covered, and the two that are not need acoustic analysis rather than
+  content.
 
 ### Spaced review (Milestone 2)
 
@@ -315,12 +320,16 @@ is enforced in more than one place.
    improvement on an assumption buried in a loop, but it is still nobody's
    data. Milestone 6's exit criterion, beating fixed sequencing in offline
    simulation, has not been demonstrated.
-4. **Writing accuracy is never judged.**
-5. **Two features have no remedy, and the speaking lab cannot give them one.**
-   `pronunciation.segment.contrast` and `pronunciation.stress.word` need
-   acoustic analysis, not a transcript. `make test-curriculum` reports them
-   separately from genuinely missing content, so nobody is tempted to write a
-   fake text drill for a sound.
+4. **Writing and mediation accuracy are never judged.** Both record evidence
+   from countable checks alone, and mediation's central claim — that the
+   sources were conveyed faithfully — is the furthest of any of them from
+   what a countable check can reach.
+5. **Two features have no remedy, and no lab in the product can give them
+   one.** `pronunciation.segment.contrast` and `pronunciation.stress.word`
+   need acoustic analysis, not a transcript. Every other feature now has a
+   study unit. `make test-curriculum` reports these two separately from
+   genuinely missing content, so nobody is tempted to write a fake text
+   drill for a sound.
 6. **Hints, replays, transcript use, spoken duration and `typed_instead` are
    self-reported by the client.** A dishonest or buggy client can overstate
    independence. The blast radius is one mis-weighted observation, except for

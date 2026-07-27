@@ -1175,3 +1175,465 @@ units:
           'Look after' never separates around its object. 'Turn off' does,
           which is why the other two orders are both fine.
 
+
+  # --- C-level: the features the mediation lab named -----------------------
+  #
+  # The taxonomy gained five features with the mediation lab, and a feature
+  # with no unit behind it is a category the error log can name and the plan
+  # can never answer. These five close that gap.
+  #
+  # They are also the point of `docs/ROADMAP.md` Milestone 7: what separates
+  # B2 from C2 is not harder words but what a learner can do with stance,
+  # attribution, implication and order. None of that is a vocabulary quiz.
+
+  - key: study.b2.hedging
+    level: B2
+    skill: pragmatics.register_choice
+    title: "Saying how sure you are"
+    minutes: 10
+    explanation: |
+      English marks certainty, and readers hear the marking whether or not
+      you meant it. "The scheme failed" and "the scheme appears to have
+      failed" are not the same claim, and neither is more polite than the
+      other -- they report different amounts of evidence.
+
+      Three ways to mark it. Modal verbs: may, might, could, would. Verbs of
+      appearing and suggesting: seems, appears, suggests, indicates.
+      Adverbs and quantifiers: possibly, largely, in some cases, around.
+
+      Two failures, and the second is the one nobody warns you about.
+
+      Under-hedging states a tentative finding flatly. If the evidence is one
+      small study, "keeping a journal improves sleep" claims more than you
+      have, and a reader who checks will not trust the rest.
+
+      Over-hedging stacks the markers until nothing is claimed at all: "it
+      may possibly be the case that there could perhaps be some slight
+      indication". One hedge is a measurement. Four is an evasion, and it
+      reads as though you are hiding something.
+
+      Aim for one marker doing one job, and drop it entirely when the
+      evidence is solid. Hedging everything is as inaccurate as hedging
+      nothing.
+    examples:
+      - "The figures suggest a decline, though the sample was small."
+      - "Attendance fell by around six per cent."
+      - "This may explain the gap, but the survey did not ask."
+      - "The building was closed on eleven days in January."
+    items:
+      - key: i1
+        type: choice
+        feature: pragmatics.stance.hedging
+        prompt: >
+          One study of 148 people found an association. The accurate
+          report of it is ___
+        options:
+          - "The results suggest a link, though the study was small."
+          - "Writing a journal improves sleep."
+          - "It is now known that journals cure insomnia."
+          - "Journals have been proven to help everyone sleep."
+        answer: "The results suggest a link, though the study was small."
+        note: >
+          'Suggest' plus the stated limitation matches what one small study
+          can support. The other three claim more evidence than exists.
+      - key: i2
+        type: choice
+        feature: pragmatics.stance.hedging
+        prompt: "The sentence that hedges so much it claims nothing is ___"
+        options:
+          - "It may possibly be that there could perhaps be some effect."
+          - "The effect may be small."
+          - "There appears to be an effect."
+          - "The effect was small."
+        answer: "It may possibly be that there could perhaps be some effect."
+        note: >
+          Four markers doing one job. Stacked hedges do not make a claim
+          safer -- they make it unreadable, and readers assume you are
+          hiding something.
+      - key: i3
+        type: gap_fill
+        feature: pragmatics.stance.hedging
+        prompt: >
+          The bookings were counted exactly: 9,412. Total bookings ___ 9,412.
+        answer: "were"
+        note: >
+          A counted figure needs no hedge. 'Appear to have been' would
+          under-claim evidence you actually have, which is its own kind of
+          inaccuracy.
+      - key: i4
+        type: choice
+        feature: pragmatics.stance.hedging
+        prompt: >
+          Residents said use had fallen; the council denied it. The best
+          report of that is ___
+        options:
+          - "Residents report a fall, which the council disputes."
+          - "Use of the centre has fallen sharply."
+          - "The council is lying about the figures."
+          - "Nothing at all has changed at the centre."
+        answer: "Residents report a fall, which the council disputes."
+        note: >
+          The disagreement is the fact. Choosing a side and stating it flatly
+          reports something neither source established.
+
+  - key: study.b2.attribution
+    level: B2
+    skill: pragmatics.register_choice
+    title: "Saying whose claim it is"
+    minutes: 9
+    explanation: |
+      When you report what a source said, the reader has to be able to tell
+      where the source stops and you begin. Lose that line and you have
+      quietly adopted somebody else's claim as your own.
+
+      The markers are small and they do all the work: according to, X says
+      that, X reports, in X's account, X argues. Note the difference between
+      'reports' and 'argues' -- one presents a fact, the other a position, and
+      choosing the wrong one misdescribes the source.
+
+      Watch what happens across two sentences. "According to the council, the
+      building is open. Residents found it locked." The first is attributed,
+      the second is yours -- and you have just endorsed the residents without
+      saying so. If both are claims, both need marking.
+
+      The reverse failure is attributing your own reasoning to a source: "the
+      report says the two figures cannot both be right" when the report says
+      no such thing and you worked it out. That is your inference and it is a
+      good one; take credit for it and let the reader judge it.
+    examples:
+      - "According to the council, the building remains open."
+      - "The report gives 9,412 bookings; the newspaper gives a much larger fall."
+      - "The two figures cannot both be right, though neither source says so."
+      - "The authors argue that the result is suggestive rather than settled."
+    items:
+      - key: i1
+        type: choice
+        feature: pragmatics.attribution.source
+        prompt: >
+          The council said the centre was open. You have no view. The
+          sentence reporting it without adopting it is ___
+        options:
+          - "According to the council, the centre remained open."
+          - "The centre remained open."
+          - "The centre was obviously open the whole time."
+          - "The council is right that the centre was open."
+        answer: "According to the council, the centre remained open."
+        note: >
+          The marker keeps the claim with its source. Dropping it makes the
+          council's claim yours, which is not what you meant to write.
+      - key: i2
+        type: choice
+        feature: pragmatics.attribution.source
+        prompt: >
+          You noticed the two figures conflict. Neither source mentions it.
+          The honest sentence is ___
+        options:
+          - "The two figures cannot both be right, though neither source says so."
+          - "The report says the two figures cannot both be right."
+          - "Both sources agree the figures conflict."
+          - "As the newspaper points out, the figures conflict."
+        answer: "The two figures cannot both be right, though neither source says so."
+        note: >
+          It is your inference. Attributing it to a source hides who is
+          reasoning, and a reader who checks the source will stop trusting
+          you.
+      - key: i3
+        type: choice
+        feature: pragmatics.attribution.source
+        prompt: "The verb presenting a position rather than a fact is ___"
+        options: ["argues", "reports", "records", "states the figure"]
+        answer: "argues"
+        note: >
+          'Argues' signals a case being made. Using it for a plain figure
+          makes a source sound partisan; using 'reports' for a contested
+          claim makes it sound settled.
+      - key: i4
+        type: choice
+        feature: pragmatics.attribution.source
+        prompt: >
+          "According to the council, the building is open. Residents found
+          it locked." What has gone wrong is ___
+        options:
+          - "The second claim is unattributed, so it reads as the writer's own."
+          - "Nothing; both claims are clearly marked."
+          - "The first claim needs no marker."
+          - "The two sentences should be joined with 'but'."
+        answer: "The second claim is unattributed, so it reads as the writer's own."
+        note: >
+          Attributing one side and not the other takes a side silently. If
+          both are claims, both need marking.
+
+  # Sentence-level flow already has a unit (`study.c1.information_flow`,
+  # above). This one is about the *document*: which order the reader needs
+  # the material in, which is the failure a synthesis actually makes.
+  - key: study.c1.ordering_a_synthesis
+    level: C1
+    skill: writing.well_structured_complex
+    title: "Ordering a synthesis for a reader"
+    minutes: 10
+    explanation: |
+      There are two orders available to you, and they are rarely the same.
+      The order you found things in, and the order a reader needs them.
+      Writing in the first is the commonest reason a well-informed account is
+      hard to follow.
+
+      The tell is a document organised by source: everything from the first
+      source, then everything from the second, then everything from the
+      third. Each paragraph is fine. The reader still cannot see what is at
+      issue, because nothing has been put beside anything.
+
+      Organise by issue instead. What question does the reader have to
+      settle? Group what bears on it, from wherever it came. Three sources on
+      one question is one paragraph; one source touching three questions is
+      split across three.
+
+      Within a sentence the same principle runs smaller: known information
+      first, new information last. "The lease costs £61,000. That figure is
+      the second largest line after salaries" flows; reversing the two makes
+      the reader hold a fact they cannot yet place.
+
+      A synthesis that reads as one summary after another has not synthesised
+      anything.
+    examples:
+      - "Two questions face the board: cost, and what the office is for."
+      - "On cost, the finance note and the survey point in opposite directions."
+      - "The lease costs £61,000. That is the second largest line after salaries."
+      - "Both the editorial team and the survey mention time, but mean different things by it."
+    items:
+      - key: i1
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: >
+          You are synthesising three views for a board. The structure that
+          is a synthesis is ___
+        options:
+          - "One section per question at issue, drawing on whichever sources bear on it."
+          - "One section per person, summarising each in turn."
+          - "The sources in the order you read them."
+          - "The longest source first, then the others."
+        answer: "One section per question at issue, drawing on whichever sources bear on it."
+        note: >
+          Organising by source produces three summaries in a row. Nothing has
+          been placed beside anything, so nothing has been synthesised.
+      - key: i2
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: "The pair of sentences that flows better for a reader is ___"
+        options:
+          - "The lease costs £61,000. That is the second largest line after salaries."
+          - "The second largest line after salaries is £61,000. The lease costs that."
+          - "£61,000 the lease costs. Salaries are the largest line."
+          - "Salaries. The lease. £61,000 a year."
+        answer: "The lease costs £61,000. That is the second largest line after salaries."
+        note: >
+          Known first, new last. The reverse makes the reader hold a figure
+          before they know what it refers to.
+      - key: i3
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: >
+          A briefing opens: "The newspaper says X. The report says Y."
+          What is missing is ___
+        options:
+          - "What is at issue between them, which is why the reader is reading."
+          - "The date each source was published."
+          - "A longer quotation from each."
+          - "The writer's own opinion, stated first."
+        answer: "What is at issue between them, which is why the reader is reading."
+        note: >
+          Two summaries placed next to each other leave the reader to do the
+          comparison. Doing it for them is the job.
+      - key: i4
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: >
+          One source touches three separate questions. In an issue-ordered
+          account it goes ___
+        options:
+          - "Split across all three, wherever each point bears on the question."
+          - "All in one place, so the source stays intact."
+          - "First, because it covers the most ground."
+          - "Last, as a summary of the others."
+        answer: "Split across all three, wherever each point bears on the question."
+        note: >
+          Keeping a source intact is organising by source again. The reader
+          needs the material grouped by their question, not by its origin.
+
+  - key: study.c1.irony
+    level: C1
+    skill: pragmatics.nuance
+    title: "Irony and understatement"
+    minutes: 9
+    explanation: |
+      Sometimes the words say one thing and the speaker means another, and
+      everyone in the room knows it except the person taking it literally.
+      Missing this is a comprehension failure, not a vocabulary gap: every
+      word was understood.
+
+      What signals it is the gap between what is said and what is obviously
+      true. "Well, that went well" after a disaster. "It is a little damp"
+      standing in a downpour. Nothing in the words carries the meaning -- the
+      mismatch does, and so does intonation in speech and context in writing.
+
+      British English leans heavily on understatement, and it is not
+      politeness. "I have one or two reservations" can mean a proposal is
+      unworkable. "That is quite interesting" can mean the opposite. Reading
+      those literally will leave you agreeing to things nobody agreed to.
+
+      Producing irony in a second language is risky and rarely necessary.
+      Recognising it is not optional: it changes what was decided in the
+      meeting you were in.
+
+      The reliable test is not the words. Ask whether the speaker could
+      plausibly mean what they said, given what everyone present can see.
+    examples:
+      - "'Another delay. Marvellous.' -- said after the third delay."
+      - "'I have one or two small reservations about the whole plan.'"
+      - "'It is a bit chilly' -- in a snowstorm."
+      - "'That is one way of doing it.'"
+    items:
+      - key: i1
+        type: choice
+        feature: pragmatics.rhetoric.irony
+        prompt: >
+          The third delay is announced. A colleague says: "Marvellous."
+          What they mean is ___
+        options:
+          - "They are frustrated; the word says the opposite of what they mean."
+          - "They are pleased about the delay."
+          - "They think the announcement was well made."
+          - "They did not hear the announcement."
+        answer: "They are frustrated; the word says the opposite of what they mean."
+        note: >
+          Nothing in 'marvellous' carries this. The gap between the word and
+          what everyone can see does.
+      - key: i2
+        type: choice
+        feature: pragmatics.rhetoric.irony
+        prompt: >
+          A manager says: "I have one or two reservations about the plan."
+          The likeliest meaning is ___
+        options:
+          - "Serious objections, put mildly."
+          - "Exactly two small points of detail."
+          - "Full agreement with the plan."
+          - "They have not read the plan."
+        answer: "Serious objections, put mildly."
+        note: >
+          Understatement, not politeness. Taken literally you would go ahead;
+          taken as meant you would stop.
+      - key: i3
+        type: choice
+        feature: pragmatics.rhetoric.irony
+        prompt: "What most reliably signals that a remark is ironic is ___"
+        options:
+          - "The mismatch between what was said and what everyone can see."
+          - "A particular set of ironic words."
+          - "The speaker smiling."
+          - "The sentence being short."
+        answer: "The mismatch between what was said and what everyone can see."
+        note: >
+          There is no ironic vocabulary. Context does the work, which is why
+          a dictionary cannot help you here.
+      - key: i4
+        type: choice
+        feature: pragmatics.rhetoric.irony
+        prompt: >
+          Your proposal is met with: "That is one way of doing it." You
+          should read it ___
+        options:
+          - "As a doubt about the approach, not an endorsement of it."
+          - "As agreement that your way is correct."
+          - "As a request for a second option."
+          - "As a compliment on your originality."
+        answer: "As a doubt about the approach, not an endorsement of it."
+        note: >
+          Literally it says nothing at all, which is the signal. If the
+          speaker agreed, they would have said so.
+
+  - key: study.c1.figurative
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    title: "Idiom and metaphor: when not to take it apart"
+    minutes: 9
+    explanation: |
+      Some expressions cannot be understood from their parts, and taking them
+      apart is what goes wrong. 'Break the ice' has nothing to do with ice.
+      'Move the goalposts' is about changing the rules after people started
+      playing.
+
+      Two things follow.
+
+      They are fixed. 'Break the ice' works; 'crack the ice' and 'break the
+      frost' do not, though nothing about the meaning explains why. Learn the
+      whole phrase or leave it alone -- a half-remembered idiom is more
+      confusing than the plain words would have been.
+
+      They carry register. Idioms are usually informal, which makes them the
+      wrong choice in a formal report and exactly right in an email to a
+      colleague. Using one in a legal summary reads as a misjudgement of the
+      situation, not as a mistake of meaning.
+
+      Dead metaphors are different and safe: 'the leg of the table', 'the
+      heart of the matter'. Nobody notices these. Live metaphors that mix --
+      'a watershed moment that opened the floodgates' -- draw attention to
+      themselves and rarely survive the attention.
+
+      Recognising idiom matters far more than producing it. You will meet a
+      great many more than you will ever need to use.
+    examples:
+      - "Someone had to break the ice, so I asked about the journey."
+      - "They moved the goalposts halfway through the process."
+      - "That is the heart of the matter."
+      - "The proposal was, in the report's phrase, not fit for purpose."
+    items:
+      - key: i1
+        type: choice
+        feature: lexis.idiom.figurative
+        prompt: "'They moved the goalposts' means ___"
+        options:
+          - "They changed the requirements after work had started."
+          - "They relocated some equipment."
+          - "They scored unexpectedly."
+          - "They cancelled the match."
+        answer: "They changed the requirements after work had started."
+        note: >
+          Nothing in 'goalposts' gives you this. The phrase means what it
+          means as a whole, and taking it apart is what leads you astray.
+      - key: i2
+        type: choice
+        feature: lexis.idiom.figurative
+        prompt: "The fixed form is ___"
+        options: ["break the ice", "crack the ice", "break the frost", "split the ice"]
+        answer: "break the ice"
+        note: >
+          The others are all reasonable by meaning and all wrong. Idioms are
+          learned whole, not assembled.
+      - key: i3
+        type: choice
+        feature: lexis.idiom.figurative
+        prompt: >
+          You are writing a formal report for a regulator. The better
+          choice is ___
+        options:
+          - "The requirements changed after work began."
+          - "They moved the goalposts on us."
+          - "It was a whole new ball game."
+          - "They pulled the rug out from under us."
+        answer: "The requirements changed after work began."
+        note: >
+          The idiom is not wrong in meaning; it is wrong in register, which
+          in a regulatory document reads as misjudging the situation.
+      - key: i4
+        type: choice
+        feature: lexis.idiom.figurative
+        prompt: "The one a reader will actually notice as a metaphor is ___"
+        options:
+          - "A watershed moment that opened the floodgates."
+          - "The heart of the matter."
+          - "The leg of the table."
+          - "The head of the department."
+        answer: "A watershed moment that opened the floodgates."
+        note: >
+          The other three are dead metaphors nobody registers. Two live ones
+          in a row draw attention and rarely survive it.
