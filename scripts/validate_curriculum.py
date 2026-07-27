@@ -99,10 +99,25 @@ def main(argv: list[str]) -> int:
     # A feature nothing practises is a category the error log can name but the
     # plan can never answer. Reported, not fatal: the taxonomy is allowed to
     # run ahead of the content that fills it.
+    #
+    # Pronunciation is separated out because it is not a content gap. A study
+    # unit is read and typed, so it cannot honestly drill a sound contrast or
+    # word stress; those need the speaking lab. Listing them beside genuinely
+    # missing units would invite someone to write a fake one.
     uncovered = sorted(set(taxonomy.codes()) - covered)
-    if uncovered:
-        print(f"Note: {len(uncovered)} features have no study unit yet:")
-        for code in uncovered:
+    needs_speech = [c for c in uncovered if c.startswith("pronunciation.")]
+    writable = [c for c in uncovered if c not in needs_speech]
+
+    if writable:
+        print(f"Note: {len(writable)} features have no study unit yet:")
+        for code in writable:
+            print(f"  {code}")
+    if needs_speech:
+        print(
+            f"Note: {len(needs_speech)} features cannot be drilled by a study "
+            "unit at all; they need the speaking lab:"
+        )
+        for code in needs_speech:
             print(f"  {code}")
     return 0
 

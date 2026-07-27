@@ -57,7 +57,7 @@ defaults. Tests run in parallel.
 55 objectives across A1–C2 with 45 prerequisite edges; a 36-item diagnostic
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
-C1; **12 study units with 52 practice items spanning A1–C2**; 9 written output
+C1; **17 study units with 75 practice items spanning A1–C2**; 9 written output
 tasks across 8 genres reaching C2; and **7 listening clips reaching C2**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
@@ -173,10 +173,11 @@ A due card never ships its own answer.
    clip accepts real recordings with no schema change.
 2. **The speaking slot still has nothing behind it**, and renders unlinked.
 3. **Writing accuracy is never judged.**
-4. **16 of 36 features have no study unit**, which `make test-curriculum`
-   reports explicitly. Every bank now reaches C1 or C2, but coverage within
-   the taxonomy is still partial: an error logged against an uncovered
-   feature schedules practice and offers no remedy.
+4. **Two features have no remedy, and cannot get one from a study unit.**
+   `pronunciation.segment.contrast` and `pronunciation.stress.word` are read
+   and typed nowhere — they need the speaking lab. `make test-curriculum`
+   now reports them separately from genuinely missing content, so nobody is
+   tempted to write a fake text drill for a sound.
 5. **Hints, replays, and transcript use are self-reported by the client.** A
    dishonest or buggy client can overstate independence. The blast radius is
    one mis-weighted observation, except for `used_transcript`, where the
@@ -192,7 +193,9 @@ A due card never ships its own answer.
 1. **Implement a concrete rubric provider** (`local` or `cloud`) behind the
    now-wired evaluator contract, so writing accuracy is actually judged. The
    wiring, capping, and UI all exist and are tested against a fake.
-2. **Cover more features with study units** — 16 of 36 still have no unit, so
-   errors logged against them schedule practice but offer no remedy.
-3. **Speaking**, the last plan-item kind with nothing behind it. Milestone 5,
-   and the only modality still resting entirely on self-report.
+2. **Speaking**, the last plan-item kind with nothing behind it. Milestone 5,
+   the only modality still resting entirely on self-report, and the only way
+   the last two taxonomy features can ever be practised.
+3. **Hand-author the prerequisite graph.** Edges are currently derived across
+   adjacent CEFR levels within a domain — a documented stand-in, not a claim
+   about acquisition order.

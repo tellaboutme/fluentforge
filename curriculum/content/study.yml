@@ -818,3 +818,360 @@ units:
           Judgement includes knowing when the instrument must stay in the
           case. Safety-critical speech takes no trust-me gaps.
 
+  - key: study.a1.countability_and_articles
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    title: "One apple, some rice: counting and not counting"
+    minutes: 8
+    explanation: |
+      English divides nouns into things you can count and things you cannot.
+      You can have one apple, two apples. You cannot have "two rices" --
+      rice is treated as a substance, not as separate items.
+
+      This decides three things at once. Countable nouns take a/an in the
+      singular and add -s in the plural. Uncountable nouns take no a/an and
+      no -s. And each group takes different quantity words: many apples but
+      much rice, a few apples but a little rice.
+
+      Use 'a' the first time you mention something, and 'the' once the
+      listener knows which one you mean: "I bought a book. The book was
+      expensive."
+
+      Some nouns are uncountable in English and countable in other
+      languages -- information, advice, furniture, news, money. These are
+      worth learning as a short list rather than working out each time.
+    examples:
+      - "I bought a book. The book was expensive."
+      - "There is some rice in the cupboard."
+      - "She gave me some very good advice."
+      - "How much money do you need? How many euros?"
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.article.definite_indefinite
+        prompt: "I have ___ apple in my bag."
+        options: ["an", "a", "the", "some"]
+        answer: "an"
+        note: >
+          'Apple' starts with a vowel sound, so it takes 'an'. It is also the
+          first mention, which is why 'a/an' and not 'the'.
+      - key: i2
+        type: choice
+        feature: grammar.noun.countability
+        prompt: "She gave me some very useful ___."
+        options: ["advice", "advices", "an advice", "advice's"]
+        answer: "advice"
+        note: >
+          'Advice' is uncountable in English: no plural -s and no a/an. For
+          one piece, say 'a piece of advice'.
+      - key: i3
+        type: choice
+        feature: grammar.quantifier.choice
+        prompt: "How ___ money do we need for the tickets?"
+        options: ["much", "many", "few", "several"]
+        answer: "much"
+        note: >
+          'Much' goes with uncountable nouns like money; 'many' goes with
+          countable ones like euros or tickets.
+      - key: i4
+        type: gap_fill
+        feature: grammar.article.definite_indefinite
+        prompt: "I bought a book yesterday. ___ book was more expensive than I expected."
+        answer: "the"
+        note: >
+          Second mention: the listener now knows which book, so it moves from
+          'a' to 'the'.
+      - key: i5
+        type: choice
+        feature: grammar.noun.countability
+        prompt: "There ___ too much furniture in this room."
+        options: ["is", "are", "were", "have"]
+        answer: "is"
+        note: >
+          'Furniture' is uncountable, so it takes a singular verb however
+          many chairs are involved.
+
+  - key: study.a2.present_and_future
+    level: A2
+    skill: grammar.past_future_basic
+    title: "Now, usually, and later"
+    minutes: 9
+    explanation: |
+      Three choices that learners often collapse into one.
+
+      The present simple is for habits and permanent states: "I work in
+      Madrid", "the shop opens at nine". Remember the -s after he, she, it.
+
+      The present continuous is for what is happening now, or around now,
+      and for arrangements already fixed: "I am working from home today",
+      "I am meeting Ana on Friday".
+
+      Verbs of state -- know, like, want, believe, own -- normally stay
+      simple even when you mean right now. "I am knowing the answer" is not
+      English.
+
+      For the future, English has several forms doing different jobs.
+      'Will' for a decision made as you speak or a prediction; 'going to'
+      for an intention you already had; the present continuous for a fixed
+      arrangement.
+    examples:
+      - "She works in Madrid. She is working from home today."
+      - "I am meeting Ana at six -- it is already arranged."
+      - "That bag looks heavy. I will carry it for you."
+      - "We are going to repaint the kitchen this summer."
+    items:
+      - key: i1
+        type: gap_fill
+        feature: grammar.tense.present_simple_form
+        prompt: "My brother ___ (work) in a hospital in Vienna."
+        answer: "works"
+        note: >
+          Third person singular in the present simple adds -s. This is the
+          single most common slip at A2.
+      - key: i2
+        type: choice
+        feature: grammar.tense.progressive_vs_simple
+        prompt: "Be quiet -- the baby ___."
+        options: ["is sleeping", "sleeps", "sleep", "has slept"]
+        answer: "is sleeping"
+        note: >
+          Happening right now, so the continuous. 'The baby sleeps a lot'
+          would be a habit, which is a different claim.
+      - key: i3
+        type: choice
+        feature: grammar.tense.progressive_vs_simple
+        prompt: "I ___ what you mean, but I disagree."
+        options: ["understand", "am understanding", "understands", "was understanding"]
+        answer: "understand"
+        note: >
+          'Understand' is a state verb: it stays simple even when you mean at
+          this moment.
+      - key: i4
+        type: choice
+        feature: grammar.tense.future_reference
+        prompt: "That box looks heavy. Do not worry -- I ___ help you."
+        options: ["will", "am going to", "am", "would"]
+        answer: "will"
+        note: >
+          The decision is being made as you speak, which is what 'will' is
+          for. 'Going to' would imply you had already planned it.
+      - key: i5
+        type: choice
+        feature: grammar.tense.future_reference
+        prompt: "I can't come on Friday -- I ___ my sister at the airport."
+        options: ["am meeting", "will meet", "meet", "would meet"]
+        answer: "am meeting"
+        note: >
+          A fixed arrangement, already made, takes the present continuous.
+
+  - key: study.b1.verb_patterns_and_reference
+    level: B1
+    skill: grammar.connected_time_modality
+    title: "What follows a verb, and what a pronoun points at"
+    minutes: 10
+    explanation: |
+      Two things that keep sentences from tangling.
+
+      First, each verb chooses what can follow it, and the choice has to be
+      learned with the verb. Some take an infinitive: decide to go, manage
+      to finish, refuse to answer. Some take an -ing form: enjoy reading,
+      avoid speaking, suggest going. A few take either, with a change of
+      meaning: "I stopped smoking" and "I stopped to smoke" describe
+      opposite events.
+
+      Second, a pronoun has to point at exactly one thing the reader has
+      already been given. "I told Ana about Maria, and she was upset" leaves
+      the reader guessing which one. If the antecedent is not obvious,
+      repeat the name -- clarity beats elegance.
+
+      When you report what someone said, the tense usually shifts back:
+      "I am tired" becomes "she said she was tired".
+    examples:
+      - "She managed to finish before the deadline."
+      - "He avoided answering the question."
+      - "I stopped smoking. / I stopped to smoke."
+      - "She said she was tired, so we went home."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.verb_pattern.complementation
+        prompt: "She managed ___ the report before the deadline."
+        options: ["to finish", "finishing", "finish", "for finishing"]
+        answer: "to finish"
+        note: >
+          'Manage' takes an infinitive. Patterns like this are learned with
+          the verb; there is no rule that predicts them.
+      - key: i2
+        type: choice
+        feature: grammar.verb_pattern.complementation
+        prompt: "He avoided ___ the question directly."
+        options: ["answering", "to answer", "answer", "answered"]
+        answer: "answering"
+        note: >
+          'Avoid' takes the -ing form. Compare 'refuse to answer', which
+          takes the infinitive.
+      - key: i3
+        type: choice
+        feature: grammar.pronoun.reference
+        prompt: "Clearest version: 'I told Ana about Maria, and ___ was upset.'"
+        options: ["Ana", "she", "her", "they"]
+        answer: "Ana"
+        note: >
+          Two women have been mentioned, so 'she' points at either. Repeating
+          the name is not clumsy here; it is the only unambiguous choice.
+      - key: i4
+        type: gap_fill
+        feature: grammar.tense.sequence_backshift
+        prompt: "'I am tired,' she said. -> She said she ___ tired."
+        answer: "was"
+        note: >
+          Reporting shifts the tense back one step: am becomes was.
+      - key: i5
+        type: choice
+        feature: grammar.comparison.form
+        prompt: "This route is ___ than the motorway, but it is prettier."
+        options: ["slower", "more slow", "slowest", "more slower"]
+        answer: "slower"
+        note: >
+          Short adjectives take -er. 'More slower' doubles the comparative,
+          which is a common and very visible error.
+
+  - key: study.b2.sentence_boundaries_and_paragraphs
+    level: B2
+    skill: writing.clear_detailed_argument
+    title: "Where sentences and paragraphs end"
+    minutes: 9
+    explanation: |
+      Two mechanical faults that make otherwise good writing hard to read.
+
+      A comma splice joins two complete sentences with a comma: "The train
+      was late, we missed the meeting." Both halves could stand alone, so a
+      comma is not enough. Use a full stop, a semicolon, or a joining word:
+      "The train was late, so we missed the meeting."
+
+      A paragraph holds one idea. It opens with a sentence that says what
+      the paragraph is about, develops it, and stops before the next idea
+      starts. A page-long block signals to the reader that you did not
+      decide where one thought ended -- and they will have to do that work
+      instead.
+
+      Neither of these is about being formal. They are about the reader
+      knowing where they are.
+    examples:
+      - "The train was late. We missed the meeting."
+      - "The train was late, so we missed the meeting."
+      - "The train was late; we missed the meeting."
+      - "Each paragraph does one job. This one is about paragraphs."
+    items:
+      - key: i1
+        type: choice
+        feature: mechanics.punctuation.sentence_boundary
+        prompt: "Correctly punctuated: '___'"
+        options:
+          - "The train was late, so we missed the meeting."
+          - "The train was late, we missed the meeting."
+          - "The train was late we missed the meeting."
+          - "The train was late, however we missed the meeting."
+        answer: "The train was late, so we missed the meeting."
+        note: >
+          A comma alone cannot join two complete sentences. 'So' is a joining
+          word, which makes the comma correct.
+      - key: i2
+        type: choice
+        feature: mechanics.punctuation.sentence_boundary
+        prompt: "Fixing a comma splice without a joining word: 'It rained all day ___ the match was cancelled.'"
+        options: [";", ",", "and,", "--,"]
+        answer: ";"
+        note: >
+          A semicolon joins two complete, closely related sentences. A full
+          stop would also be correct.
+      - key: i3
+        type: choice
+        feature: discourse.organisation.paragraphing
+        prompt: "A new paragraph should start when ___"
+        options:
+          - "the topic changes."
+          - "the paragraph reaches five lines."
+          - "you have used a connective."
+          - "you introduce a quotation."
+        answer: "the topic changes."
+        note: >
+          Length is a symptom, not the rule. One paragraph, one idea.
+      - key: i4
+        type: choice
+        feature: mechanics.spelling.common
+        prompt: "Correctly spelled: 'The change had a noticeable ___ on morale.'"
+        options: ["effect", "affect", "efect", "affekt"]
+        answer: "effect"
+        note: >
+          'Effect' is the noun here. 'Affect' is normally the verb: the
+          change affected morale, and the effect was visible.
+
+  - key: study.b1.phrasal_verbs
+    level: B1
+    skill: vocabulary.independent_range
+    title: "Phrasal verbs: the particle carries the meaning"
+    minutes: 9
+    explanation: |
+      A phrasal verb is a verb plus a particle, and the pair means something
+      the parts do not. 'Look' means look; 'look after' means care for;
+      'look into' means investigate; 'look up' means find in a reference.
+      The verb is doing very little work -- the particle is carrying it.
+
+      This is why guessing from the verb fails. It also means you cannot
+      swap particles and stay understood: "look after this word in the
+      dictionary" will simply confuse.
+
+      Two practical points. Many phrasal verbs have a single-word equivalent
+      that sounds more formal: put off / postpone, find out / establish,
+      bring up / raise. And some separate around their object -- "turn the
+      light off" -- while others never do: "look after the children", never
+      "look the children after".
+
+      Learn them in a phrase, not as a list of particles.
+    examples:
+      - "Could you look after the cat while we are away?"
+      - "I will look into it and come back to you."
+      - "Let me look up the exact figure."
+      - "They put the meeting off until Thursday."
+    items:
+      - key: i1
+        type: gap_fill
+        feature: lexis.phrasal_verb.meaning
+        prompt: "I do not know the word -- I will look it ___ in the dictionary."
+        answer: "up"
+        note: >
+          'Look up' means find in a reference. 'Look into' would mean
+          investigate, which is a different action.
+      - key: i2
+        type: choice
+        feature: lexis.phrasal_verb.meaning
+        prompt: "Could you ___ the children on Saturday?"
+        options: ["look after", "look up", "look into", "look over"]
+        answer: "look after"
+        note: >
+          'Look after' is care for. The particle is doing all the work here;
+          the verb 'look' contributes almost nothing.
+      - key: i3
+        type: choice
+        feature: lexis.phrasal_verb.meaning
+        prompt: "The meeting was ___ until Thursday."
+        options: ["put off", "put up", "put out", "put in"]
+        answer: "put off"
+        note: >
+          'Put off' is postpone. The single-word equivalent is the more
+          formal choice, which is a register decision, not a correctness one.
+      - key: i4
+        type: choice
+        feature: lexis.phrasal_verb.meaning
+        prompt: "Which of these is NOT possible English? ___"
+        options:
+          - "look the children after"
+          - "turn the light off"
+          - "turn off the light"
+          - "look after the children"
+        answer: "look the children after"
+        note: >
+          'Look after' never separates around its object. 'Turn off' does,
+          which is why the other two orders are both fine.
+
