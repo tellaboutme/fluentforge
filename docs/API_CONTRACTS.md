@@ -231,6 +231,53 @@ Error codes and features referenced by an activity are drawn from a closed
 taxonomy (`apps/api/app/learning/taxonomy.py`). Codes are stable and never
 renamed. Clients render `feature_label`, never the raw code.
 
+### Benchmarks
+
+- `GET /benchmarks/eligibility` — **implemented**. Whether one is due, and
+  what has to happen if not.
+- `POST /benchmarks` — **implemented**. Starts one, or refuses with
+  `benchmark_not_due` (409) and the reason.
+- `POST /benchmarks/{id}/responses` — **implemented**.
+- `POST /benchmarks/{id}/complete` — **implemented**.
+
+A benchmark is the only observation in the product that claims to *measure a
+level* rather than record that something was practised, and it is the only
+producer of `EvidenceType.BENCHMARK` — the joint-highest weight in the
+mastery model. Four properties earn that weight, and each is visible on the
+wire.
+
+**It has no key, and the client does not choose it.** An activity is opened
+by `activity_key`; a benchmark is asked for and either granted or refused.
+A learner who could take one when they felt ready would be measuring their
+confidence. `POST /benchmarks` returns the items the server picked.
+
+**It is unaided, and `unaided: true` says so** on the opened session.
+`POST /benchmarks/{id}/responses` **rejects unknown fields**, so there is no
+`hints_used` to send — a benchmark taken with a hint is not a benchmark, and
+a client sending one is told rather than having it dropped while the result
+is recorded as unaided. Evidence is written at `independence: 1.0` and
+evaluator confidence `1.0`, which is only defensible because the item types
+are closed and the answers known in advance.
+
+**Every item is one the learner has never met**, in any context. An item
+already seen measures recall of that item. A benchmark that cannot be filled
+from unseen material does not run, and the refusal says so.
+
+**It can lower an estimate.** Everything else accumulates; this is the first
+observation strong enough to move a profile down, and that is the point.
+The completion response carries `lowered[]`, the skills whose estimate fell.
+Clients must show it: a measurement that only ever agreed with the learner
+would not be a measurement, and hiding a fall would quietly make it one.
+
+The whole benchmark is **one evidence context per skill**, so eight items in
+one sitting cannot satisfy the mastery model's breadth requirement on their
+own.
+
+Only closed item types are used. Written and spoken production stay
+provisional until a rubric judges them, so including them would mean either
+claiming certainty the checks cannot support or recording a benchmark that
+is not one. Productive benchmarking waits for a judged deployment.
+
 ### Reviews
 
 - `GET /reviews/due` — **implemented**. Capped; `due_now` reports the true total.

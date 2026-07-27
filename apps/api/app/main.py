@@ -14,6 +14,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from .routers.activities import router as activities_router
 from .routers.auth import router as auth_router
+from .routers.benchmarks import router as benchmarks_router
 from .routers.curriculum import router as curriculum_router
 from .routers.diagnostics import router as diagnostics_router
 from .routers.health import router as health_router
@@ -92,6 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(plans_router, prefix=API_V1_PREFIX)
     app.include_router(reviews_router, prefix=API_V1_PREFIX)
     app.include_router(activities_router, prefix=API_V1_PREFIX)
+    app.include_router(benchmarks_router, prefix=API_V1_PREFIX)
 
     return app
 

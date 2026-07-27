@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **636 Python tests**; eslint, tsc, and **243 web
+curriculum validation, **667 Python tests**; eslint, tsc, and **243 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -331,6 +331,28 @@ browser does not have and by a mastery model it does not run. So:
 - The app is installable: manifest, icons, theme colour. Zoom is not locked,
   because zooming is how a low-vision learner reads.
 
+### Benchmarks (Milestone 7 — new)
+
+`EvidenceType.BENCHMARK` had existed since the first commit, weighted 1.00 —
+the joint-highest in the mastery model — and nothing had ever written one.
+The strongest evidence the system can hold was a category with no producer.
+
+- **Scheduled by the server, never chosen.** A learner who takes one when
+  they feel ready measures their confidence. Asking early is refused with
+  the reason.
+- **Unaided, and the schema has nowhere to say otherwise.** The response
+  body rejects unknown fields, so a client cannot report a hint and have it
+  silently dropped while the result is recorded as unaided.
+- **Every item unseen**, in any context, and closed-only: full evaluator
+  confidence is defensible only where the answer is known in advance.
+- **It can lower an estimate**, and the completion response names the skills
+  that fell. Everything else in the product accumulates; a measurement that
+  can only agree with the learner is not one.
+- **One evidence context per skill**, so eight items in one sitting cannot
+  satisfy the model's breadth requirement alone.
+- Productive benchmarking waits for a judged deployment: writing and speaking
+  stay provisional, and a provisional benchmark is not one.
+
 ### Accessibility gate (new)
 
 - **axe runs in the browser suite** against sign-in, register and the
@@ -430,12 +452,9 @@ browser does not have and by a mastery model it does not run. So:
 
 ## Next three tasks
 
-1. **Benchmark portfolios**, the last unbuilt item in Milestone 7 and the
-   largest hole in the assessment model: `EvidenceType.BENCHMARK` exists,
-   the mastery model weights it, and nothing in the product ever writes one.
-   A benchmark has to be scheduled rather than chosen — a learner who takes
-   one when they feel ready measures their confidence — and has to be able
-   to *lower* an estimate, which nothing currently does.
+1. **A benchmark screen.** The endpoints exist and are tested; no UI opens
+   them yet, so the measurement is reachable only through the API. It also
+   needs a place in the daily plan, which currently cannot offer one.
 2. **Run a provider against a real model.** Both `cloud` and `local` are
    built and tested against stub transports, which proves they handle every
    way the outside world can misbehave and proves nothing about whether a
