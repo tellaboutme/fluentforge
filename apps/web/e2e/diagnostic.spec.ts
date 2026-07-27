@@ -9,6 +9,18 @@ import { expect, test, type Page } from "@playwright/test";
 
 const PASSWORD = "correct-horse-9";
 
+/**
+ * How long one interaction may take.
+ *
+ * Short on a development machine, because a control that has not appeared in
+ * five seconds is usually a real defect and a 30-second wait buries it.
+ * Longer on CI, where the runner is slower, the whole suite is bigger, and
+ * the same five seconds turns a working journey into a red build. The
+ * recovery path below -- "did the report appear?" -- is what keeps a genuine
+ * failure from hiding behind the larger number.
+ */
+const ACTION_TIMEOUT = process.env.CI ? 20_000 : 5_000;
+
 function uniqueEmail(): string {
   return `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
 }
@@ -60,17 +72,22 @@ async function completeDiagnostic(page: Page, limit = 40): Promise<number> {
 
     try {
       if (await radio.isVisible().catch(() => false)) {
-        await radio.check({ timeout: 5000 });
+        await radio.check({ timeout: ACTION_TIMEOUT });
       } else {
-        await textAnswer.fill("guess", { timeout: 5000 });
+        await textAnswer.fill("guess", { timeout: ACTION_TIMEOUT });
       }
-      await submit.click({ timeout: 5000 });
+      // Wait for the control to be usable rather than racing it. The submit
+      // button is disabled until an answer is registered, so clicking the
+      // instant the radio is checked is a race the CI runner loses more
+      // often than a development machine does.
+      await expect(submit).toBeEnabled({ timeout: ACTION_TIMEOUT });
+      await submit.click({ timeout: ACTION_TIMEOUT });
       answered += 1;
 
       const next = page.getByRole("button", { name: /next question/i });
-      await next.waitFor({ state: "visible", timeout: 5000 });
-      await next.click({ timeout: 5000 });
-      await next.waitFor({ state: "hidden", timeout: 5000 });
+      await next.waitFor({ state: "visible", timeout: ACTION_TIMEOUT });
+      await next.click({ timeout: ACTION_TIMEOUT });
+      await next.waitFor({ state: "hidden", timeout: ACTION_TIMEOUT });
     } catch (error) {
       // A control that vanished mid-action usually means the report took
       // over. If it did, the journey succeeded; anything else is real.

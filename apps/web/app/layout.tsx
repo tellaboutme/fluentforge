@@ -17,6 +17,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // `width` and `initialScale` restate Next's defaults on purpose: exporting
+  // a `viewport` object replaces them wholesale rather than merging, so
+  // omitting them drops `width=device-width` and renders the mobile layout
+  // at desktop width scaled down.
+  width: "device-width",
+  initialScale: 1,
   themeColor: "#0f1419",
   // Zooming is how a low-vision learner reads. Locking it is an
   // accessibility failure that costs nothing to avoid.
