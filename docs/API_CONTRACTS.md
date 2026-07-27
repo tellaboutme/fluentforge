@@ -128,12 +128,29 @@ What each kind evidences differs, and the difference is on the wire:
   the evidence records `synthesised: true` for later audit.
 
 - **Writing** records `contextual_production` at reduced evaluator
-  *confidence*: the learner demonstrably composed the text, but nothing
-  judged its accuracy. `provisional` is `true` and clients must surface it —
-  presenting a passed length check as good writing is forbidden by
-  `docs/AI_TUTOR_BEHAVIOR.md`. A response too short to judge records no
-  evidence at all rather than a bad score, and reports
+  *confidence* (0.45): the learner demonstrably composed the text, but the
+  countable checks did not judge its accuracy. A response too short to judge
+  records no evidence at all rather than a bad score, and reports
   `evidence_recorded: false`.
+
+  When a rubric evaluator is configured **and returns a usable judgement**, a
+  *second* evidence event is added rather than the first being replaced — the
+  two make different claims, and overwriting would lose the distinction. Both
+  share one context key, so one piece of writing judged twice is one context.
+  Evaluator confidence is capped at 0.85 before it reaches the mastery model:
+  a model reporting near-certainty has not earned the trust of a closed item
+  scored against a known answer.
+
+  `provisional` is `true` until that happens, and clients must surface it —
+  presenting a passed length check as good writing is forbidden by
+  `docs/AI_TUTOR_BEHAVIOR.md`. When a rubric did run, the response carries
+  `rubric[]` (each dimension with its score, confidence, and **quotations from
+  the learner's own text**), at most three `priority_feedback[]` entries, and
+  `evaluated_by`. A dimension with no cited evidence is a guess, so the
+  citations travel with the score and clients should show them.
+
+  An abstention, a confidence below 0.6, or a provider that fails all leave
+  the learner with exactly the deterministic feedback they would have had.
 
 Plan items whose `activity_key` begins with `read:`, `study:`, `write:`, or
 `listen:` can be opened at these endpoints. `review:` items belong to the

@@ -87,6 +87,12 @@ make capture-fixtures   # rewrites apps/web/fixtures/api-payloads.json
 
 Commit the result. CI re-captures and fails if the committed fixture is stale.
 
+The capture is deterministic on purpose: generated identifiers, timestamps and
+dates are replaced with stable placeholders, and the file is written with an
+explicit LF newline. Both are required for CI's re-capture-and-diff to mean
+anything. Identity is preserved across the substitution — two fields holding
+the same real UUID still hold the same placeholder.
+
 ## Tests
 
 | Layer | Command | What it catches |

@@ -15,16 +15,31 @@ curriculum validation, **420 Python tests**; eslint, tsc, and **188 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
-> **This repository is not under version control.** There is no `.git`
-> directory, so there is no history, no way to review a change as a diff, and
-> no way to undo one. `.gitignore` and `.github/workflows/ci.yml` both exist,
-> so this was clearly intended — but until `git init` happens, CI has never
-> run and cannot run, which is also why the Playwright suite in risk #4 has
-> never executed.
+Version control starts at commit `d503861`, which captures this passing state
+as the baseline. 221 files tracked; `.venv`, `node_modules`, and `local-data`
+correctly excluded. `scripts/git-init.ps1` created it.
+
+CI runs on every push to `github.com/tellaboutme/fluentforge`: six jobs
+covering Python on 3.10 and 3.12, the web app, PostgreSQL migrations, fixture
+drift, and the Playwright browser suite. The first push exposed a real defect
+in the `fixtures` job — see "Fixed by CI" below.
 
 A Playwright suite (`make e2e`) covers the browser journey. It runs in CI; it
-could not be executed in the sandbox this work was done in, because
-Playwright's browser download is blocked there.
+cannot run in the sandbox this work is written in, because Playwright's
+browser download is blocked there.
+
+### Fixed by CI's first run
+
+The `fixtures` job re-captures the API payloads and diffs them against the
+committed copy. It failed immediately, for two reasons that had been latent
+since the job was written — it could never have passed:
+
+- The capture contained five generated UUIDs and two timestamps, all new on
+  every run. These are now replaced with stable placeholders that preserve
+  identity: fields sharing a real identifier still share a placeholder.
+- The file was written with CRLF on Windows and regenerated with LF on Linux,
+  so every line differed. The capture pins `newline="\n"` and
+  `.gitattributes` stores LF.
 
 ### Bootstrap
 
@@ -126,9 +141,13 @@ A due card never ships its own answer.
 - **Speaking.** No recorder, transcription, or acoustic analysis. The
   `speaking` slot is the last plan-item kind with nothing behind it, and
   speaking skills are still evidenced only by self-rating.
-- **Rubric evaluation.** The provider contract has no implementation, so
-  writing accuracy is still never judged. Every writing task already names the
-  features a rubric should look at, so the gap is recorded rather than hidden.
+- **A rubric provider.** The evaluator is now *wired in* — writing calls it,
+  a usable judgement adds evidence, and the UI renders dimensions, citations
+  and corrections. What does not exist yet is a provider that actually calls a
+  model: `local` and `cloud` still raise at startup, so the shipped default
+  abstains and writing stays provisional. The wiring is the part that was
+  missing and is fully tested; the provider is a afternoon's work behind a
+  contract that now has a caller.
 - **Diagnostic errors still use legacy codes.** `services/diagnostics.py` logs
   `item.<skill_key>`; the taxonomy exists but the diagnostic does not use it
   yet. Study activities do.

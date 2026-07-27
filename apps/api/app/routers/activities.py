@@ -194,6 +194,22 @@ class WritingCheckOutcome(BaseModel):
     message: str
 
 
+class RubricDimensionOutcome(BaseModel):
+    name: str
+    score: float
+    confidence: float
+    #: Short quotations from the learner's own text. An evaluator that cannot
+    #: cite evidence is guessing, so this travels with the score.
+    evidence: list[str]
+
+
+class PriorityFeedbackOutcome(BaseModel):
+    category: str
+    original: str
+    improved: str
+    explanation: str
+
+
 class WritingOutcome(BaseModel):
     activity_type: Literal["writing_task"] = "writing_task"
     activity_key: str
@@ -210,6 +226,13 @@ class WritingOutcome(BaseModel):
     #: show this: claiming a piece of writing is fine when only its length was
     #: checked is the dishonesty `docs/AI_TUTOR_BEHAVIOR.md` forbids.
     provisional: bool
+    #: Empty unless a rubric actually ran and was trusted.
+    rubric: list[RubricDimensionOutcome] = []
+    #: At most three. Correcting everything teaches nothing.
+    priority_feedback: list[PriorityFeedbackOutcome] = []
+    #: Which evaluator judged this, or None. Surfaced so a learner can tell
+    #: machine judgement from a countable check.
+    evaluated_by: str | None = None
 
 
 class ListeningOutcome(BaseModel):
@@ -398,6 +421,8 @@ def complete_activity(
         )
 
     analysis = result.analysis
+    evaluation = result.evaluation
+    judged = result.judged
     return WritingOutcome(
         activity_key=result.activity_key,
         score=result.score,
@@ -413,4 +438,23 @@ def complete_activity(
         missing_elements=list(analysis.missing_elements),
         evidence_recorded=result.evidence_recorded,
         provisional=result.provisional,
+        rubric=[
+            RubricDimensionOutcome(
+                name=dimension.name,
+                score=dimension.score,
+                confidence=dimension.confidence,
+                evidence=list(dimension.evidence),
+            )
+            for dimension in (evaluation.dimensions if judged and evaluation else [])
+        ],
+        priority_feedback=[
+            PriorityFeedbackOutcome(
+                category=item.category,
+                original=item.original,
+                improved=item.improved,
+                explanation=item.explanation,
+            )
+            for item in (evaluation.priority_feedback if judged and evaluation else [])
+        ],
+        evaluated_by=evaluation.provider if judged and evaluation else None,
     )

@@ -25,7 +25,7 @@ import {
   type WritingActivity,
   type WritingResult,
 } from "@/lib/api";
-import { questionTypeLabel } from "@/lib/labels";
+import { confidenceLabel, questionTypeLabel } from "@/lib/labels";
 import { useSession } from "@/lib/session";
 import { ErrorNotice, Loading } from "@/components/Status";
 
@@ -592,6 +592,60 @@ function Writing({
               </li>
             ))}
           </ul>
+
+          {/* A rubric ran. Show what it looked at and what it cited, so the
+              learner can disagree with a judgement rather than just receive
+              it. `docs/AI_TUTOR_BEHAVIOR.md`: an evaluator that cannot cite
+              evidence is guessing. */}
+          {result.rubric.length > 0 ? (
+            <>
+              <h2 className="subheading">Assessed against a rubric</h2>
+              <ul className="checks">
+                {result.rubric.map((dimension) => (
+                  <li key={dimension.name}>
+                    <strong>{dimension.name}</strong>{" "}
+                    <span className="muted">
+                      {confidenceLabel(dimension.confidence).toLowerCase()}
+                    </span>
+                    {dimension.evidence.length > 0 ? (
+                      <ul>
+                        {dimension.evidence.map((quote) => (
+                          <li key={quote}>
+                            <em>&ldquo;{quote}&rdquo;</em>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              {result.evaluatedBy ? (
+                <p className="hint">
+                  Judged by an automatic evaluator ({result.evaluatedBy}), not
+                  by a teacher. It can be wrong, and it is weighted lower than
+                  a task with a known answer.
+                </p>
+              ) : null}
+            </>
+          ) : null}
+
+          {/* At most three. Correcting everything teaches nothing. */}
+          {result.priorityFeedback.length > 0 ? (
+            <>
+              <h2 className="subheading">Worth fixing first</h2>
+              <ul className="checks">
+                {result.priorityFeedback.map((item) => (
+                  <li key={`${item.category}-${item.original}`}>
+                    <span className="question-type">{item.category}</span>
+                    <br />
+                    <s>{item.original}</s> &rarr; <strong>{item.improved}</strong>
+                    <br />
+                    <span className="muted">{item.explanation}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
 
           {/* Non-negotiable: never imply the writing was judged good. */}
           {result.provisional ? (

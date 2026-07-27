@@ -3,11 +3,23 @@
 Run with `make capture-fixtures` after changing any API response shape. The
 committed fixture is what stops the hand-written TypeScript client from
 silently drifting away from what FastAPI actually sends.
+
+The output has to be **byte-identical for the same API**, because CI proves
+the committed copy is current by re-capturing and diffing. Two things would
+otherwise make that impossible, and both are handled below:
+
+- Generated identifiers and timestamps differ on every run. They are
+  replaced with stable placeholders that preserve *shape* and *identity*:
+  two fields holding the same real UUID still hold the same placeholder,
+  so a client asserting they match keeps working.
+- Line endings differ by platform. Python's text mode would write CRLF on
+  Windows and LF on Linux, so the newline is pinned explicitly.
 """
 
 from __future__ import annotations
 
 import json
+import re
 import sys
 import tempfile
 from collections.abc import Iterator
@@ -19,6 +31,16 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 OUTPUT = REPO_ROOT / "apps" / "web" / "fixtures" / "api-payloads.json"
+
+#: Anything matching these is regenerated per run and must be neutralised.
+_UUID = re.compile(
+    r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+)
+_TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T[\d:.]+(?:Z|[+-]\d{2}:?\d{2})?$")
+_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+STABLE_DATE = "2026-01-01"
+STABLE_TIMESTAMP = "2026-01-01T00:00:00Z"
 
 SAMPLE_WRITING = (
     "Last weekend I visited my sister in another city. We walked around the "
@@ -200,10 +222,57 @@ def main() -> int:
         "listening_result": listening_result_payload,
     }
 
+    stable = _stabilise(fixtures, {})
+
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(fixtures, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    # `newline` is pinned: without it Python writes CRLF on Windows and LF
+    # on Linux, and CI would diff every line of a file nobody had changed.
+    OUTPUT.write_text(
+        json.dumps(stable, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     print(f"Wrote {OUTPUT.relative_to(REPO_ROOT)}")
     return 0
+
+
+def _placeholder(index: int) -> str:
+    """A syntactically valid UUID that is obviously not a real one."""
+    return f"00000000-0000-4000-8000-{index:012d}"
+
+
+def _stabilise(value: Any, identities: dict[str, str]) -> Any:
+    """Replace per-run values with deterministic stand-ins.
+
+    `identities` maps each real UUID to its placeholder, so the same
+    identifier appearing in three payloads still appears as one value in the
+    fixture. Losing that would let a genuine bug — two fields that should
+    agree drifting apart — pass unnoticed.
+
+    Dictionaries are walked in key order so the numbering depends only on the
+    content, never on the order FastAPI happened to serialise it in.
+    """
+    if isinstance(value, dict):
+        return {key: _stabilise(value[key], identities) for key in sorted(value)}
+    if isinstance(value, list):
+        return [_stabilise(entry, identities) for entry in value]
+    if not isinstance(value, str):
+        return value
+
+    if _TIMESTAMP.match(value):
+        return STABLE_TIMESTAMP
+    if _DATE.match(value):
+        return STABLE_DATE
+
+    def swap(match: re.Match[str]) -> str:
+        found = match.group(0)
+        if found not in identities:
+            identities[found] = _placeholder(len(identities) + 1)
+        return identities[found]
+
+    # `sub`, not a full-string match: an identifier can be embedded in a key
+    # or a URL as well as standing alone.
+    return _UUID.sub(swap, value)
 
 
 def _redact(payload: dict[str, Any]) -> dict[str, Any]:

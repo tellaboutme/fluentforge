@@ -1,0 +1,34 @@
+# Line endings.
+#
+# Development happens on Windows; CI runs on Linux. Without this, a file
+# written by Python's text mode on Windows is stored with CRLF, CI regenerates
+# it with LF, and `git diff --exit-code` reports every line as changed in a
+# file nobody edited. That is exactly how the `fixtures` job failed on the
+# first push.
+#
+# `text=auto eol=lf` means: git decides what is text, and stores and checks it
+# out with LF. Editors on Windows have handled LF for many years.
+* text=auto eol=lf
+
+# Generated and diffed by CI. Called out explicitly because this one is not a
+# matter of taste: `scripts/capture_api_fixtures.py` writes it with an
+# explicit LF newline, and the stored form has to agree.
+apps/web/fixtures/api-payloads.json text eol=lf
+
+# Lockfiles are generated. Marking them keeps merge conflicts readable and
+# stops diffs being dominated by whitespace noise.
+uv.lock            text eol=lf -diff
+pnpm-lock.yaml     text eol=lf -diff
+
+# Binary: never translate, never diff as text.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+*.mp3  binary
+*.wav  binary
+*.m4a  binary

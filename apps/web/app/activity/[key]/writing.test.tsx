@@ -82,6 +82,34 @@ const PASSING: WritingResult = {
   missingElements: [],
   evidenceRecorded: true,
   provisional: true,
+  rubric: [],
+  priorityFeedback: [],
+  evaluatedBy: null,
+};
+
+/** What a deployment with an evaluator configured actually returns. */
+const JUDGED: WritingResult = {
+  ...PASSING,
+  explanation:
+    "Checked for length, structure and content, and assessed for accuracy and range against a rubric.",
+  provisional: false,
+  rubric: [
+    {
+      name: "accuracy",
+      score: 0.7,
+      confidence: 0.8,
+      evidence: ["My train was cancelled"],
+    },
+  ],
+  priorityFeedback: [
+    {
+      category: "grammar.tense.past_simple_form",
+      original: "I have late yesterday",
+      improved: "I was late yesterday",
+      explanation: "Yesterday is a finished time, so the past simple fits.",
+    },
+  ],
+  evaluatedBy: "fake",
 };
 
 const TOO_SHORT: WritingResult = {
@@ -215,6 +243,45 @@ describe("feedback", () => {
     await screen.findByRole("status");
     expect(screen.getByText(/a good length/i)).toBeInTheDocument();
     expect(screen.getByText(/you linked ideas using/i)).toBeInTheDocument();
+  });
+
+  it("shows what the rubric looked at, and what it quoted", async () => {
+    // A score with no evidence is a guess. The learner has to be able to
+    // disagree with a judgement, which means seeing what it rested on.
+    mocks.completeActivity.mockResolvedValue(JUDGED);
+    await submit();
+
+    const status = await screen.findByRole("status");
+    expect(status).toHaveTextContent(/assessed against a rubric/i);
+    expect(status).toHaveTextContent(/accuracy/i);
+    expect(status).toHaveTextContent(/my train was cancelled/i);
+  });
+
+  it("names the evaluator and says it can be wrong", async () => {
+    mocks.completeActivity.mockResolvedValue(JUDGED);
+    await submit();
+
+    const status = await screen.findByRole("status");
+    expect(status).toHaveTextContent(/not by a teacher/i);
+    expect(status).toHaveTextContent(/can be wrong/i);
+  });
+
+  it("drops the provisional warning once accuracy has been judged", async () => {
+    mocks.completeActivity.mockResolvedValue(JUDGED);
+    await submit();
+
+    const status = await screen.findByRole("status");
+    expect(status).not.toHaveTextContent(/nothing here has judged your grammar/i);
+  });
+
+  it("limits corrections to what is worth fixing first", async () => {
+    // Correcting everything teaches nothing.
+    mocks.completeActivity.mockResolvedValue(JUDGED);
+    await submit();
+
+    const status = await screen.findByRole("status");
+    expect(status).toHaveTextContent(/worth fixing first/i);
+    expect(status).toHaveTextContent(/I was late yesterday/);
   });
 
   it("says when a response was too short to count for anything", async () => {

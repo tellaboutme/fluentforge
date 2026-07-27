@@ -48,6 +48,12 @@ from ..learning.writing import (
     summarise,
 )
 from ..models.curriculum import SkillNode
+from ..providers import (
+    WritingEvaluation,
+    WritingEvaluationRequest,
+    WritingEvaluator,
+    get_writing_evaluator,
+)
 from ..models.enums import EvidenceType, SessionStatus
 from ..models.learning import Attempt, LearningSession
 from ..settings import settings
@@ -112,6 +118,12 @@ STUDY_INDEPENDENCE = 0.65
 #: reaches zero.
 HINT_PENALTY = 0.15
 MIN_INDEPENDENCE = 0.25
+
+#: Evaluator confidence is capped before it reaches the mastery model. A model
+#: that reports 0.95 has not earned the same trust as a closed item scored
+#: against a known answer, and `docs/AI_TUTOR_BEHAVIOR.md` is explicit that AI
+#: judgement is an accelerator rather than an authority.
+MAX_RUBRIC_CONFIDENCE = 0.85
 
 #: A study unit below this score means the point did not land. Above it, the
 #: learner has it and the misses are worth naming individually.
@@ -417,20 +429,32 @@ class WritingResult:
     score: float
     analysis: WritingAnalysis
     evidence_recorded: bool
+    #: A schema-valid rubric evaluation, or None when no evaluator was
+    #: configured, it abstained, or it failed.
+    evaluation: WritingEvaluation | None = None
 
     @property
-    def explanation(self) -> str:
-        return summarise(self.analysis)
+    def judged(self) -> bool:
+        """Whether anything actually assessed accuracy."""
+        return self.evaluation is not None and self.evaluation.is_usable
 
     @property
     def provisional(self) -> bool:
-        """Always true: nothing here judged accuracy.
+        """True while nothing has judged accuracy.
 
-        Stated as a property rather than a literal so the day a rubric
-        evaluator runs, this becomes a real question with a real answer
-        instead of a constant somebody forgot.
+        The day an evaluator runs, this becomes a real answer rather than a
+        constant somebody forgot to revisit.
         """
-        return True
+        return not self.judged
+
+    @property
+    def explanation(self) -> str:
+        if self.judged:
+            return (
+                "Checked for length, structure and content, and assessed for "
+                "accuracy and range against a rubric."
+            )
+        return summarise(self.analysis)
 
 
 # --- Completion: reading ----------------------------------------------------
@@ -790,6 +814,7 @@ def complete_writing(
     activity_key: str,
     text: str,
     duration_ms: int | None = None,
+    evaluator: WritingEvaluator | None = None,
 ) -> WritingResult:
     """Check a written response against countable requirements.
 
@@ -798,6 +823,16 @@ def complete_writing(
     it was accurate. A response too short to be evidence records none at all
     rather than recording a bad score — "not enough to say" and "said badly"
     are different claims.
+
+    When a rubric evaluator is configured and returns a usable judgement, it
+    adds a **second** evidence event rather than replacing the first. The two
+    say different things — one that language was produced, one about its
+    quality — and overwriting would lose the distinction. Both share a context
+    key, so judging one piece of writing never counts as two contexts.
+
+    The evaluator is never allowed to break a submission. `docs/PRODUCT_SPEC.md`
+    makes AI an accelerator, so a timeout, a quota error, or a malformed
+    response all degrade to exactly what the learner would have got anyway.
     """
     task = get_writing(activity_key)
     analysis = analyse(text, task.requirements)
@@ -859,13 +894,71 @@ def complete_writing(
         recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
         recorded = True
 
+    evaluation = (
+        _evaluate_writing(task, text, evaluator) if analysis.met_minimum else None
+    )
+    if evaluation is not None and evaluation.is_usable and node is not None:
+        record_evidence(
+            session,
+            user_id=user_id,
+            skill_node_id=node.id,
+            attempt_id=attempt.id,
+            evidence_type=WRITING_EVIDENCE,
+            score=evaluation.overall_score,
+            difficulty=_difficulty_for(task.cefr_level.rank),
+            # Capped: a model reporting high confidence has not earned the
+            # trust of a closed item scored against a known answer.
+            confidence=min(evaluation.confidence, MAX_RUBRIC_CONFIDENCE),
+            independence=1.0,
+            novelty=1.0,
+            # Same context as the deterministic event on purpose: this is one
+            # piece of writing judged twice, not two pieces of evidence.
+            context_key=f"task:{task.key}",
+            metadata={
+                "source": WRITING_CONTEXT,
+                "rubric": True,
+                "provider": evaluation.provider,
+                "model": evaluation.model,
+                "prompt_version": evaluation.prompt_version,
+                "dimensions": {d.name: d.score for d in evaluation.dimensions},
+            },
+        )
+        recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
+        recorded = True
+
     session.flush()
     return WritingResult(
         activity_key=activity_key,
         score=analysis.score,
         analysis=analysis,
         evidence_recorded=recorded,
+        evaluation=evaluation,
     )
+
+
+def _evaluate_writing(
+    task: WritingTask,
+    text: str,
+    evaluator: WritingEvaluator | None,
+) -> WritingEvaluation | None:
+    """Ask the configured evaluator for a rubric judgement.
+
+    Total by construction. The protocol says implementations return `None`
+    rather than raising, but a provider is third-party code reached over a
+    network, so the contract is enforced here rather than trusted. A learner's
+    submission must never be lost to somebody else's exception.
+    """
+    chosen = evaluator or get_writing_evaluator()
+    request = WritingEvaluationRequest(
+        task_prompt=task.prompt,
+        response_text=text,
+        target_level=task.cefr_level.value,
+        skill_key=task.skill_key,
+    )
+    try:
+        return chosen.evaluate(request)
+    except Exception:  # noqa: BLE001 - deliberately total; see docstring
+        return None
 
 
 # --- Dispatch ---------------------------------------------------------------

@@ -409,6 +409,21 @@ export interface WritingCheckOutcome {
   message: string;
 }
 
+export interface RubricDimensionOutcome {
+  name: string;
+  score: number;
+  confidence: number;
+  /** Quotations from the learner's own text. A score without evidence is a guess. */
+  evidence: string[];
+}
+
+export interface PriorityFeedbackOutcome {
+  category: string;
+  original: string;
+  improved: string;
+  explanation: string;
+}
+
 export interface WritingResult {
   activityType: "writing_task";
   activityKey: string;
@@ -423,6 +438,12 @@ export interface WritingResult {
   evidenceRecorded: boolean;
   /** True while nothing has judged accuracy. The UI must not hide this. */
   provisional: boolean;
+  /** Empty unless a rubric actually ran and was trusted. */
+  rubric: RubricDimensionOutcome[];
+  /** At most three. Correcting everything teaches nothing. */
+  priorityFeedback: PriorityFeedbackOutcome[];
+  /** Which evaluator judged this, or null. */
+  evaluatedBy: string | null;
 }
 
 export interface ListeningResult {
