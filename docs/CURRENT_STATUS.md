@@ -1,6 +1,6 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–3 are complete.** The core learning loop now closes,
+Last updated: 2026-07-26. **Milestones 0–3 are complete.** The core learning loop now closes,
 and **every plan-item kind that has an activity behind it can be opened**: a
 learner registers, takes an adaptive diagnostic including a written task,
 receives a daily plan that explains itself, opens and completes reading,
@@ -24,9 +24,13 @@ covering Python on 3.10 and 3.12, the web app, PostgreSQL migrations, fixture
 drift, and the Playwright browser suite. The first push exposed a real defect
 in the `fixtures` job — see "Fixed by CI" below.
 
-A Playwright suite (`make e2e`) covers the browser journey. It runs in CI; it
-cannot run in the sandbox this work is written in, because Playwright's
-browser download is blocked there.
+The Playwright suite has now **actually run and passed**: 14 tests across
+desktop and mobile viewports, on the development machine via the runner. Its
+first-ever execution found four real defects — a bash-only launcher that
+failed on Windows, hydration blocked by Next 16's cross-origin default (which
+made the register form fall back to a native GET submit, password in the URL),
+keystrokes lost to a pre-hydration race, and two flaky-by-construction
+locators in the spec itself.
 
 ### Fixed by CI's first run
 
@@ -169,20 +173,18 @@ A due card never ships its own answer.
    clip accepts real recordings with no schema change.
 2. **The speaking slot still has nothing behind it**, and renders unlinked.
 3. **Writing accuracy is never judged.**
-4. **The Playwright suite has never actually run.** Its browser download is
-   blocked in the sandbox this work was done in.
-5. **Listening still stops at B2**, and 16 of 36 features have no study
+4. **Listening still stops at B2**, and 16 of 36 features have no study
    unit, which `make test-curriculum` reports explicitly. Study, writing and
    reading now reach C1/C2; clips do not yet.
-6. **Hints, replays, and transcript use are self-reported by the client.** A
+5. **Hints, replays, and transcript use are self-reported by the client.** A
    dishonest or buggy client can overstate independence. The blast radius is
    one mis-weighted observation, except for `used_transcript`, where the
    failure mode is recording listening evidence that was really reading.
 7. **Scheduler, mastery, and plan constants are defensible defaults, not
    findings.** Study independence 0.65, hint penalty 0.15, two free replays,
    replay penalty 0.1 — all documented guesses.
-8. **No automated colour-contrast or screen-reader check.**
-9. **Token in `sessionStorage`** is readable by any script on the page.
+7. **No automated colour-contrast or screen-reader check.**
+8. **Token in `sessionStorage`** is readable by any script on the page.
 
 ## Next three tasks
 

@@ -17,11 +17,12 @@
 
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
-  type ReactNode,
 } from "react";
 
 const STORAGE_KEY = "fluentforge.session";
@@ -73,6 +74,15 @@ interface SessionValue {
 const SessionContext = createContext<SessionValue | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
+  // Mark the document once React has taken over. A controlled input wipes
+  // keystrokes that arrive before hydration, which is invisible to a human
+  // but bites anything fast: the keyboard-only E2E journey typed a name into
+  // the register form pre-hydration and submitted an empty field. Tests (and
+  // anything else that needs to know) wait for html[data-hydrated="true"].
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = "true";
+  }, []);
+
   const token = useSyncExternalStore(subscribe, readToken, serverToken);
   const ready = useSyncExternalStore(subscribe, clientReady, serverReady);
 

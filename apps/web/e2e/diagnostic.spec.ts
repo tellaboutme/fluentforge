@@ -13,8 +13,16 @@ function uniqueEmail(): string {
   return `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
 }
 
+/** Typing into a controlled input before hydration silently loses the
+ * keystrokes: the register form once submitted an empty name this way. The
+ * app marks the document when React has taken over; wait for it. */
+async function awaitHydration(page: Page): Promise<void> {
+  await page.locator('html[data-hydrated="true"]').waitFor();
+}
+
 async function registerLearner(page: Page): Promise<void> {
   await page.goto("/register");
+  await awaitHydration(page);
   await page.getByLabel(/what should we call you/i).fill("Egor");
   await page.getByLabel(/^email$/i).fill(uniqueEmail());
   await page.getByLabel(/^password$/i).fill(PASSWORD);
@@ -22,33 +30,53 @@ async function registerLearner(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/diagnostic/);
 }
 
-/** Answer whatever is on screen until the diagnostic ends. */
+/** Answer whatever is on screen until the diagnostic ends.
+ *
+ * Every transition here races the UI: between "Next question" and the next
+ * render, the old controls are still detaching, and the final submission
+ * replaces the whole form with the report mid-action. So each interaction
+ * gets a short timeout, and on failure the helper's first question is always
+ * "did the report appear?" rather than "retry the same control for 30s".
+ */
 async function completeDiagnostic(page: Page, limit = 40): Promise<number> {
   let answered = 0;
+  const done = page.getByRole("heading", {
+    name: /here is what we can say so far/i,
+  });
+  const submit = page.getByRole("button", {
+    // Closed items say "Check answer"; the written response says "Submit".
+    name: /check answer|submit my answer/i,
+  });
+
+  const finished = () => done.isVisible().catch(() => false);
 
   for (let step = 0; step < limit; step += 1) {
-    const done = page.getByRole("heading", {
-      name: /here is what we can say so far/i,
-    });
-    if (await done.isVisible().catch(() => false)) break;
+    if (await finished()) break;
 
-    const radios = page.getByRole("radio");
+    const radio = page.getByRole("radio").first();
     const textAnswer = page.getByLabel(/your answer/i);
+    await done.or(radio).or(textAnswer).first().waitFor({ state: "visible" });
+    if (await finished()) break;
 
-    if ((await radios.count()) > 0) {
-      await radios.first().check();
-    } else if (await textAnswer.isVisible().catch(() => false)) {
-      await textAnswer.fill("guess");
-    } else {
-      break;
+    try {
+      if (await radio.isVisible().catch(() => false)) {
+        await radio.check({ timeout: 5000 });
+      } else {
+        await textAnswer.fill("guess", { timeout: 5000 });
+      }
+      await submit.click({ timeout: 5000 });
+      answered += 1;
+
+      const next = page.getByRole("button", { name: /next question/i });
+      await next.waitFor({ state: "visible", timeout: 5000 });
+      await next.click({ timeout: 5000 });
+      await next.waitFor({ state: "hidden", timeout: 5000 });
+    } catch (error) {
+      // A control that vanished mid-action usually means the report took
+      // over. If it did, the journey succeeded; anything else is real.
+      if (await finished()) break;
+      throw error;
     }
-
-    await page.getByRole("button", { name: /check answer/i }).click();
-    answered += 1;
-
-    const next = page.getByRole("button", { name: /next question/i });
-    await next.waitFor({ state: "visible" });
-    await next.click();
   }
 
   return answered;
@@ -109,6 +137,7 @@ test("the dashboard shows a plan that explains itself", async ({ page }) => {
 
 test("the diagnostic is operable with the keyboard alone", async ({ page }) => {
   await page.goto("/register");
+  await awaitHydration(page);
 
   await page.keyboard.press("Tab"); // skip link
   await page.keyboard.press("Tab"); // display name
@@ -133,6 +162,7 @@ test("the diagnostic is operable with the keyboard alone", async ({ page }) => {
 
 test("the skip link is reachable and works", async ({ page }) => {
   await page.goto("/");
+  await awaitHydration(page);
   await page.keyboard.press("Tab");
 
   const skip = page.getByRole("link", { name: /skip to content/i });
@@ -154,7 +184,9 @@ test("wrong credentials do not reveal whether the email exists", async ({
   await page.getByLabel(/^password$/i).fill(PASSWORD);
   await page.getByRole("button", { name: /^sign in$/i }).click();
 
-  const alert = page.getByRole("alert");
+  // Scoped to main: the Next.js dev overlay contributes its own
+  // `role="alert"`, and the unscoped locator matches both.
+  const alert = page.getByRole("main").getByRole("alert");
   await expect(alert).toBeVisible();
   await expect(alert).toContainText(/email or password is incorrect/i);
   await expect(alert).not.toContainText(/no account|not found|unknown/i);

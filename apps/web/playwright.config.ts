@@ -32,7 +32,9 @@ export default defineConfig({
 
   webServer: [
     {
-      command: "bash ../../scripts/e2e-api.sh",
+      // Python, not bash: on a Windows dev machine `bash` resolves to WSL,
+      // and a broken WSL failed the suite before a single test ran.
+      command: "uv run python ../../scripts/e2e_api.py",
       port: API_PORT,
       reuseExistingServer: !process.env.CI,
       stdout: "pipe",
