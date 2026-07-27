@@ -1,0 +1,12 @@
+id: academic
+name: Academic English
+levels: [B1, B2, C1, C2]
+scenarios:
+  - read_and_annotate
+  - summarise_source
+  - compare_sources
+  - build_argument
+  - cite_and_paraphrase
+  - lecture_notes
+  - seminar_discussion
+  - research_presentation

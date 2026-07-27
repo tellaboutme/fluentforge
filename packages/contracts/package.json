@@ -1,0 +1,22 @@
+{
+  "name": "@fluentforge/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "format": "prettier --check ."
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "prettier": "3.9.6",
+    "vitest": "4.1.10"
+  }
+}

@@ -1,0 +1,127 @@
+version: 0.1.0
+description: >
+  Seed lexical items and multiword chunks for the review system. Phrase-first
+  where the phrase is what a learner actually needs: "make a decision" is worth
+  more than "decision" alone, because the collocation is where errors live
+  (docs/SKILL_MATRIX.md, section 8).
+
+  Each entry declares which retrieval modes are worth scheduling. Recognition
+  and production are separate memories and are tracked separately.
+
+entries:
+  # --- A1 -------------------------------------------------------------------
+  - lemma: week
+    pos: noun
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "seven days"
+    example: "There are seven days in a week."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: grandmother
+    pos: noun
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "your mother's or father's mother"
+    example: "My grandmother lives near the sea."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: go to work
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "travel to your job"
+    example: "I go to work by bus."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  # --- A2 -------------------------------------------------------------------
+  - lemma: book a room
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "arrange a room in advance"
+    example: "We booked a room for two nights."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: see a doctor
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "visit a doctor about a health problem"
+    example: "You should see a doctor about that cough."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: look forward to
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "feel pleased about something that will happen"
+    example: "I'm looking forward to the weekend."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  # --- B1 -------------------------------------------------------------------
+  - lemma: make a decision
+    pos: phrase
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "decide something"
+    example: "It took us a week to make a decision."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: look up
+    pos: phrasal_verb
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "search for information in a reference"
+    example: "I had to look up the word in a dictionary."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: turn out
+    pos: phrasal_verb
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "happen in the end, often unexpectedly"
+    example: "It turned out to be much easier than we thought."
+    modes: [meaning_recognition, form_recall]
+
+  # --- B2 -------------------------------------------------------------------
+  - lemma: compelling
+    pos: adjective
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "so convincing that it changes your mind"
+    example: "The evidence was compelling."
+    modes: [meaning_recognition, meaning_recall, contextual_production]
+
+  - lemma: bear in mind
+    pos: phrase
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "remember and take into account"
+    example: "Bear in mind that the office closes early on Friday."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: a significant increase
+    pos: phrase
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "a rise large enough to matter"
+    example: "The results indicate a significant increase."
+    modes: [meaning_recognition, contextual_production]
+
+  # --- C1 -------------------------------------------------------------------
+  - lemma: hold water
+    pos: idiom
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "stand up to scrutiny (of an argument)"
+    example: "Her argument didn't hold water once the data was published."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: by and large
+    pos: phrase
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "generally speaking"
+    example: "By and large, the changes have been welcomed."
+    modes: [meaning_recognition, contextual_production]

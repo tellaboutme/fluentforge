@@ -1,0 +1,44 @@
+level: C1
+title: "Flexible proficient user"
+status: draft
+objectives:
+  - id: listening.implicit_extended
+    can_do: "Understand extended demanding speech, including implicit relationships, stance, and less familiar organisation."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.complex_precise
+    can_do: "Express complex ideas fluently, precisely, and in a well-organised manner for social, academic, and professional purposes."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.flexible_management
+    can_do: "Manage complex interaction, disagreement, negotiation, and collaboration with flexible language."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.demanding_implicit
+    can_do: "Understand long complex factual, academic, professional, and literary texts, including implicit meaning and style."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.well_structured_complex
+    can_do: "Produce clear, well-structured, detailed texts with controlled organisation, register, and rhetorical effect."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.fine_prosody
+    can_do: "Use prosody flexibly to convey focus, attitude, contrast, and discourse structure."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.broad_idiomatic
+    can_do: "Use a broad lexical repertoire including less common senses, idiomatic language, and precise reformulation."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.flexible_complexity
+    can_do: "Maintain high grammatical accuracy while selecting structures for information flow and style."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pragmatics.nuance
+    can_do: "Interpret and express indirectness, irony, tact, stance, and social nuance."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: mediation.complex_synthesis
+    can_do: "Synthesize and adapt complex information for audiences with different needs."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

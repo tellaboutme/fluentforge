@@ -1,0 +1,65 @@
+[project]
+name = "fluentforge-services"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "pydantic>=2.8,<3",
+  "pydantic-settings>=2.4,<3",
+  "email-validator>=2.2,<3",
+  "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4",
+  "alembic>=1.13,<2",
+  "redis>=5,<7",
+  "httpx>=0.27,<1",
+  "pyyaml>=6,<7",
+  "bcrypt>=4.1,<6",
+  "PyJWT>=2.9,<3"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+  "pytest-asyncio>=0.24,<1",
+  "pytest-xdist>=3.6,<4",
+  "ruff>=0.6,<1",
+  "mypy>=1.11",
+  "types-PyYAML>=6,<7"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["apps/api/alembic/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "BLE", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts intentionally adjust sys.path before importing the application.
+"scripts/*.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+# `apps` and `services` are namespace packages; without these two settings mypy
+# resolves the same file under two module names.
+explicit_package_bases = true
+mypy_path = "."
+namespace_packages = true
+exclude = ["apps/api/alembic/versions/"]
+
+[[tool.mypy.overrides]]
+# Migration scripts are generated; they are linted by review, not by mypy.
+module = "apps.api.alembic.*"
+ignore_errors = true
+
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests", "services/worker/tests", "tests"]
+# Tests are independent (each gets its own in-memory database), so run them
+# across cores. Keeps the suite inside a reasonable feedback loop as it grows.
+addopts = "-n auto"
+pythonpath = ["."]
+asyncio_mode = "auto"
+filterwarnings = ["error::DeprecationWarning:apps.*"]

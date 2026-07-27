@@ -1,0 +1,1332 @@
+{
+  "listening_activity": {
+    "activity_key": "listen:listen.a1.station_announcement",
+    "activity_type": "listening_task",
+    "audio": null,
+    "cefr_level": "A1",
+    "estimated_minutes": 4,
+    "questions": [
+      {
+        "key": "gist",
+        "options": [
+          "A train is leaving from a different platform.",
+          "A train has been cancelled.",
+          "The station is closing early.",
+          "A new train has been added."
+        ],
+        "prompt": "What is the announcement mainly about?",
+        "question_type": "gist"
+      },
+      {
+        "key": "detail",
+        "options": [
+          "Platform four",
+          "Platform two",
+          "Platform ten",
+          "Platform fifteen"
+        ],
+        "prompt": "Which platform should passengers go to?",
+        "question_type": "detail"
+      },
+      {
+        "key": "inference",
+        "options": [
+          "Wait a little longer than they expected.",
+          "Buy a new ticket.",
+          "Travel on a different day.",
+          "Take a bus instead."
+        ],
+        "prompt": "What will passengers probably have to do?",
+        "question_type": "inference"
+      }
+    ],
+    "setting": "A loudspeaker announcement on a train platform.",
+    "skill_key": "listening.basic_personal",
+    "speech_rate": 0.8,
+    "title": "An announcement at the station",
+    "transcript": "Attention please. The ten fifteen train to Brighton\nwill leave from platform four, not platform two.\nI repeat: platform four.\nThe train is running about ten minutes late.\nWe are sorry for the delay.",
+    "word_count": 34
+  },
+  "listening_result": {
+    "activity_key": "listen:listen.a1.station_announcement",
+    "activity_type": "listening_task",
+    "correct_count": 3,
+    "evidence_recorded": true,
+    "explanation": "You caught all of it, and quickly.",
+    "independence": 1.0,
+    "plays": 2,
+    "results": [
+      {
+        "correct": true,
+        "expected": "A train is leaving from a different platform.",
+        "key": "gist",
+        "question_type": "gist"
+      },
+      {
+        "correct": true,
+        "expected": "Platform four",
+        "key": "detail",
+        "question_type": "detail"
+      },
+      {
+        "correct": true,
+        "expected": "Wait a little longer than they expected.",
+        "key": "inference",
+        "question_type": "inference"
+      }
+    ],
+    "score": 1.0,
+    "total": 3,
+    "used_transcript": false
+  },
+  "next": {
+    "ability_estimate": 0.25,
+    "answered": 0,
+    "finished": false,
+    "item": {
+      "cefr_level": "B1",
+      "difficulty": 0.5,
+      "evidence_type": "self_report",
+      "instructions": "Rate 0 (not at all) to 4 (easily).",
+      "item_type": "self_assessment",
+      "key": "self.interaction.unprepared",
+      "max_words": null,
+      "min_words": null,
+      "options": [],
+      "prompt": "I can take part in an unprepared conversation on a familiar topic.",
+      "skill_key": "interaction.unprepared_familiar"
+    },
+    "session_id": "0b542e80-85dd-45d3-9fd5-5134937f3d28"
+  },
+  "plan": {
+    "engine_version": "0.1.0",
+    "has_productive": true,
+    "has_receptive": true,
+    "id": "ad9b1074-2aac-4a6c-8ccf-5e2ed29f64e1",
+    "items": [
+      {
+        "activity_key": "review:week:meaning_recognition",
+        "activity_type": "review",
+        "components": {
+          "due_review": 0.4,
+          "error_follow_up": 0.0,
+          "expected_gain": 0.0,
+          "goal_relevance": 0.0,
+          "modality_diversity": 0.0,
+          "repetition_penalty": -0.0,
+          "skill_balance": 0.5,
+          "transfer_check": 0.0,
+          "uncertainty": 0.3,
+          "weak_prerequisite": 0.0
+        },
+        "domain": "vocabulary",
+        "estimated_minutes": 8,
+        "explanation": "You have not spent much time on this recently.",
+        "kind": "review",
+        "priority": 1.2,
+        "reason_codes": [
+          "SKILL_BALANCE",
+          "DUE_REVIEW",
+          "UNCERTAINTY"
+        ],
+        "sequence": 0,
+        "skill_key": "week",
+        "title": "Review: week"
+      },
+      {
+        "activity_key": "read:text.b1.cafe",
+        "activity_type": "reading_task",
+        "components": {
+          "due_review": 0.0,
+          "error_follow_up": 0.0,
+          "expected_gain": 0.0,
+          "goal_relevance": 0.0,
+          "modality_diversity": 0.0,
+          "repetition_penalty": -0.0,
+          "skill_balance": 0.5,
+          "transfer_check": 0.0,
+          "uncertainty": 0.3,
+          "weak_prerequisite": 0.0
+        },
+        "domain": "reading",
+        "estimated_minutes": 7,
+        "explanation": "You have not spent much time on this recently.",
+        "kind": "input",
+        "priority": 0.8,
+        "reason_codes": [
+          "SKILL_BALANCE",
+          "UNCERTAINTY"
+        ],
+        "sequence": 1,
+        "skill_key": "reading.familiar_arguments",
+        "title": "The caf\u00e9 on the corner"
+      },
+      {
+        "activity_key": "study:study.b1.present_perfect",
+        "activity_type": "study_task",
+        "components": {
+          "due_review": 0.0,
+          "error_follow_up": 0.0,
+          "expected_gain": 0.0,
+          "goal_relevance": 0.0,
+          "modality_diversity": 0.0,
+          "repetition_penalty": -0.0,
+          "skill_balance": 0.5,
+          "transfer_check": 0.0,
+          "uncertainty": 0.3,
+          "weak_prerequisite": 0.0
+        },
+        "domain": "grammar",
+        "estimated_minutes": 9,
+        "explanation": "You have not spent much time on this recently.",
+        "kind": "study",
+        "priority": 0.8,
+        "reason_codes": [
+          "SKILL_BALANCE",
+          "UNCERTAINTY"
+        ],
+        "sequence": 2,
+        "skill_key": "grammar.connected_time_modality",
+        "title": "Present perfect, or past simple?"
+      },
+      {
+        "activity_key": "write:write.a1.introduce_yourself",
+        "activity_type": "writing_task",
+        "components": {
+          "due_review": 0.0,
+          "error_follow_up": 0.0,
+          "expected_gain": 0.744315,
+          "goal_relevance": 0.0,
+          "modality_diversity": 0.0,
+          "repetition_penalty": -0.6,
+          "skill_balance": 0.5,
+          "transfer_check": 0.0,
+          "uncertainty": 0.549811,
+          "weak_prerequisite": 0.326955
+        },
+        "domain": "written_production",
+        "estimated_minutes": 8,
+        "explanation": "Right at the edge of what you can already do.",
+        "kind": "output",
+        "priority": 1.52108,
+        "reason_codes": [
+          "EXPECTED_GAIN",
+          "UNCERTAINTY",
+          "SKILL_BALANCE"
+        ],
+        "sequence": 3,
+        "skill_key": "writing.basic_sentences",
+        "title": "Introduce yourself to a new class"
+      },
+      {
+        "activity_key": "reflect:daily",
+        "activity_type": "reflection",
+        "components": {
+          "due_review": 0.0,
+          "error_follow_up": 0.0,
+          "expected_gain": 0.0,
+          "goal_relevance": 0.0,
+          "modality_diversity": 0.0,
+          "repetition_penalty": -0.0,
+          "skill_balance": 0.5,
+          "transfer_check": 0.0,
+          "uncertainty": 0.0,
+          "weak_prerequisite": 0.0
+        },
+        "domain": "learning_strategies",
+        "estimated_minutes": 4,
+        "explanation": "You have not spent much time on this recently.",
+        "kind": "reflection",
+        "priority": 0.5,
+        "reason_codes": [
+          "SKILL_BALANCE"
+        ],
+        "sequence": 4,
+        "skill_key": "strategies.reflection",
+        "title": "Review your feedback"
+      }
+    ],
+    "plan_date": "2026-07-27",
+    "requested_minutes": 40,
+    "status": "active",
+    "total_minutes": 36,
+    "unmet_constraints": []
+  },
+  "profile": {
+    "curriculum_version": "0.5.0",
+    "daily_minutes": 40,
+    "display_name": "Fixture Learner",
+    "domain_summaries": [
+      {
+        "domain": "grammar",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "listening",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "mediation",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 4
+      },
+      {
+        "domain": "pragmatics",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 3
+      },
+      {
+        "domain": "pronunciation",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "reading",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "spoken_interaction",
+        "mean_confidence": 0.007,
+        "observed_skills": 1,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "spoken_production",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "vocabulary",
+        "mean_confidence": 0.0,
+        "observed_skills": 0,
+        "tracked_skills": 6
+      },
+      {
+        "domain": "written_production",
+        "mean_confidence": 0.0139,
+        "observed_skills": 1,
+        "tracked_skills": 6
+      }
+    ],
+    "explanation_language": "en",
+    "goals": {},
+    "interests": {},
+    "skills": [
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.basic_clause",
+        "status": "unobserved",
+        "title": "Basic clause"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.past_future_basic",
+        "status": "unobserved",
+        "title": "Past future basic"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.connected_time_modality",
+        "status": "unobserved",
+        "title": "Connected time modality"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.broad_control",
+        "status": "unobserved",
+        "title": "Broad control"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.flexible_complexity",
+        "status": "unobserved",
+        "title": "Flexible complexity"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "grammar",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "grammar.stylistic_control",
+        "status": "unobserved",
+        "title": "Stylistic control"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.basic_personal",
+        "status": "unobserved",
+        "title": "Basic personal"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.routine_messages",
+        "status": "unobserved",
+        "title": "Routine messages"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.main_points_standard",
+        "status": "unobserved",
+        "title": "Main points standard"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.complex_argument",
+        "status": "unobserved",
+        "title": "Complex argument"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.implicit_extended",
+        "status": "unobserved",
+        "title": "Implicit extended"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "listening",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "listening.near_unrestricted",
+        "status": "unobserved",
+        "title": "Near unrestricted"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "mediation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "mediation.basic_summary",
+        "status": "unobserved",
+        "title": "Basic summary"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "mediation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "mediation.combine_sources",
+        "status": "unobserved",
+        "title": "Combine sources"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "mediation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "mediation.complex_synthesis",
+        "status": "unobserved",
+        "title": "Complex synthesis"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "mediation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "mediation.reconstruct_multisource",
+        "status": "unobserved",
+        "title": "Reconstruct multisource"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pragmatics",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pragmatics.register_choice",
+        "status": "unobserved",
+        "title": "Register choice"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pragmatics",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pragmatics.nuance",
+        "status": "unobserved",
+        "title": "Nuance"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pragmatics",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pragmatics.mastery",
+        "status": "unobserved",
+        "title": "Mastery"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.core_intelligibility",
+        "status": "unobserved",
+        "title": "Core intelligibility"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.phrase_rhythm",
+        "status": "unobserved",
+        "title": "Phrase rhythm"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.connected_speech_basic",
+        "status": "unobserved",
+        "title": "Connected speech basic"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.prosodic_control",
+        "status": "unobserved",
+        "title": "Prosodic control"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.fine_prosody",
+        "status": "unobserved",
+        "title": "Fine prosody"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "pronunciation",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "pronunciation.expressive_control",
+        "status": "unobserved",
+        "title": "Expressive control"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.signs_forms",
+        "status": "unobserved",
+        "title": "Signs forms"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.short_everyday_texts",
+        "status": "unobserved",
+        "title": "Short everyday texts"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.familiar_arguments",
+        "status": "unobserved",
+        "title": "Familiar arguments"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.complex_contemporary",
+        "status": "unobserved",
+        "title": "Complex contemporary"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.demanding_implicit",
+        "status": "unobserved",
+        "title": "Demanding implicit"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "reading",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "reading.near_unrestricted",
+        "status": "unobserved",
+        "title": "Near unrestricted"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_interaction",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "interaction.basic_exchange",
+        "status": "unobserved",
+        "title": "Basic exchange"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_interaction",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "interaction.routine_transactions",
+        "status": "unobserved",
+        "title": "Routine transactions"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.04186,
+        "distinct_contexts": 1,
+        "domain": "spoken_interaction",
+        "evidence_count": 1,
+        "last_observed_at": "2026-07-27T00:39:16.146506Z",
+        "mastery_probability": 0.5,
+        "skill_key": "interaction.unprepared_familiar",
+        "status": "emerging",
+        "title": "Unprepared familiar"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_interaction",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "interaction.fluent_collaboration",
+        "status": "unobserved",
+        "title": "Fluent collaboration"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_interaction",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "interaction.flexible_management",
+        "status": "unobserved",
+        "title": "Flexible management"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_interaction",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "interaction.subtle_strategic",
+        "status": "unobserved",
+        "title": "Subtle strategic"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.basic_identity",
+        "status": "unobserved",
+        "title": "Basic identity"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.simple_description",
+        "status": "unobserved",
+        "title": "Simple description"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.connected_narrative",
+        "status": "unobserved",
+        "title": "Connected narrative"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.develop_viewpoint",
+        "status": "unobserved",
+        "title": "Develop viewpoint"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.complex_precise",
+        "status": "unobserved",
+        "title": "Complex precise"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "spoken_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "speaking.precise_spontaneous",
+        "status": "unobserved",
+        "title": "Precise spontaneous"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.high_frequency_survival",
+        "status": "unobserved",
+        "title": "High frequency survival"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.everyday_topics",
+        "status": "unobserved",
+        "title": "Everyday topics"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.independent_range",
+        "status": "unobserved",
+        "title": "Independent range"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.precision_collocation",
+        "status": "unobserved",
+        "title": "Precision collocation"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.broad_idiomatic",
+        "status": "unobserved",
+        "title": "Broad idiomatic"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "vocabulary",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "vocabulary.fine_shades",
+        "status": "unobserved",
+        "title": "Fine shades"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.083649,
+        "distinct_contexts": 1,
+        "domain": "written_production",
+        "evidence_count": 1,
+        "last_observed_at": "2026-07-27T00:39:16.174247Z",
+        "mastery_probability": 0.554169,
+        "skill_key": "writing.basic_sentences",
+        "status": "emerging",
+        "title": "Basic sentences"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "written_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "writing.linked_messages",
+        "status": "unobserved",
+        "title": "Linked messages"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "written_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "writing.connected_genres",
+        "status": "unobserved",
+        "title": "Connected genres"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "written_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "writing.clear_detailed_argument",
+        "status": "unobserved",
+        "title": "Clear detailed argument"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "written_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "writing.well_structured_complex",
+        "status": "unobserved",
+        "title": "Well structured complex"
+      },
+      {
+        "cefr_estimate": null,
+        "confidence": 0.0,
+        "distinct_contexts": 0,
+        "domain": "written_production",
+        "evidence_count": 0,
+        "last_observed_at": null,
+        "mastery_probability": 0.0,
+        "skill_key": "writing.rhetorical_mastery",
+        "status": "unobserved",
+        "title": "Rhetorical mastery"
+      }
+    ],
+    "target_level": "C2",
+    "timezone": "UTC",
+    "user_id": "9e82d637-c55f-4bcd-9179-24e6843190d7"
+  },
+  "reading_activity": {
+    "activity_key": "read:text.a1.noticeboard",
+    "activity_type": "reading_task",
+    "body": "LIFT OUT OF ORDER\n\nThe lift will not work on Monday and Tuesday.\nEngineers will be here from 9am.\nPlease use the stairs.\n\nSorry for the trouble.\nThe building office",
+    "cefr_level": "A1",
+    "estimated_minutes": 4,
+    "questions": [
+      {
+        "key": "gist",
+        "options": [
+          "The lift is not working for two days.",
+          "The building office is closed.",
+          "There is a new engineer in the building.",
+          "The stairs are being repaired."
+        ],
+        "prompt": "What is this notice mainly about?",
+        "question_type": "gist"
+      },
+      {
+        "key": "detail",
+        "options": [
+          "9am",
+          "Monday evening",
+          "Tuesday only",
+          "The notice does not say"
+        ],
+        "prompt": "When do the engineers arrive?",
+        "question_type": "detail"
+      }
+    ],
+    "skill_key": "reading.signs_forms",
+    "title": "A noticeboard in a block of flats",
+    "word_count": 30
+  },
+  "reading_result": {
+    "activity_key": "read:text.a1.noticeboard",
+    "activity_type": "reading_task",
+    "correct_count": 2,
+    "evidence_recorded": true,
+    "explanation": "You followed the whole text.",
+    "results": [
+      {
+        "correct": true,
+        "expected": "The lift is not working for two days.",
+        "key": "gist",
+        "question_type": "gist"
+      },
+      {
+        "correct": true,
+        "expected": "9am",
+        "key": "detail",
+        "question_type": "detail"
+      }
+    ],
+    "score": 1.0,
+    "total": 2
+  },
+  "register": {
+    "account": {
+      "email": "fixture@example.com",
+      "id": "9e82d637-c55f-4bcd-9179-24e6843190d7"
+    },
+    "token": {
+      "access_token": "redacted.for.fixtures",
+      "expires_in": 43200,
+      "token_type": "bearer"
+    }
+  },
+  "report": {
+    "caveats": [
+      "This is an internal estimate, not an official CEFR certificate.",
+      "Recognition items show what you can identify, not yet what you can produce.",
+      "A short diagnostic cannot confirm a can-do statement. Skills stay marked 'needs evidence' until you have shown them across several different tasks.",
+      "Your starting level decides which content you see first. It is not a score."
+    ],
+    "curriculum_version": "0.5.0",
+    "items_answered": 2,
+    "model_version": "0.1.0",
+    "outcomes": [
+      {
+        "cefr_level": "B1",
+        "confidence": 0.04186,
+        "distinct_contexts": 1,
+        "evidence_count": 1,
+        "mastery_probability": 0.5,
+        "skill_key": "interaction.unprepared_familiar",
+        "status": "emerging",
+        "title": "Unprepared familiar"
+      },
+      {
+        "cefr_level": "A1",
+        "confidence": 0.083649,
+        "distinct_contexts": 1,
+        "evidence_count": 1,
+        "mastery_probability": 0.554169,
+        "skill_key": "writing.basic_sentences",
+        "status": "emerging",
+        "title": "Basic sentences"
+      }
+    ],
+    "session_id": "0b542e80-85dd-45d3-9fd5-5134937f3d28",
+    "skills_observed": 2,
+    "starting_band": null,
+    "status": "completed"
+  },
+  "session": {
+    "answered": 0,
+    "id": "0b542e80-85dd-45d3-9fd5-5134937f3d28",
+    "started_at": "2026-07-27T00:39:16.056369Z",
+    "status": "in_progress"
+  },
+  "study_activity": {
+    "activity_key": "study:study.a1.be_and_word_order",
+    "activity_type": "study_task",
+    "cefr_level": "A1",
+    "estimated_minutes": 6,
+    "examples": [
+      "I am from Lisbon.",
+      "The shops are closed on Sunday.",
+      "She is not at home today.",
+      "Are they your neighbours?"
+    ],
+    "explanation": "English needs a verb in almost every sentence, even when you are only\nsaying what something is. That verb is usually 'be': am, is, or are.\n\nThe order is subject, then verb, then the rest: \"My sister is a nurse.\"\nEnglish does not drop the verb the way many languages do, and it does\nnot usually move the subject after the verb in a statement.\n\nTo make it negative, add 'not' after the verb: \"I am not ready.\"\nTo ask, put the verb first: \"Are you ready?\"",
+    "items": [
+      {
+        "feature": "grammar.agreement.subject_verb",
+        "feature_label": "Subject and verb agreement",
+        "item_type": "choice",
+        "key": "i1",
+        "options": [
+          "are",
+          "is",
+          "am",
+          "be"
+        ],
+        "prompt": "My brothers ___ at university in Berlin."
+      },
+      {
+        "feature": "grammar.word_order.question",
+        "feature_label": "Question formation",
+        "item_type": "choice",
+        "key": "i2",
+        "options": [
+          "Are",
+          "Is",
+          "Do",
+          "They are"
+        ],
+        "prompt": "___ your parents at home this evening?"
+      },
+      {
+        "feature": "grammar.negation.form",
+        "feature_label": "Negation",
+        "item_type": "gap_fill",
+        "key": "i3",
+        "options": [],
+        "prompt": "I ___ (not / be) hungry, thank you."
+      },
+      {
+        "feature": "grammar.word_order.statement",
+        "feature_label": "Word order in statements",
+        "item_type": "choice",
+        "key": "i4",
+        "options": [
+          "It is",
+          "Is",
+          "Is it",
+          "Very cold is"
+        ],
+        "prompt": "___ very cold today."
+      }
+    ],
+    "skill_key": "grammar.basic_clause",
+    "title": "Saying who and what: the verb 'be'"
+  },
+  "study_result": {
+    "activity_key": "study:study.a1.be_and_word_order",
+    "activity_type": "study_task",
+    "correct_count": 3,
+    "evidence_recorded": true,
+    "explanation": "Mostly there. Worth another look at: Word order in statements.",
+    "independence": 0.5,
+    "logged_features": [
+      "grammar.word_order.statement"
+    ],
+    "results": [
+      {
+        "correct": true,
+        "expected": "are",
+        "feature": "grammar.agreement.subject_verb",
+        "feature_label": "Subject and verb agreement",
+        "key": "i1",
+        "note": "'Brothers' is plural, so the verb is 'are'. 'Is' goes with one person or thing."
+      },
+      {
+        "correct": true,
+        "expected": "Are",
+        "feature": "grammar.word_order.question",
+        "feature_label": "Question formation",
+        "key": "i2",
+        "note": "To ask a question with 'be', the verb comes first: \"Are your parents...?\" You do not need 'do' with 'be'."
+      },
+      {
+        "correct": true,
+        "expected": "am not",
+        "feature": "grammar.negation.form",
+        "feature_label": "Negation",
+        "key": "i3",
+        "note": "'Not' goes after 'be': \"I am not hungry.\" The short form is \"I'm not\"."
+      },
+      {
+        "correct": false,
+        "expected": "It is",
+        "feature": "grammar.word_order.statement",
+        "feature_label": "Word order in statements",
+        "key": "i4",
+        "note": "English sentences need a subject, even when there is nothing real to point at. For weather and time we use 'it'."
+      }
+    ],
+    "score": 0.75,
+    "total": 4
+  },
+  "submit": {
+    "answered": 1,
+    "checks": [],
+    "correct": false,
+    "expected": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "explanation": "Self-rating recorded. It guides item selection, not your level.",
+    "finished": false,
+    "provisional": false,
+    "score": 0.5
+  },
+  "writing_activity": {
+    "activity_key": "write:write.a1.introduce_yourself",
+    "activity_type": "writing_task",
+    "cefr_level": "A1",
+    "estimated_minutes": 8,
+    "genre": "message",
+    "guidance": [
+      "Write in full sentences, each with a subject and a verb.",
+      "Use 'I am', 'I live', 'I like' \u2014 the present simple.",
+      "Join two ideas with 'and' or 'but' at least once."
+    ],
+    "max_words": 90,
+    "min_sentences": 3,
+    "min_words": 30,
+    "prompt": "You have joined an evening class. The teacher has asked everyone to\nwrite a short introduction for the class noticeboard.\n\nWrite about yourself. Say where you are from, where you live now, and\none thing you do in your free time.",
+    "required_elements": [
+      "live",
+      "from"
+    ],
+    "skill_key": "writing.basic_sentences",
+    "title": "Introduce yourself to a new class"
+  },
+  "writing_prompt": {
+    "cefr_level": "A1",
+    "difficulty": 0.2,
+    "evidence_type": "contextual_production",
+    "instructions": "Write 3 to 5 short sentences. Simple language is fine.",
+    "item_type": "written_response",
+    "key": "writing.a1.about_me",
+    "max_words": 120,
+    "min_words": 25,
+    "options": [],
+    "prompt": "Tell us about yourself. Where do you live, and what do you do on a normal day?",
+    "skill_key": "writing.basic_sentences"
+  },
+  "writing_result": {
+    "activity_key": "write:write.a1.introduce_yourself",
+    "activity_type": "writing_task",
+    "checks": [
+      {
+        "code": "length",
+        "message": "47 words \u2014 a good length.",
+        "passed": true
+      },
+      {
+        "code": "sentences",
+        "message": "4 sentences.",
+        "passed": true
+      },
+      {
+        "code": "connectives",
+        "message": "You linked ideas using: and, because, before, then.",
+        "passed": true
+      },
+      {
+        "code": "content",
+        "message": "The task also asked you to mention: live, from.",
+        "passed": false
+      }
+    ],
+    "connectives_used": [
+      "and",
+      "because",
+      "before",
+      "then"
+    ],
+    "evidence_recorded": true,
+    "explanation": "These are automatic checks on length, structure and content. They do not judge grammar or word choice.",
+    "lexical_variety": 0.8085,
+    "missing_elements": [
+      "live",
+      "from"
+    ],
+    "provisional": true,
+    "score": 0.75,
+    "sentence_count": 4,
+    "word_count": 47
+  },
+  "writing_submit": {
+    "answered": 2,
+    "checks": [
+      {
+        "code": "length",
+        "message": "47 words \u2014 a good length.",
+        "passed": true
+      },
+      {
+        "code": "sentences",
+        "message": "4 sentences.",
+        "passed": true
+      },
+      {
+        "code": "connectives",
+        "message": "You linked ideas using: and, because, before, then.",
+        "passed": true
+      }
+    ],
+    "correct": true,
+    "expected": [],
+    "explanation": "These are automatic checks on length, structure and content. They do not judge grammar or word choice.",
+    "finished": false,
+    "provisional": true,
+    "score": 1.0
+  }
+}

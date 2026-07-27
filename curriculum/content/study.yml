@@ -1,0 +1,546 @@
+version: 0.1.0
+description: >
+  Focused study units: one point explained, then practice on exactly that
+  point. The explanation stays visible while the learner practises, so this is
+  scaffolded work by design — the evidence it produces is recorded at reduced
+  independence (docs/ASSESSMENT_ENGINE.md).
+
+  Every practice item names the linguistic feature it exercises, so a wrong
+  answer becomes a specific practisable error rather than "something in this
+  skill" (apps/api/app/learning/taxonomy.py).
+
+  All content is original to this repository. Grading is deterministic:
+  multiple choice against a known answer, or a typed form matched against an
+  explicit list of accepted spellings. The study lab works with AI disabled.
+
+units:
+  # --- A1 -----------------------------------------------------------------
+  - key: study.a1.be_and_word_order
+    level: A1
+    skill: grammar.basic_clause
+    title: "Saying who and what: the verb 'be'"
+    minutes: 6
+    explanation: |
+      English needs a verb in almost every sentence, even when you are only
+      saying what something is. That verb is usually 'be': am, is, or are.
+
+      The order is subject, then verb, then the rest: "My sister is a nurse."
+      English does not drop the verb the way many languages do, and it does
+      not usually move the subject after the verb in a statement.
+
+      To make it negative, add 'not' after the verb: "I am not ready."
+      To ask, put the verb first: "Are you ready?"
+    examples:
+      - "I am from Lisbon."
+      - "The shops are closed on Sunday."
+      - "She is not at home today."
+      - "Are they your neighbours?"
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.agreement.subject_verb
+        prompt: "My brothers ___ at university in Berlin."
+        options: ["are", "is", "am", "be"]
+        answer: "are"
+        note: >
+          'Brothers' is plural, so the verb is 'are'. 'Is' goes with one
+          person or thing.
+      - key: i2
+        type: choice
+        feature: grammar.word_order.question
+        prompt: "___ your parents at home this evening?"
+        options: ["Are", "Is", "Do", "They are"]
+        answer: "Are"
+        note: >
+          To ask a question with 'be', the verb comes first: "Are your
+          parents...?" You do not need 'do' with 'be'.
+      - key: i3
+        type: gap_fill
+        feature: grammar.negation.form
+        prompt: "I ___ (not / be) hungry, thank you."
+        answer: "am not"
+        accept: ["'m not", "am not"]
+        note: >
+          'Not' goes after 'be': "I am not hungry." The short form is
+          "I'm not".
+      - key: i4
+        type: choice
+        feature: grammar.word_order.statement
+        prompt: "___ very cold today."
+        options: ["It is", "Is", "Is it", "Very cold is"]
+        answer: "It is"
+        note: >
+          English sentences need a subject, even when there is nothing real to
+          point at. For weather and time we use 'it'.
+
+  # --- A2 -----------------------------------------------------------------
+  - key: study.a2.past_simple
+    level: A2
+    skill: grammar.past_future_basic
+    title: "Talking about finished time"
+    minutes: 8
+    explanation: |
+      Use the past simple for something that is finished, at a time that is
+      finished: yesterday, last week, in 2019, an hour ago.
+
+      Most verbs add -ed: worked, arrived, stopped. Many common verbs are
+      irregular and simply have to be learned: go went, see saw, take took,
+      buy bought, come came.
+
+      For negatives and questions, use 'did' plus the plain form of the verb.
+      The past is already marked on 'did', so the main verb goes back to
+      normal: "I did not go", not "I did not went".
+    examples:
+      - "We arrived at eight and left before lunch."
+      - "She bought the tickets last Friday."
+      - "I did not see your message until this morning."
+      - "Did you speak to the landlord?"
+    items:
+      - key: i1
+        type: gap_fill
+        feature: grammar.tense.past_simple_form
+        prompt: "Yesterday she ___ (go) to the office by bus."
+        answer: "went"
+        note: >
+          'Go' is irregular: the past simple is 'went'. There is no -ed form.
+      - key: i2
+        type: gap_fill
+        feature: grammar.tense.past_simple_form
+        prompt: "We ___ (not / see) the email until this morning."
+        answer: "did not see"
+        accept: ["didn't see", "did not see"]
+        note: >
+          After 'did not', the verb goes back to its plain form: 'see', not
+          'saw'. 'Did' already carries the past.
+      - key: i3
+        type: choice
+        feature: grammar.word_order.question
+        prompt: "___ you finish the report on Friday?"
+        options: ["Did", "Do", "Have", "Were"]
+        answer: "Did"
+        note: >
+          'On Friday' is a finished time, so the question uses 'did' plus the
+          plain verb 'finish'.
+      - key: i4
+        type: choice
+        feature: grammar.preposition.time_place
+        prompt: "They moved to Manchester ___ 2019."
+        options: ["in", "on", "at", "since"]
+        answer: "in"
+        note: >
+          Years take 'in'. Days take 'on' (on Monday), clock times take 'at'
+          (at six).
+      - key: i5
+        type: gap_fill
+        feature: grammar.tense.past_simple_form
+        prompt: "He ___ (take) the wrong train and arrived an hour late."
+        answer: "took"
+        note: >
+          'Take' is irregular: took. Notice 'arrived' is regular and just adds
+          -ed.
+
+  - key: study.a2.everyday_collocations
+    level: A2
+    skill: vocabulary.everyday_topics
+    title: "Words that go together"
+    minutes: 7
+    explanation: |
+      Some English words belong together and others do not, even when the
+      meaning would be clear either way. These pairs are called collocations,
+      and you learn them as whole chunks rather than word by word.
+
+      'Make' and 'do' cause the most trouble. Roughly: you 'make' something
+      that did not exist before (make a plan, make a mistake, make dinner),
+      and you 'do' work or an activity (do your homework, do the washing, do
+      business).
+
+      Learning the chunk is faster than learning the rule, and the rule has
+      too many exceptions to trust on its own.
+    examples:
+      - "Can I make a suggestion?"
+      - "I need to do the washing before Friday."
+      - "She made a mistake in the total."
+      - "We do business with them every year."
+    items:
+      - key: i1
+        type: choice
+        feature: lexis.collocation.verb_noun
+        prompt: "I think I ___ a mistake on the form."
+        options: ["made", "did", "took", "had"]
+        answer: "made"
+        note: >
+          It is always 'make a mistake'. 'Do a mistake' is understandable but
+          not English.
+      - key: i2
+        type: choice
+        feature: lexis.collocation.verb_noun
+        prompt: "He never ___ his homework before the last evening."
+        options: ["does", "makes", "takes", "gives"]
+        answer: "does"
+        note: >
+          Homework is work you carry out, so it is 'do your homework'.
+      - key: i3
+        type: gap_fill
+        feature: lexis.collocation.verb_noun
+        prompt: "Could I ___ a photo of the noticeboard?"
+        answer: "take"
+        note: >
+          Photos are 'taken', not made or done. This is a fixed chunk worth
+          memorising whole.
+      - key: i4
+        type: choice
+        feature: lexis.confusable.pair
+        prompt: "Could you ___ me twenty euros until Friday?"
+        options: ["lend", "borrow", "loan me to", "rent"]
+        answer: "lend"
+        note: >
+          You lend something to someone; you borrow something from someone.
+          The lender gives, the borrower takes.
+
+  # --- B1 -----------------------------------------------------------------
+  - key: study.b1.present_perfect
+    level: B1
+    skill: grammar.connected_time_modality
+    title: "Present perfect, or past simple?"
+    minutes: 9
+    explanation: |
+      Both forms describe the past. The difference is whether the time is
+      finished.
+
+      Use the past simple when the time is over and usually stated: yesterday,
+      last month, in March, when I was a student. "I saw her on Tuesday."
+
+      Use the present perfect when the past matters *now* — the time is not
+      finished, or you are not saying when. "I have seen that film" means you
+      have the experience; when is not the point. "I have lived here for three
+      years" means you still live here.
+
+      This is why 'yesterday' and the present perfect do not go together. Once
+      you name a finished time, use the past simple.
+
+      'For' measures a length of time; 'since' names a starting point.
+    examples:
+      - "I have worked here since March."
+      - "I worked there for two years, then I left."
+      - "Have you ever been to Poland?"
+      - "She went to Poland last spring."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.tense.perfect_vs_past
+        prompt: "I ___ my keys — I cannot get in."
+        options: ["have lost", "lost", "was losing", "had lost"]
+        answer: "have lost"
+        note: >
+          The loss matters right now: you still cannot get in. That present
+          consequence is what the present perfect is for.
+      - key: i2
+        type: choice
+        feature: grammar.tense.perfect_vs_past
+        prompt: "We ___ the contract last Thursday."
+        options: ["signed", "have signed", "have been signing", "sign"]
+        answer: "signed"
+        note: >
+          'Last Thursday' is a finished time, so the past simple is required.
+          The present perfect cannot take a stated finished time.
+      - key: i3
+        type: choice
+        feature: grammar.preposition.time_place
+        prompt: "She has been the manager ___ 2021."
+        options: ["since", "for", "from", "during"]
+        answer: "since"
+        note: >
+          'Since' names the point it started; 'for' measures the length —
+          "for three years".
+      - key: i4
+        type: gap_fill
+        feature: grammar.tense.perfect_vs_past
+        prompt: "I ___ (never / work) nights in my life."
+        answer: "have never worked"
+        accept: ["have never worked", "'ve never worked"]
+        note: >
+          'In my life' is unfinished time, so the present perfect fits.
+          'Never' sits between 'have' and the participle.
+      - key: i5
+        type: choice
+        feature: grammar.tense.perfect_vs_past
+        prompt: "I ___ in Madrid for six years, but I moved away in 2020."
+        options: ["lived", "have lived", "have been living", "live"]
+        answer: "lived"
+        note: >
+          You no longer live there, so the period is finished: past simple.
+          "I have lived in Madrid for six years" would mean you still do.
+
+  - key: study.b1.linking_ideas
+    level: B1
+    skill: vocabulary.independent_range
+    title: "Joining ideas so the reader can follow"
+    minutes: 8
+    explanation: |
+      At B1 the sentences are usually right and the *joins* are what let a
+      reader down. A connective tells the reader what relationship is coming,
+      so the wrong one is worse than none at all.
+
+      Contrast: but, however, although, though. 'Although' starts a clause
+      ("Although it rained, we went"); 'however' starts a new sentence
+      ("It rained. However, we went").
+
+      Reason and result: because, since, so, therefore, as a result. 'Because'
+      introduces the cause; 'so' introduces the result. They point in opposite
+      directions.
+
+      Addition: and, also, in addition, moreover.
+    examples:
+      - "Although the flat is small, it gets a lot of light."
+      - "The line was closed, so we walked."
+      - "We walked because the line was closed."
+      - "The price is fair. However, delivery takes a month."
+    items:
+      - key: i1
+        type: choice
+        feature: discourse.cohesion.connective
+        prompt: "The flat is small. ___, it gets plenty of light."
+        options: ["However", "Although", "Because", "So"]
+        answer: "However"
+        note: >
+          'However' joins two separate sentences. 'Although' would need one
+          sentence: "Although the flat is small, it gets plenty of light."
+      - key: i2
+        type: choice
+        feature: discourse.cohesion.connective
+        prompt: "The train was cancelled, ___ we took a taxi."
+        options: ["so", "because", "although", "however"]
+        answer: "so"
+        note: >
+          The taxi is the result of the cancellation. 'Because' would reverse
+          the logic: it introduces the cause.
+      - key: i3
+        type: gap_fill
+        feature: discourse.cohesion.connective
+        prompt: "___ I had read the instructions twice, I still assembled it wrongly."
+        answer: "although"
+        accept: ["although", "though", "even though"]
+        note: >
+          The two facts clash, and one sentence holds both, so a subordinator
+          of contrast fits: although, though, or even though.
+      - key: i4
+        type: choice
+        feature: grammar.clause.subordination
+        prompt: "___ the deadline moved, we still had too little time."
+        options: ["Even though", "Even", "Despite", "However"]
+        answer: "Even though"
+        note: >
+          'Despite' is followed by a noun ("despite the delay"), not by a
+          clause with a subject and a verb.
+
+  # --- B2 -----------------------------------------------------------------
+  - key: study.b2.conditionals_and_hedging
+    level: B2
+    skill: grammar.broad_control
+    title: "Conditionals, and saying how sure you are"
+    minutes: 10
+    explanation: |
+      A conditional pairs a situation with its consequence, and the tenses on
+      the two halves have to agree with each other.
+
+      Real and likely: "If the figures arrive today, we will publish on
+      Friday." Present in the 'if' clause, 'will' in the result. Note that
+      'will' does not appear in the 'if' clause itself.
+
+      Unlikely or imaginary now: "If we had more time, we would test it
+      properly." Past form in the 'if' clause, 'would' in the result — even
+      though you are talking about the present.
+
+      Finished and impossible: "If we had tested it, we would not have
+      shipped the bug." Past perfect, then 'would have'.
+
+      Modals also let you say how sure you are, which at B2 matters as much as
+      accuracy: 'must' for near certainty, 'might' or 'could' for possibility,
+      'cannot' for near impossibility.
+    examples:
+      - "If the figures arrive today, we will publish on Friday."
+      - "If we had more time, we would test it properly."
+      - "If we had tested it, we would not have shipped the bug."
+      - "That must be the courier. It cannot be the post at this hour."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.conditional.form
+        prompt: "If the supplier ___ tomorrow, we can still meet the deadline."
+        options: ["confirms", "will confirm", "confirmed", "would confirm"]
+        answer: "confirms"
+        note: >
+          'Will' does not appear inside the 'if' clause. The present form
+          carries the future meaning there.
+      - key: i2
+        type: gap_fill
+        feature: grammar.conditional.form
+        prompt: "If I ___ (know) the answer, I would have said so at the time."
+        answer: "had known"
+        accept: ["had known", "'d known"]
+        note: >
+          The result is 'would have said' — finished and impossible — so the
+          'if' clause takes the past perfect: had known.
+      - key: i3
+        type: choice
+        feature: grammar.modality.obligation
+        prompt: "She left an hour ago, so she ___ be home by now."
+        options: ["must", "can", "should have", "might not"]
+        answer: "must"
+        note: >
+          'Must' expresses a confident deduction from evidence, not
+          obligation, in this use.
+      - key: i4
+        type: choice
+        feature: grammar.conditional.form
+        prompt: "If we ___ the venue now, we would lose the deposit."
+        options: ["changed", "change", "had changed", "would change"]
+        answer: "changed"
+        note: >
+          'Would lose' signals a hypothetical present, so the 'if' clause
+          takes the past form: "If we changed the venue now..."
+      - key: i5
+        type: choice
+        feature: grammar.passive.form
+        prompt: "The report ___ before the board meets on Tuesday."
+        options:
+          - "must be finished"
+          - "must finish"
+          - "must have finished"
+          - "must be finishing"
+        answer: "must be finished"
+        note: >
+          The report does not finish anything; something is done to it. After
+          a modal the passive is 'be' plus the past participle.
+
+  - key: study.b2.precision_and_collocation
+    level: B2
+    skill: vocabulary.precision_collocation
+    title: "Choosing the word a competent user would choose"
+    minutes: 9
+    explanation: |
+      At B2 the problem is rarely being understood. It is being approximate:
+      picking a word close enough to work but not the one a proficient user
+      would reach for.
+
+      Two habits fix most of it. First, learn strong verb-noun pairs as units:
+      'raise a concern', 'meet a deadline', 'draw a conclusion', 'reach an
+      agreement', 'take responsibility'. Second, watch word families — the
+      right root in the wrong part of speech is a very visible B2 error:
+      'a success outcome' should be 'a successful outcome'.
+
+      Also watch pairs that look interchangeable and are not: 'affect' is
+      normally the verb and 'effect' the noun; 'economic' means to do with the
+      economy while 'economical' means cheap to run.
+    examples:
+      - "I would like to raise a concern about the timeline."
+      - "We reached an agreement after two hours."
+      - "The delay affected everyone. Its effect is still visible."
+      - "The change had a successful outcome."
+    items:
+      - key: i1
+        type: choice
+        feature: lexis.collocation.verb_noun
+        prompt: "I would like to ___ a concern about the timeline."
+        options: ["raise", "say", "tell", "speak"]
+        answer: "raise"
+        note: >
+          'Raise a concern' is the standard pairing. 'Say a concern' is
+          understandable but marks the writer as approximate.
+      - key: i2
+        type: gap_fill
+        feature: lexis.word_form.derivation
+        prompt: "The pilot produced a ___ (success) outcome in every region."
+        answer: "successful"
+        note: >
+          'Outcome' is a noun, so it needs the adjective 'successful'.
+          'Success' is itself a noun.
+      - key: i3
+        type: choice
+        feature: lexis.confusable.pair
+        prompt: "The delay ___ every team in the building."
+        options: ["affected", "effected", "affect", "effect"]
+        answer: "affected"
+        note: >
+          'Affect' is the verb; 'effect' is normally the noun — "the effect of
+          the delay".
+      - key: i4
+        type: choice
+        feature: lexis.collocation.verb_noun
+        prompt: "After two hours we finally ___ an agreement."
+        options: ["reached", "arrived", "did", "found"]
+        answer: "reached"
+        note: >
+          'Reach an agreement' is the fixed pairing. You arrive *at* a
+          decision, but you reach an agreement.
+      - key: i5
+        type: choice
+        feature: lexis.precision.approximation
+        prompt: "The new heating system is far more ___ than the old one."
+        options: ["economical", "economic", "economy", "economics"]
+        answer: "economical"
+        note: >
+          'Economical' means cheap to run. 'Economic' means relating to the
+          economy — an economic policy, an economical car.
+
+  - key: study.b2.register
+    level: B2
+    skill: pragmatics.register_choice
+    title: "Matching the tone to the reader"
+    minutes: 8
+    explanation: |
+      Register is the difference between writing that is correct and writing
+      that fits. The same request can be too blunt for a stranger and
+      absurdly stiff for a colleague you see daily.
+
+      Three things carry most of it. Distance: 'Send me the file' versus
+      'Could you send me the file when you get a moment?' Contractions and
+      phrasal verbs feel informal; their single-word equivalents feel formal —
+      'put off' against 'postpone', 'find out' against 'establish'.
+      Directness: a formal complaint softens the accusation rather than
+      sharpening it.
+
+      There is no rule that formal is better. Over-formality with a close
+      colleague reads as cold or sarcastic.
+    examples:
+      - "Could you send the file over when you get a chance?"
+      - "I am writing to request a copy of the report."
+      - "We had to put the meeting off."
+      - "The meeting has been postponed until further notice."
+    items:
+      - key: i1
+        type: choice
+        feature: pragmatics.register.formality
+        prompt: "In a formal complaint: 'The meeting was ___ without notice.'"
+        options: ["postponed", "put off", "pushed back", "moved about"]
+        answer: "postponed"
+        note: >
+          Single-word Latinate verbs read as formal; the phrasal equivalents
+          read as conversational.
+      - key: i2
+        type: choice
+        feature: pragmatics.politeness.directness
+        prompt: "Writing to someone you have never met: '___ send me the figures?'"
+        options: ["Could you possibly", "Send me", "You must", "I want you to"]
+        answer: "Could you possibly"
+        note: >
+          A request to a stranger needs softening. A bare imperative reads as
+          an order, whatever you intended.
+      - key: i3
+        type: choice
+        feature: pragmatics.register.formality
+        prompt: "In a message to a close colleague: 'I ___ get to it before Friday.'"
+        options: ["won't", "shall not", "am not going to be able to", "regret to say I cannot"]
+        answer: "won't"
+        note: >
+          With someone you know well, the contracted form fits. The formal
+          alternatives would read as cold or sarcastic.
+      - key: i4
+        type: gap_fill
+        feature: pragmatics.politeness.directness
+        prompt: "Softening a disagreement: 'I ___ not be so sure about that.'"
+        answer: "would"
+        accept: ["would", "'d"]
+        note: >
+          'I would not be so sure' disagrees without contradicting the person
+          directly. 'You are wrong' closes the conversation.

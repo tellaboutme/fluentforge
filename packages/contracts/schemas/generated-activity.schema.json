@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "objective_id",
+    "activity_type",
+    "instructions",
+    "payload",
+    "scoring",
+    "transfer_variant"
+  ],
+  "properties": {
+    "objective_id": {
+      "type": "string"
+    },
+    "activity_type": {
+      "type": "string"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "scoring": {
+      "type": "object"
+    },
+    "misconceptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transfer_variant": {
+      "type": "object"
+    }
+  }
+}

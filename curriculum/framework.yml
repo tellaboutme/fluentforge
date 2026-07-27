@@ -1,0 +1,29 @@
+version: 0.5.0
+levels: [A1, A2, B1, B2, C1, C2]
+domains:
+  listening: {weekly_min_share: 0.12}
+  spoken_production: {weekly_min_share: 0.08}
+  spoken_interaction: {weekly_min_share: 0.08}
+  pronunciation: {weekly_min_share: 0.06}
+  reading: {weekly_min_share: 0.12}
+  written_production: {weekly_min_share: 0.08}
+  written_interaction: {weekly_min_share: 0.04}
+  vocabulary: {weekly_min_share: 0.12}
+  grammar: {weekly_min_share: 0.10}
+  discourse: {weekly_min_share: 0.05}
+  pragmatics: {weekly_min_share: 0.05}
+  mediation: {weekly_min_share: 0.05}
+  learning_strategies: {weekly_min_share: 0.05}
+evidence_types:
+  - recognition
+  - controlled_recall
+  - contextual_production
+  - comprehension
+  - interaction
+  - transfer
+  - benchmark
+mastery:
+  supported_threshold: 0.70
+  independent_threshold: 0.82
+  high_confidence_threshold: 0.75
+  minimum_distinct_contexts: 3

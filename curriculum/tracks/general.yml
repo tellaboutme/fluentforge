@@ -1,0 +1,4 @@
+id: general
+name: General English
+levels: [A1, A2, B1, B2, C1, C2]
+priority_domains: [listening, spoken_interaction, reading, written_interaction, vocabulary, grammar]

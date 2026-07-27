@@ -1,0 +1,30 @@
+version: 0.1.0
+strands:
+  clause_basics:
+    A1: [be, have, basic_word_order, simple_negation, yes_no_questions, wh_questions]
+    A2: [coordination, simple_subordination, object_patterns]
+    B1: [relative_clauses, complement_clauses, reported_speech_basic]
+    B2: [participle_clauses, complex_complementation, clefting_intro]
+    C1: [information_structure, ellipsis, advanced_subordination]
+    C2: [stylistic_manipulation, rhetorical_fragmentation, marked_word_order]
+  tense_aspect:
+    A1: [present_simple, present_continuous_intro]
+    A2: [past_simple, past_continuous, going_to, will_basic, present_perfect_intro]
+    B1: [present_perfect_contrasts, past_perfect_intro, future_continuous_intro]
+    B2: [narrative_tenses, future_perfect, aspectual_choice]
+    C1: [advanced_time_reference, tense_in_discourse]
+    C2: [stylistic_tense_shift, nuanced_aspect]
+  modality:
+    A1: [can_ability, can_request]
+    A2: [must_have_to_should_may]
+    B1: [deduction_basic, obligation_contrasts, conditionals_0_1_2]
+    B2: [past_modals, mixed_conditionals, hedging]
+    C1: [stance_and_modality, advanced_hedging]
+    C2: [fine_modal_distinctions, rhetorical_modality]
+  noun_phrase:
+    A1: [articles_basic, plurals, possessives, demonstratives]
+    A2: [countability, quantifiers, comparison]
+    B1: [complex_modification, determiners_range]
+    B2: [nominalisation_intro, dense_noun_phrases]
+    C1: [advanced_nominalisation, postmodification]
+    C2: [stylistic_density_control]

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "language_dimensions",
+    "acoustic_dimensions",
+    "confidence"
+  ],
+  "properties": {
+    "language_dimensions": {
+      "type": "array"
+    },
+    "acoustic_dimensions": {
+      "type": "array"
+    },
+    "priority_feedback": {
+      "type": "array",
+      "maxItems": 3
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "abstain_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

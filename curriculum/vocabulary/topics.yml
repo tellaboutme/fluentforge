@@ -1,0 +1,28 @@
+version: 0.1.0
+core_topics:
+  A1: [identity, family, numbers, time, daily_routine, food, home, places, transport, basic_work]
+  A2: [health, shopping, travel, education, technology_basics, weather, services, past_events, plans]
+  B1: [relationships, culture, news_basics, workplace, learning, environment, media, problems_solutions]
+  B2: [society, science, business, abstract_opinion, public_issues, technical_domains, argument]
+  C1: [academic_discourse, professional_specialisation, policy, rhetoric, nuanced_emotion, idiom]
+  C2: [fine_semantic_distinction, literary_language, humour, metaphor, specialised_and_cross_domain_synthesis]
+knowledge_dimensions:
+  - form
+  - pronunciation
+  - spelling
+  - core_meaning
+  - additional_senses
+  - grammar_pattern
+  - collocations
+  - register
+  - connotation
+  - receptive_speed
+  - productive_recall
+  - contextual_flexibility
+multiword_types:
+  - collocation
+  - lexical_bundle
+  - sentence_frame
+  - phrasal_verb
+  - idiom
+  - discourse_marker

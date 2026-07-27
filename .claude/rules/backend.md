@@ -1,0 +1,11 @@
+---
+paths:
+  - "apps/api/**"
+  - "services/worker/**"
+---
+- Keep domain calculations pure where possible.
+- Validate all external and AI inputs with Pydantic.
+- Store UTC datetimes and explicit version identifiers.
+- Make background jobs idempotent.
+- Never log raw learner responses or audio URLs at info level.
+- Add migration and rollback notes for schema changes.

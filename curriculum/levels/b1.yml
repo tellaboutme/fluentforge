@@ -1,0 +1,40 @@
+level: B1
+title: "Independent everyday user"
+status: draft
+objectives:
+  - id: listening.main_points_standard
+    can_do: "Understand the main points of clear standard speech on familiar work, study, leisure, and media topics."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.connected_narrative
+    can_do: "Produce connected descriptions, narratives, explanations, opinions, and plans."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.unprepared_familiar
+    can_do: "Enter unprepared conversations on familiar topics, clarify meaning, and repair common misunderstandings."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.familiar_arguments
+    can_do: "Understand straightforward factual texts and identify main conclusions in clearly structured arguments."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.connected_genres
+    can_do: "Write connected personal and factual texts, reviews, explanations, and basic arguments."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.connected_speech_basic
+    can_do: "Maintain intelligibility in longer turns using stress, rhythm, linking, and repair."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.independent_range
+    can_do: "Paraphrase around gaps and use a useful range of topic vocabulary, chunks, and collocations."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.connected_time_modality
+    can_do: "Control common tense/aspect contrasts, conditionals, relative clauses, passive, reported speech, and modal meanings."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: mediation.basic_summary
+    can_do: "Relay and summarise the main information from clear short sources."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

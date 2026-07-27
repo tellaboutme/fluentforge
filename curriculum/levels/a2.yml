@@ -1,0 +1,36 @@
+level: A2
+title: "Routine independence"
+status: draft
+objectives:
+  - id: listening.routine_messages
+    can_do: "Understand short clear messages and common exchanges about everyday activities."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.simple_description
+    can_do: "Describe routines, background, immediate environment, past events, and simple plans."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.routine_transactions
+    can_do: "Handle short predictable conversations and transactions with occasional support."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.short_everyday_texts
+    can_do: "Understand short messages, adverts, instructions, and simple factual texts."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.linked_messages
+    can_do: "Write simple linked sentences in notes, messages, descriptions, and personal emails."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.phrase_rhythm
+    can_do: "Use understandable word stress and basic phrase grouping; recognise common weak forms."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.everyday_topics
+    can_do: "Use broader everyday vocabulary, common collocations, and frequent phrasal verbs."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.past_future_basic
+    can_do: "Use common past and future forms, modals, comparison, quantifiers, and simple subordination."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

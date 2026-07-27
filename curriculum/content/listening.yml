@@ -1,0 +1,239 @@
+version: 0.1.0
+description: >
+  Short listening clips, each with gist, detail, and inference questions.
+  Meaning-focused, like the reading library: the learner listens for the
+  message first, and the questions follow.
+
+  No audio files ship with this repository. Each clip carries a transcript and
+  the client speaks it with the browser's own speech synthesis, so the
+  listening lab works offline, with no AI key, and with no licensing question.
+  That is a real compromise: synthetic speech under-represents the weak forms
+  and elision that make real listening hard, so a learner who copes here has
+  not yet proved they cope with a recording of two people talking. The
+  limitation is recorded in docs/CURRENT_STATUS.md rather than hidden.
+
+  Set `audio` on a clip to point at a real recording; the client prefers it
+  when present. No schema change is needed to move to recorded audio.
+
+  Transcripts are written to be *heard*, not read: contractions, false starts,
+  and the way people actually open and close a conversation. All content is
+  original to this repository.
+
+clips:
+  # --- A1 -----------------------------------------------------------------
+  - key: listen.a1.station_announcement
+    level: A1
+    skill: listening.basic_personal
+    title: "An announcement at the station"
+    setting: "A loudspeaker announcement on a train platform."
+    minutes: 4
+    speech_rate: 0.8
+    transcript: |
+      Attention please. The ten fifteen train to Brighton
+      will leave from platform four, not platform two.
+      I repeat: platform four.
+      The train is running about ten minutes late.
+      We are sorry for the delay.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the announcement mainly about?"
+        options:
+          - "A train is leaving from a different platform."
+          - "A train has been cancelled."
+          - "The station is closing early."
+          - "A new train has been added."
+        answer: "A train is leaving from a different platform."
+      - key: detail
+        type: detail
+        prompt: "Which platform should passengers go to?"
+        options: ["Platform four", "Platform two", "Platform ten", "Platform fifteen"]
+        answer: "Platform four"
+      - key: inference
+        type: inference
+        prompt: "What will passengers probably have to do?"
+        options:
+          - "Wait a little longer than they expected."
+          - "Buy a new ticket."
+          - "Travel on a different day."
+          - "Take a bus instead."
+        answer: "Wait a little longer than they expected."
+
+  # --- A2 -----------------------------------------------------------------
+  - key: listen.a2.voicemail
+    level: A2
+    skill: listening.routine_messages
+    title: "A voicemail from a friend"
+    setting: "A message left on your phone by a friend, Nadia."
+    minutes: 5
+    speech_rate: 0.85
+    transcript: |
+      Hi, it's Nadia. Listen, about Saturday —
+      I can't make lunch after all. My sister's coming
+      down from Leeds and I said I'd meet her at the station.
+      I'm really sorry, I know you booked the table.
+      Could we do Sunday instead? Any time after eleven
+      works for me. Give me a ring when you get this. Bye!
+    questions:
+      - key: gist
+        type: gist
+        prompt: "Why is Nadia calling?"
+        options:
+          - "To change the day of their meeting."
+          - "To invite her sister to lunch."
+          - "To book a table at a restaurant."
+          - "To ask for a lift to the station."
+        answer: "To change the day of their meeting."
+      - key: detail
+        type: detail
+        prompt: "Who is Nadia meeting on Saturday?"
+        options: ["Her sister", "Her sister's friend", "Nobody", "The restaurant manager"]
+        answer: "Her sister"
+      - key: inference
+        type: inference
+        prompt: "How does Nadia feel about changing the plan?"
+        options:
+          - "Apologetic — she knows it causes trouble."
+          - "Annoyed with her friend."
+          - "Completely unbothered."
+          - "Worried that her sister will be late."
+        answer: "Apologetic — she knows it causes trouble."
+
+  # --- B1 -----------------------------------------------------------------
+  - key: listen.b1.colleague_handover
+    level: B1
+    skill: listening.main_points_standard
+    title: "A handover before a holiday"
+    setting: "A colleague, Tom, explaining what to cover while he is away."
+    minutes: 7
+    speech_rate: 0.95
+    transcript: |
+      Right, so, two things while I'm away.
+      The Renfrew report — it's basically done, but the
+      figures for March haven't come back from finance yet.
+      When they do, just drop them into the table on page six.
+      Don't rewrite the summary, I'll do that when I'm back.
+      The other thing is Priya's team. They'll ask about
+      the new deadline. Tell them it hasn't moved, whatever
+      they've heard. If they push, send them to Dan, not to me —
+      I genuinely will not have signal.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is Tom doing?"
+        options:
+          - "Explaining what to handle while he is away."
+          - "Asking for help finishing a report."
+          - "Complaining about a missed deadline."
+          - "Introducing a new member of the team."
+        answer: "Explaining what to handle while he is away."
+      - key: detail
+        type: detail
+        prompt: "What should be done with the March figures?"
+        options:
+          - "Add them to the table on page six."
+          - "Rewrite the summary around them."
+          - "Send them to Priya's team."
+          - "Wait until Tom returns."
+        answer: "Add them to the table on page six."
+      - key: inference
+        type: inference
+        prompt: "Why does Tom say to send people to Dan?"
+        options:
+          - "He will be unreachable while away."
+          - "Dan wrote the report."
+          - "He does not get on with Priya."
+          - "Dan set the original deadline."
+        answer: "He will be unreachable while away."
+
+  - key: listen.b1.radio_weather
+    level: B1
+    skill: listening.main_points_standard
+    title: "A weekend weather forecast"
+    setting: "A short forecast at the end of a radio news bulletin."
+    minutes: 5
+    speech_rate: 1.0
+    transcript: |
+      And now the weekend weather.
+      Saturday starts brightly across most of the country,
+      though there'll be a band of rain pushing in from the west
+      by mid-afternoon. Temperatures around fifteen, which is
+      about average for the time of year.
+      Sunday is the better of the two days — dry, plenty of sunshine,
+      and feeling warmer, up to nineteen in the south east.
+      If you're planning anything outdoors, Sunday's your day.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the main message of the forecast?"
+        options:
+          - "Sunday will be better than Saturday."
+          - "The whole weekend will be wet."
+          - "Saturday will be warmer than Sunday."
+          - "A storm is expected on Sunday."
+        answer: "Sunday will be better than Saturday."
+      - key: detail
+        type: detail
+        prompt: "When is the rain expected on Saturday?"
+        options: ["Mid-afternoon", "Early morning", "Late evening", "Around lunchtime"]
+        answer: "Mid-afternoon"
+      - key: inference
+        type: inference
+        prompt: "What does the presenter suggest?"
+        options:
+          - "Plan outdoor activities for Sunday."
+          - "Stay indoors all weekend."
+          - "Travel to the south east on Saturday."
+          - "Expect unusually cold weather."
+        answer: "Plan outdoor activities for Sunday."
+
+  # --- B2 -----------------------------------------------------------------
+  - key: listen.b2.panel_disagreement
+    level: B2
+    skill: listening.complex_argument
+    title: "A disagreement about remote work"
+    setting: "Two speakers on a discussion programme, Ana and Mark."
+    minutes: 9
+    speech_rate: 1.05
+    transcript: |
+      ANA: The productivity data is pretty clear, though.
+      Output per head went up, and it stayed up.
+      MARK: Went up on measurable tasks. That's not the same thing.
+      What you can't see in that data is the stuff that used to
+      happen by accident — someone overhearing how a problem
+      got solved, a junior picking up judgement they were never
+      formally taught.
+      ANA: I'm not disputing that's harder now. I'd just rather
+      solve it deliberately than go back to hoping proximity
+      does it for us. Mandating attendance doesn't recreate
+      those moments; it just puts people in the same postcode.
+      MARK: Maybe. Although I'd say we haven't really tried
+      to design the alternative either.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What do Ana and Mark disagree about?"
+        options:
+          - "Whether productivity data captures what matters."
+          - "Whether output per head actually rose."
+          - "Whether juniors should be paid more."
+          - "Whether the programme should continue."
+        answer: "Whether productivity data captures what matters."
+      - key: detail
+        type: detail
+        prompt: "What does Mark say the data cannot show?"
+        options:
+          - "Informal learning that used to happen by chance."
+          - "The total hours people work."
+          - "How many staff have resigned."
+          - "The cost of office space."
+        answer: "Informal learning that used to happen by chance."
+      - key: inference
+        type: inference
+        prompt: "How would you describe Mark's final remark?"
+        options:
+          - "A partial concession that still holds his ground."
+          - "A complete change of mind."
+          - "A refusal to discuss it further."
+          - "An accusation that Ana is wrong."
+        answer: "A partial concession that still holds his ground."

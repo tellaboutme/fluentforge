@@ -1,0 +1,44 @@
+level: C2
+title: "Highly proficient user"
+status: draft
+objectives:
+  - id: listening.near_unrestricted
+    can_do: "Understand virtually any spoken language, including fast, compressed, idiomatic, and rhetorically complex discourse."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.precise_spontaneous
+    can_do: "Express ideas spontaneously with exceptional precision, flexibility, and control of fine shades of meaning."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.subtle_strategic
+    can_do: "Participate strategically and effortlessly in highly complex interaction, repairing and reformulating unobtrusively."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.near_unrestricted
+    can_do: "Understand and critically interpret nearly all forms of written language, including stylistically and conceptually demanding works."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.rhetorical_mastery
+    can_do: "Create sophisticated, effective texts with precise style, structure, voice, and audience adaptation."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.expressive_control
+    can_do: "Use phonological and prosodic resources with highly flexible expressive control while remaining intelligible."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.fine_shades
+    can_do: "Control a very broad lexical repertoire, idiom, colloquialism, metaphor, register, and fine semantic distinctions."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.stylistic_control
+    can_do: "Use complex grammar consistently and manipulate structure for emphasis, rhythm, stance, and rhetorical effect."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pragmatics.mastery
+    can_do: "Navigate subtle interpersonal, cultural, humorous, and rhetorical meaning with flexibility."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: mediation.reconstruct_multisource
+    can_do: "Reconstruct, synthesize, and reframe complex information from multiple sources with precision."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

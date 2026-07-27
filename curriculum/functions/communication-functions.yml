@@ -1,0 +1,8 @@
+version: 0.1.0
+functions:
+  A1: [greet, introduce, identify, ask_basic_information, request_basic_item, express_like_dislike]
+  A2: [invite, accept_decline, apologise, describe, narrate_simply, make_arrangements, ask_clarification]
+  B1: [explain_reasons, give_advice, compare, complain, negotiate_simple_solution, express_uncertainty]
+  B2: [develop_argument, persuade, challenge_politely, speculate, summarise, chair_basic_discussion]
+  C1: [hedge, reframe, manage_sensitive_disagreement, synthesise, imply, use_humour_carefully]
+  C2: [control_rhetorical_effect, negotiate_fine_meaning, deploy_irony, adapt_voice, mediate_complex_conflict]

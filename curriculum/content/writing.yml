@@ -1,0 +1,219 @@
+version: 0.1.0
+description: >
+  Written output tasks: a prompt with a genre, a reader, and a purpose, plus
+  the countable requirements a response is checked against.
+
+  What is checked deterministically is length, sentence count, linking, and
+  whether the points the task asked for appear. That is real evidence of
+  production — the learner composed the text — but it is partial, and it is
+  recorded at reduced evaluator confidence to say so
+  (apps/api/app/learning/writing.py).
+
+  `target_features` names what a rubric evaluator should judge when one is
+  configured. Until then the gap is recorded here rather than hidden.
+
+  All prompts are original to this repository.
+
+tasks:
+  # --- A1 -----------------------------------------------------------------
+  - key: write.a1.introduce_yourself
+    level: A1
+    skill: writing.basic_sentences
+    title: "Introduce yourself to a new class"
+    genre: message
+    minutes: 8
+    prompt: |
+      You have joined an evening class. The teacher has asked everyone to
+      write a short introduction for the class noticeboard.
+
+      Write about yourself. Say where you are from, where you live now, and
+      one thing you do in your free time.
+    guidance:
+      - "Write in full sentences, each with a subject and a verb."
+      - "Use 'I am', 'I live', 'I like' — the present simple."
+      - "Join two ideas with 'and' or 'but' at least once."
+    min_words: 30
+    max_words: 90
+    min_sentences: 3
+    min_connectives: 1
+    required_elements: ["live", "from"]
+    target_features:
+      - grammar.agreement.subject_verb
+      - grammar.tense.present_simple_form
+      - grammar.article.definite_indefinite
+
+  # --- A2 -----------------------------------------------------------------
+  - key: write.a2.late_email
+    level: A2
+    skill: writing.linked_messages
+    title: "An email to say you will be late"
+    genre: email
+    minutes: 10
+    prompt: |
+      You are meeting a colleague at the office at nine tomorrow, but your
+      train is cancelled and you will arrive about an hour late.
+
+      Write an email to your colleague. Apologise, explain what happened, say
+      what time you now expect to arrive, and suggest what they can start
+      without you.
+    guidance:
+      - "Open and close the way an email does, not a formal letter."
+      - "Apologise explicitly — say you are sorry, do not just imply it."
+      - "Use the past simple for what happened, and a future form for the new time."
+      - "Link your reasons with 'because' or 'so'."
+    min_words: 50
+    max_words: 150
+    min_sentences: 4
+    min_connectives: 2
+    required_elements: ["sorry", "train"]
+    target_features:
+      - grammar.tense.past_simple_form
+      - grammar.tense.future_reference
+      - discourse.cohesion.connective
+      - pragmatics.politeness.directness
+
+  - key: write.a2.describe_place
+    level: A2
+    skill: writing.linked_messages
+    title: "Describe where you live"
+    genre: description
+    minutes: 10
+    prompt: |
+      A friend from another country is thinking of visiting your town for a
+      weekend.
+
+      Write a short description of where you live. Say what the area is like,
+      what there is to do, and one thing you would change about it.
+    guidance:
+      - "Use 'there is' and 'there are' to say what exists."
+      - "Compare at least two things: bigger, quieter, more expensive."
+      - "Give one opinion, and a reason for it."
+    min_words: 60
+    max_words: 160
+    min_sentences: 4
+    min_connectives: 2
+    required_elements: ["there"]
+    target_features:
+      - grammar.comparison.form
+      - grammar.article.definite_indefinite
+      - grammar.noun.countability
+      - discourse.cohesion.connective
+
+  # --- B1 -----------------------------------------------------------------
+  - key: write.b1.complaint
+    level: B1
+    skill: writing.connected_genres
+    title: "A complaint about a delayed order"
+    genre: email
+    minutes: 14
+    prompt: |
+      Six weeks ago you ordered a desk online. It was promised within ten
+      days. It has still not arrived, and two messages to customer support
+      have gone unanswered.
+
+      Write to the company. Explain what you ordered and when, describe what
+      has happened since, say clearly what you want them to do, and give a
+      date by which you expect an answer.
+    guidance:
+      - "State the facts before the complaint: order, date, promise."
+      - "Use the present perfect for what has happened since — 'it has not arrived'."
+      - "Say what you want plainly, but keep the tone civil."
+      - "Organise it in short paragraphs rather than one block."
+    min_words: 110
+    max_words: 250
+    min_sentences: 6
+    min_connectives: 3
+    required_elements: ["order", "week"]
+    target_features:
+      - grammar.tense.perfect_vs_past
+      - discourse.organisation.paragraphing
+      - discourse.cohesion.connective
+      - pragmatics.register.formality
+
+  - key: write.b1.summarise_article
+    level: B1
+    skill: mediation.basic_summary
+    title: "Pass on the main points of something you read"
+    genre: summary
+    minutes: 12
+    prompt: |
+      A colleague missed a short article you both needed to read. It argued
+      that remote work has made informal learning at work harder, because
+      people no longer overhear how colleagues handle problems.
+
+      Write a message passing on the main points. Report what the article
+      said, distinguish clearly between its argument and your own view, and
+      end with what you think your team should do.
+    guidance:
+      - "Report, do not copy: use your own sentences."
+      - "Mark the source explicitly — 'the article argues that...'."
+      - "Keep your own opinion separate and clearly labelled as yours."
+    min_words: 100
+    max_words: 220
+    min_sentences: 5
+    min_connectives: 3
+    required_elements: ["article"]
+    target_features:
+      - grammar.tense.sequence_backshift
+      - discourse.reference.given_new
+      - discourse.cohesion.connective
+      - lexis.precision.approximation
+
+  # --- B2 -----------------------------------------------------------------
+  - key: write.b2.argument_essay
+    level: B2
+    skill: writing.clear_detailed_argument
+    title: "Argue a position on free public transport"
+    genre: argument
+    minutes: 20
+    prompt: |
+      Your city is debating whether public transport should be free at the
+      point of use, paid for from general taxation.
+
+      Write an argued piece for a local paper. Take a clear position, support
+      it with at least two developed reasons, acknowledge the strongest
+      objection to your view, and answer it.
+    guidance:
+      - "State your position in the first paragraph, not the last."
+      - "Develop each reason — a claim with no support is not an argument."
+      - "Give the objection its real strength before you answer it."
+      - "Use linking that signals structure: 'however', 'as a result', 'admittedly'."
+    min_words: 180
+    max_words: 400
+    min_sentences: 10
+    min_connectives: 5
+    required_elements: ["however"]
+    target_features:
+      - discourse.organisation.paragraphing
+      - discourse.cohesion.connective
+      - grammar.clause.subordination
+      - grammar.modality.obligation
+      - lexis.precision.approximation
+
+  - key: write.b2.review
+    level: B2
+    skill: writing.clear_detailed_argument
+    title: "Review something you have used or seen"
+    genre: review
+    minutes: 16
+    prompt: |
+      Write a review of a place, product, film, or service you know well, for
+      readers who are deciding whether to spend money on it.
+
+      Describe it briefly, judge it against what it is trying to be, be
+      specific about one thing that works and one that does not, and end with
+      a recommendation that says who it suits.
+    guidance:
+      - "Judge against a standard, not against your mood on the day."
+      - "Be specific: 'the seats are narrow' beats 'it was bad'."
+      - "Use hedging where you are unsure — 'may not suit', 'tends to'."
+    min_words: 150
+    max_words: 320
+    min_sentences: 8
+    min_connectives: 4
+    required_elements: ["recommend"]
+    target_features:
+      - grammar.modality.obligation
+      - grammar.comparison.form
+      - lexis.collocation.verb_noun
+      - pragmatics.register.formality

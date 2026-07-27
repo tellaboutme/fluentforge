@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Install scripts run arbitrary code. Only these are trusted, and only because
+# each ships a platform-specific native binary that cannot work without one.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

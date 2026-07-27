@@ -1,0 +1,44 @@
+level: B2
+title: "Confident independent user"
+status: draft
+objectives:
+  - id: listening.complex_argument
+    can_do: "Follow extended speech and complex lines of argument on familiar and some specialised topics."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.develop_viewpoint
+    can_do: "Give clear detailed descriptions and develop viewpoints with supporting reasons and examples."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.fluent_collaboration
+    can_do: "Interact with sufficient fluency and spontaneity for sustained collaboration and discussion."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.complex_contemporary
+    can_do: "Understand articles, reports, documentation, and prose expressing viewpoints and implications."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.clear_detailed_argument
+    can_do: "Write clear detailed texts, syntheses, reports, proposals, and arguments for different audiences."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.prosodic_control
+    can_do: "Use stress, rhythm, intonation, and chunking to support meaning with generally good intelligibility."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.precision_collocation
+    can_do: "Use a broad range of collocations and alternatives, with some control of register and connotation."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.broad_control
+    can_do: "Use a broad range of complex structures with errors that rarely cause misunderstanding."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pragmatics.register_choice
+    can_do: "Adjust directness, politeness, and register in common social and professional situations."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: mediation.combine_sources
+    can_do: "Combine and explain key information from multiple clear sources."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

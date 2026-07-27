@@ -1,0 +1,36 @@
+level: A1
+title: "Basic survival"
+status: draft
+objectives:
+  - id: listening.basic_personal
+    can_do: "Understand familiar words and very basic phrases about personal details when speech is slow and clear."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: speaking.basic_identity
+    can_do: "Give basic personal information using short phrases and simple clauses."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: interaction.basic_exchange
+    can_do: "Ask and answer simple questions about immediate needs and familiar topics."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: reading.signs_forms
+    can_do: "Understand very short notices, labels, menus, and simple forms."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: writing.basic_sentences
+    can_do: "Write short simple sentences about oneself, possessions, routines, and preferences."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: pronunciation.core_intelligibility
+    can_do: "Produce common words and basic sentence stress clearly enough to be understood with support."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: vocabulary.high_frequency_survival
+    can_do: "Use high-frequency words and chunks for identity, family, time, numbers, food, places, and daily needs."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3
+  - id: grammar.basic_clause
+    can_do: "Use basic word order, be/have, simple present, basic questions, pronouns, articles, plurals, and common prepositions."
+    evidence: [comprehension, contextual_production, transfer]
+    min_contexts: 3

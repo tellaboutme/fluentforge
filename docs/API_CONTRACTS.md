@@ -1,0 +1,191 @@
+# API Contracts
+
+All endpoints are under `/api/v1`. Endpoints marked **implemented** exist today;
+the rest are planned (see `docs/ROADMAP.md`).
+
+## System (unversioned)
+
+- `GET /health` — **implemented**. Liveness only; never touches the database.
+- `GET /ready` — **implemented**. Reports database, active curriculum version,
+  and provider modes. Returns `degraded` when no curriculum is loaded.
+
+## Core endpoints
+
+### Auth
+
+- `POST /auth/register` — **implemented**. Creates an account and learner profile.
+- `POST /auth/login` — **implemented**. Returns a bearer token.
+- `GET /auth/me` — **implemented**.
+
+Unknown email and wrong password return an identical response. Password policy
+failures return `weak_password` and create no account.
+
+### Curriculum
+
+- `GET /curriculum` — **implemented**. The active version and its skill nodes.
+
+### Profile
+
+- `GET /profile` — **implemented**
+- `PATCH /profile` — **implemented**
+- `GET /profile/skill-map`
+- `GET /profile/errors`
+
+`GET /profile` returns a list of per-skill estimates. There is no field carrying
+a single current level for the learner. `target_level` is a goal, not an
+assessment. Each skill carries `mastery_probability`, `confidence`,
+`evidence_count`, `distinct_contexts`, and a `status` of
+`unobserved | emerging | supported | independent`. `cefr_estimate` is `null`
+until the skill reaches `supported`; clients must render that as "needs
+evidence", never as a low level.
+
+### Diagnostic
+
+- `POST /diagnostics` — **implemented**. Starts or resumes a session.
+- `GET /diagnostics/{id}/next` — **implemented**
+- `POST /diagnostics/{id}/responses` — **implemented**
+- `POST /diagnostics/{id}/complete` — **implemented**
+- `GET /diagnostics/{id}/report` — **implemented**
+
+Item prompts never include an answer key; expected answers are returned only in
+the response to a submission. `ability_estimate` is an internal routing number,
+not a CEFR level and not a score to show the learner.
+
+The report's `starting_band` says which level's content to open with. It is a
+routing decision, not a placement: a short diagnostic cannot confirm a can-do
+statement, so skills remain `emerging` until evidence accumulates across
+contexts. `caveats` is always non-empty and must be surfaced in the UI.
+
+### Plans and sessions
+
+- `GET /plans/today` — **implemented**. Generates on first request, then stable
+  for the rest of the day.
+- `POST /plans/generate` — **implemented**. `{"regenerate": true}` replaces today's.
+- `POST /sessions`
+- `POST /sessions/{id}/complete`
+
+Every plan item carries `reason_codes`, a learner-facing `explanation`, and the
+full `components` breakdown that produced its priority — including components
+that scored zero. `docs/ADAPTIVE_ENGINE.md` forbids an opaque score, so the
+reasoning travels with the data rather than living only in the engine.
+`unmet_constraints` lists anything the planner could not satisfy; a thin plan
+must not look like a complete one.
+
+### Activities and attempts
+
+- `GET /activities/{activity_key}` — **implemented**. Opens an activity.
+- `POST /activities/{activity_key}/complete` — **implemented**. Scores it and
+  records evidence.
+- `GET /attempts/{id}/feedback`
+
+Both endpoints serve four activity kinds, discriminated on `activity_type`.
+Clients must switch on that field; the shapes do not overlap.
+
+| `activity_key` prefix | `activity_type` | Opened payload | Completed with |
+| --- | --- | --- | --- |
+| `read:` | `reading_task` | `body`, `word_count`, `questions[]` | `answers` |
+| `study:` | `study_task` | `explanation`, `examples[]`, `items[]` | `answers`, `hints_used` |
+| `write:` | `writing_task` | `prompt`, `guidance[]`, word and sentence requirements | `text` |
+| `listen:` | `listening_task` | `setting`, `transcript`, `speech_rate`, `audio`, `questions[]` | `answers`, `plays`, `used_transcript` |
+
+Submitting the wrong payload for a kind returns `activity_payload_mismatch`
+with the field it expected, rather than a generic validation failure.
+
+An open activity never includes answers. For reading and study, `expected`
+appears only in the completion response; a study unit's per-item `note` is
+withheld until then too, because the note is the teaching moment and giving it
+away first removes the retrieval.
+
+What each kind evidences differs, and the difference is on the wire:
+
+- **Reading** records `comprehension` — never production, however well the
+  learner scores. Each text is its own evidence context.
+- **Study** records `controlled_recall` at reduced `independence`, because the
+  explanation stays on screen while the learner practises. The completion
+  response returns that `independence` so a client can say why a perfect study
+  score does not settle a skill. Revealed hints are self-reported in
+  `hints_used` and lower it further. Each unit is one context, whatever its
+  item count. Wrong items are logged as errors against the *linguistic
+  feature* they exercised, returned in `logged_features`.
+- **Listening** records `comprehension` against a *listening* skill, so
+  understanding by ear and understanding by eye never merge into one number.
+  Each clip is its own context. `plays` reduces `independence` past a small
+  free allowance, because catching a clip in two passes is stronger evidence
+  than needing six.
+
+  The transcript **is** sent with the opened activity. It is the stimulus, not
+  an answer key: the client speaks it, and a learner who cannot use audio has
+  no other route through the exercise. What protects the measurement is
+  disclosure rather than secrecy — a client that shows the transcript before
+  the learner answers must send `used_transcript: true`, and the API then
+  records **no listening evidence at all** and returns
+  `evidence_recorded: false`. Clients must surface that: claiming someone
+  understood speech when they read it is the same dishonesty as claiming
+  unjudged writing was good.
+
+  `audio` is `null` while a clip relies on browser speech synthesis. Synthetic
+  speech under-represents the connected speech that makes listening hard, so
+  the evidence records `synthesised: true` for later audit.
+
+- **Writing** records `contextual_production` at reduced evaluator
+  *confidence*: the learner demonstrably composed the text, but nothing
+  judged its accuracy. `provisional` is `true` and clients must surface it —
+  presenting a passed length check as good writing is forbidden by
+  `docs/AI_TUTOR_BEHAVIOR.md`. A response too short to judge records no
+  evidence at all rather than a bad score, and reports
+  `evidence_recorded: false`.
+
+Plan items whose `activity_key` begins with `read:`, `study:`, `write:`, or
+`listen:` can be opened at these endpoints. `review:` items belong to the
+review queue. `speak:` and `reflect:` kinds have no activity yet and must not
+be linked.
+
+Error codes and features referenced by an activity are drawn from a closed
+taxonomy (`apps/api/app/learning/taxonomy.py`). Codes are stable and never
+renamed. Clients render `feature_label`, never the raw code.
+
+### Reviews
+
+- `GET /reviews/due` — **implemented**. Capped; `due_now` reports the true total.
+- `POST /reviews/seed` — **implemented**. Idempotent.
+- `POST /reviews/{id}/answer` — **implemented**. Grade is one of
+  `forgot | hard | good | easy`.
+
+A due card returns `meaning` and `example` as `null`. They are populated only
+in the answer response, after the learner has graded themselves — a card that
+ships its own answer is not a retrieval test.
+
+Each retrieval mode is a separate card with its own schedule. Answering one
+records evidence of the type that mode can support: a recognition review is
+never recorded as production.
+
+### Content
+
+- `POST /content/imports`
+- `GET /content/imports/{id}`
+- `GET /content/library`
+
+### Speaking
+
+- `POST /speech/uploads`
+- `GET /speech/uploads/{id}/status`
+- `GET /speech/uploads/{id}/feedback`
+
+## Contract rules
+
+- IDs are opaque strings or UUIDs.
+- Timestamps are ISO-8601 UTC.
+- Errors use `{code, message, details, request_id}` with stable machine codes.
+  Current codes: `invalid_credentials`, `not_authenticated`, `account_inactive`,
+  `email_already_registered`, `weak_password`, `profile_not_found`,
+  `curriculum_not_loaded`, `session_not_found`, `diagnostic_complete`,
+  `item_not_found`, `plan_not_found`, `review_not_found`, `activity_not_found`,
+  `activity_payload_mismatch`, `validation_error`. Codes are never renamed or
+  reused.
+- Validation errors report field locations only; submitted content and
+  credentials never appear in an error body or log.
+- Every request and response carries an `X-Request-ID` header.
+- Long-running requests return a job resource.
+- Retryable writes accept `Idempotency-Key`.
+- Every scored response exposes evaluator type and confidence.
+- The API never reports an official CEFR certification.

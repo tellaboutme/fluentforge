@@ -1,0 +1,14 @@
+id: technology-career
+name: Technology and Career English
+levels: [A2, B1, B2, C1, C2]
+scenarios:
+  - explain_code_and_bugs
+  - ask_clarifying_questions
+  - daily_standup
+  - technical_interview
+  - client_meeting
+  - write_documentation
+  - negotiate_scope
+  - present_architecture
+  - disagree_professionally
+  - synthesise_research

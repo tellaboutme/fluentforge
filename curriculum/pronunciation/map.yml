@@ -1,0 +1,17 @@
+version: 0.1.0
+priorities:
+  - intelligibility
+  - comprehensibility
+  - listening_support
+  - expressive_prosody
+strands:
+  segmentals: [consonant_contrasts, vowel_contrasts, endings, clusters]
+  lexical_stress: [syllables, primary_stress, stress_shift, compounds]
+  rhythm: [content_function_words, weak_forms, reductions]
+  connected_speech: [linking, assimilation, elision, resyllabification]
+  intonation: [chunking, focus, questions, attitude, discourse_management]
+  fluency: [pause_placement, chunk_length, repair, speech_rate]
+policy:
+  target_native_accent: false
+  score_accent_identity: false
+  require_contextual_intelligibility: true

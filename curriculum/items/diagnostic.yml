@@ -1,0 +1,426 @@
+version: 0.1.0
+description: >
+  Deterministic diagnostic item bank. Every item is scored locally with no model
+  call, so onboarding works with AI disabled. Distractors are built from known
+  learner misconceptions rather than filler, per docs/LEARNING_SCIENCE.md.
+
+  Multiple-choice items produce recognition evidence and gap-fill items produce
+  controlled recall. Neither can establish productive mastery on its own; the
+  writing and speaking samples in Milestone 1 supply that.
+
+items:
+  # --- A1 grammar -----------------------------------------------------------
+  - key: grammar.a1.be_present
+    type: multiple_choice
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.10
+    prompt: "She ___ a teacher."
+    options: ["is", "are", "am", "be"]
+    answer: ["is"]
+    distractors:
+      are: "'are' goes with you/we/they. 'She' takes 'is'."
+      am: "'am' only goes with 'I'."
+      be: "'be' is the base form; it needs to change for the subject."
+
+  - key: grammar.a1.present_simple_s
+    type: multiple_choice
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.18
+    prompt: "My brother ___ to work by bus."
+    options: ["goes", "go", "going", "gone"]
+    answer: ["goes"]
+    distractors:
+      go: "After he/she/it, present simple verbs add -s."
+      going: "'going' needs a form of 'be' before it."
+
+  - key: grammar.a1.article
+    type: gap_fill
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.22
+    instructions: "Write one word."
+    prompt: "I have ___ apple in my bag."
+    answer: ["an"]
+    distractors:
+      a: "Use 'an' before a vowel sound: an apple."
+
+  - key: grammar.a1.question_order
+    type: word_order
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.28
+    instructions: "Put the words in order to make a question."
+    prompt: "you / where / do / live"
+    answer: ["where do you live"]
+
+  # --- A2 grammar -----------------------------------------------------------
+  - key: grammar.a2.past_simple
+    type: gap_fill
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.32
+    instructions: "Write the past simple of the verb in brackets."
+    prompt: "We ___ (go) to the cinema last night."
+    answer: ["went"]
+    distractors:
+      goed: "'go' is irregular: go / went / gone."
+      goes: "This sentence is about last night, so it needs a past form."
+
+  - key: grammar.a2.comparative
+    type: gap_fill
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.36
+    instructions: "Write one or two words."
+    prompt: "This book is ___ (interesting) than the other one."
+    answer: ["more interesting"]
+    distractors:
+      interestinger: "Long adjectives use 'more', not '-er'."
+
+  - key: grammar.a2.present_perfect_intro
+    type: multiple_choice
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.42
+    prompt: "I ___ never been to Japan."
+    options: ["have", "has", "am", "did"]
+    answer: ["have"]
+    distractors:
+      has: "'has' goes with he/she/it. 'I' takes 'have'."
+      did: "'never been' needs the present perfect, not the past simple."
+
+  # --- B1 grammar -----------------------------------------------------------
+  - key: grammar.b1.present_perfect_contrast
+    type: multiple_choice
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.50
+    prompt: "I ___ my keys, so I can't open the door."
+    options: ["have lost", "lost", "was losing", "had lost"]
+    answer: ["have lost"]
+    distractors:
+      lost: "The past simple states when it happened; here the result matters now."
+      had lost: "The past perfect needs a second, later past event to relate to."
+
+  - key: grammar.b1.second_conditional
+    type: gap_fill
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.56
+    instructions: "Write two words."
+    prompt: "If I had more time, I ___ (learn) another language."
+    answer: ["would learn", "'d learn"]
+    distractors:
+      will learn: "'If I had' is hypothetical, so the result clause uses 'would'."
+
+  - key: grammar.b1.reported_speech
+    type: gap_fill
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.60
+    instructions: "Write two words."
+    prompt: "She said she ___ (be) tired."
+    answer: ["was"]
+
+  # --- B2 grammar -----------------------------------------------------------
+  - key: grammar.b2.passive
+    type: gap_fill
+    skill: grammar.broad_control
+    level: B2
+    difficulty: 0.66
+    instructions: "Write two words."
+    prompt: "The report ___ (finish) by Friday, so nobody needs to work this weekend."
+    answer: ["was finished", "has been"]
+
+  - key: grammar.b2.past_modal
+    type: multiple_choice
+    skill: grammar.broad_control
+    level: B2
+    difficulty: 0.70
+    prompt: "You ___ told me earlier — I would have helped."
+    options: ["should have", "should", "must", "would"]
+    answer: ["should have"]
+    distractors:
+      should: "'should tell' refers to now; this is a regret about the past."
+
+  # --- C1 grammar -----------------------------------------------------------
+  - key: grammar.c1.inversion
+    type: word_order
+    skill: grammar.flexible_complexity
+    level: C1
+    difficulty: 0.80
+    instructions: "Put the words in order to make an emphatic sentence."
+    prompt: "had / no / she / sooner / arrived"
+    answer: ["no sooner had she arrived"]
+
+  - key: grammar.c1.nominalisation
+    type: multiple_choice
+    skill: grammar.flexible_complexity
+    level: C1
+    difficulty: 0.78
+    prompt: "___ of the new policy took longer than expected."
+    options:
+      ["The implementation", "To implement", "Implementing it", "They implemented"]
+    answer: ["The implementation"]
+
+  # --- A1 vocabulary --------------------------------------------------------
+  - key: vocabulary.a1.family
+    type: multiple_choice
+    skill: vocabulary.high_frequency_survival
+    level: A1
+    difficulty: 0.10
+    prompt: "My mother's mother is my ___."
+    options: ["grandmother", "aunt", "sister", "daughter"]
+    answer: ["grandmother"]
+
+  - key: vocabulary.a1.time
+    type: gap_fill
+    skill: vocabulary.high_frequency_survival
+    level: A1
+    difficulty: 0.20
+    instructions: "Write one word."
+    prompt: "There are seven days in a ___."
+    answer: ["week"]
+
+  # --- A2 vocabulary --------------------------------------------------------
+  - key: vocabulary.a2.travel
+    type: multiple_choice
+    skill: vocabulary.everyday_topics
+    level: A2
+    difficulty: 0.34
+    prompt: "We need to ___ a hotel before we travel."
+    options: ["book", "order", "buy", "take"]
+    answer: ["book"]
+    distractors:
+      order: "You order food; you book a room or a ticket."
+
+  - key: vocabulary.a2.health
+    type: gap_fill
+    skill: vocabulary.everyday_topics
+    level: A2
+    difficulty: 0.40
+    instructions: "Write one word."
+    prompt: "I don't feel well. I should see a ___."
+    answer: ["doctor"]
+
+  # --- B1 vocabulary --------------------------------------------------------
+  - key: vocabulary.b1.collocation_decision
+    type: multiple_choice
+    skill: vocabulary.independent_range
+    level: B1
+    difficulty: 0.52
+    prompt: "It took us a week to ___ a decision."
+    options: ["make", "do", "take", "have"]
+    answer: ["make"]
+    distractors:
+      do: "'do' collocates with work and tasks, not with 'a decision'."
+      take: "'take a decision' exists in some varieties but 'make' is far more frequent."
+
+  - key: vocabulary.b1.phrasal_verb
+    type: gap_fill
+    skill: vocabulary.independent_range
+    level: B1
+    difficulty: 0.58
+    instructions: "Write one word."
+    prompt: "I need to look ___ this word in the dictionary."
+    answer: ["up"]
+
+  # --- B2 vocabulary --------------------------------------------------------
+  - key: vocabulary.b2.precision
+    type: multiple_choice
+    skill: vocabulary.precision_collocation
+    level: B2
+    difficulty: 0.68
+    prompt: "The evidence was ___ enough to change their minds."
+    options: ["compelling", "strong-willed", "forceful", "heavy"]
+    answer: ["compelling"]
+    distractors:
+      forceful: "'forceful' describes a person or manner, not evidence."
+
+  - key: vocabulary.b2.register
+    type: multiple_choice
+    skill: vocabulary.precision_collocation
+    level: B2
+    difficulty: 0.72
+    prompt: "In a formal report, which is most appropriate?"
+    options:
+      - "The results indicate a significant increase."
+      - "The results show things went way up."
+      - "Turns out the numbers jumped."
+      - "Numbers are up loads."
+    answer: ["The results indicate a significant increase."]
+
+  # --- C1 vocabulary --------------------------------------------------------
+  - key: vocabulary.c1.idiomatic
+    type: multiple_choice
+    skill: vocabulary.broad_idiomatic
+    level: C1
+    difficulty: 0.82
+    prompt: "Her argument didn't ___ water once the data was published."
+    options: ["hold", "carry", "keep", "bear"]
+    answer: ["hold"]
+
+  # --- Reading --------------------------------------------------------------
+  - key: reading.a1.sign
+    type: multiple_choice
+    skill: reading.signs_forms
+    level: A1
+    difficulty: 0.14
+    prompt: "A sign says 'NO ENTRY'. What does it mean?"
+    options:
+      ["You cannot go in.", "The shop is open.", "Entry is free.", "Please wait here."]
+    answer: ["You cannot go in."]
+
+  - key: reading.a2.message
+    type: multiple_choice
+    skill: reading.short_everyday_texts
+    level: A2
+    difficulty: 0.38
+    prompt: >
+      "Hi Sam — I'm running about 20 minutes late. Start without me and I'll
+      join for the second half." What should Sam do?
+    options:
+      ["Begin now.", "Wait for the writer.", "Cancel the meeting.", "Leave early."]
+    answer: ["Begin now."]
+
+  - key: reading.b1.inference
+    type: multiple_choice
+    skill: reading.familiar_arguments
+    level: B1
+    difficulty: 0.55
+    prompt: >
+      "The café had changed hands again. The coffee was cheaper now, though
+      regulars had stopped coming." What does the writer suggest?
+    options:
+      - "Quality probably fell despite the lower price."
+      - "The café became more popular."
+      - "The coffee improved."
+      - "Prices went up."
+    answer: ["Quality probably fell despite the lower price."]
+
+  - key: reading.b2.stance
+    type: multiple_choice
+    skill: reading.complex_contemporary
+    level: B2
+    difficulty: 0.70
+    prompt: >
+      "Proponents claim the scheme will pay for itself — an assertion that
+      remains, at best, untested." What is the writer's stance?
+    options: ["Sceptical", "Enthusiastic", "Neutral and factual", "Alarmed"]
+    answer: ["Sceptical"]
+
+  # --- Written production ---------------------------------------------------
+  # Scored by countable checks only (length, sentences, connectives, required
+  # content). These confirm the learner produced language; they cannot judge
+  # accuracy, so the evidence is recorded at reduced evaluator confidence and
+  # marked provisional until a rubric evaluator runs. See learning/writing.py.
+  - key: writing.a1.about_me
+    type: written_response
+    skill: writing.basic_sentences
+    level: A1
+    difficulty: 0.20
+    instructions: "Write 3 to 5 short sentences. Simple language is fine."
+    prompt: >
+      Tell us about yourself. Where do you live, and what do you do on a normal day?
+    requirements:
+      min_words: 25
+      max_words: 120
+      min_sentences: 3
+      min_connectives: 1
+
+  - key: writing.a2.last_weekend
+    type: written_response
+    skill: writing.linked_messages
+    level: A2
+    difficulty: 0.38
+    instructions: >
+      Write about 50 words. Use past forms, and mention the word 'because'
+      at least once to explain a reason.
+    prompt: >
+      What did you do last weekend? Say what you did, who you were with, and
+      whether you enjoyed it.
+    requirements:
+      min_words: 40
+      max_words: 160
+      min_sentences: 3
+      min_connectives: 2
+      required_elements: ["because"]
+
+  - key: writing.b1.opinion_message
+    type: written_response
+    skill: writing.connected_genres
+    level: B1
+    difficulty: 0.55
+    instructions: >
+      Write about 80 words, organised into more than one idea.
+    prompt: >
+      A friend is thinking of moving to your city. Write a message giving your
+      opinion: what is good about living there, what is difficult, and what you
+      would advise them to do.
+    requirements:
+      min_words: 60
+      max_words: 220
+      min_sentences: 4
+      min_connectives: 3
+
+  - key: writing.b2.argument
+    type: written_response
+    skill: writing.clear_detailed_argument
+    level: B2
+    difficulty: 0.70
+    instructions: >
+      Write about 120 words. Present a position, support it, and acknowledge
+      the other side.
+    prompt: >
+      Some employers now expect staff to be reachable outside working hours.
+      Do you think that is reasonable? Give your view, support it with a
+      reason, and respond to one argument against it.
+    requirements:
+      min_words: 90
+      max_words: 300
+      min_sentences: 5
+      min_connectives: 4
+      required_elements: ["however"]
+
+  # --- Self-assessment (seeds item selection; never establishes mastery) -----
+  - key: self.speaking.sustained
+    type: self_assessment
+    skill: speaking.simple_description
+    level: A2
+    difficulty: 0.30
+    instructions: "Rate 0 (not at all) to 4 (easily)."
+    prompt: "I can describe my daily routine for a minute without preparing."
+
+  - key: self.listening.conversation
+    type: self_assessment
+    skill: listening.routine_messages
+    level: A2
+    difficulty: 0.30
+    instructions: "Rate 0 (not at all) to 4 (easily)."
+    prompt: "I can follow a slow conversation between two people about everyday plans."
+
+  - key: self.writing.connected
+    type: self_assessment
+    skill: writing.linked_messages
+    level: A2
+    difficulty: 0.30
+    instructions: "Rate 0 (not at all) to 4 (easily)."
+    prompt: "I can write a short message linking several sentences with 'and', 'but', 'because'."
+
+  - key: self.interaction.unprepared
+    type: self_assessment
+    skill: interaction.unprepared_familiar
+    level: B1
+    difficulty: 0.50
+    instructions: "Rate 0 (not at all) to 4 (easily)."
+    prompt: "I can take part in an unprepared conversation on a familiar topic."
+
+  - key: self.pronunciation.understood
+    type: self_assessment
+    skill: pronunciation.phrase_rhythm
+    level: A2
+    difficulty: 0.30
+    instructions: "Rate 0 (not at all) to 4 (easily)."
+    prompt: "People usually understand me without asking me to repeat myself."

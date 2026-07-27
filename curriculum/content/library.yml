@@ -1,0 +1,172 @@
+version: 0.1.0
+description: >
+  Short curated texts for reading practice, each with gist, detail, and
+  inference questions. Meaning-focused: the learner reads for the message
+  first, and the questions follow (docs/LEARNING_SCIENCE.md, extensive
+  practice).
+
+  Every text is original to this repository, so there is no licensing question.
+  Questions are deterministic multiple choice — the reading lab works with AI
+  disabled.
+
+texts:
+  - key: text.a1.noticeboard
+    level: A1
+    skill: reading.signs_forms
+    title: "A noticeboard in a block of flats"
+    minutes: 4
+    body: |
+      LIFT OUT OF ORDER
+
+      The lift will not work on Monday and Tuesday.
+      Engineers will be here from 9am.
+      Please use the stairs.
+
+      Sorry for the trouble.
+      The building office
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is this notice mainly about?"
+        options:
+          - "The lift is not working for two days."
+          - "The building office is closed."
+          - "There is a new engineer in the building."
+          - "The stairs are being repaired."
+        answer: "The lift is not working for two days."
+      - key: detail
+        type: detail
+        prompt: "When do the engineers arrive?"
+        options: ["9am", "Monday evening", "Tuesday only", "The notice does not say"]
+        answer: "9am"
+
+  - key: text.a2.message
+    level: A2
+    skill: reading.short_everyday_texts
+    title: "A message from a colleague"
+    minutes: 5
+    body: |
+      Hi Sam,
+
+      I'm going to be about twenty minutes late — the train stopped
+      outside the station and nobody has told us why.
+
+      Please start the meeting without me. I've sent Maria my notes,
+      so she can talk about the budget while you wait.
+
+      See you soon,
+      Alex
+    questions:
+      - key: gist
+        type: gist
+        prompt: "Why is Alex writing?"
+        options:
+          - "To say they will arrive late and what to do."
+          - "To cancel the meeting."
+          - "To complain about the train company."
+          - "To ask Sam for the budget notes."
+        answer: "To say they will arrive late and what to do."
+      - key: detail
+        type: detail
+        prompt: "Who will talk about the budget?"
+        options: ["Maria", "Sam", "Alex", "Nobody"]
+        answer: "Maria"
+      - key: inference
+        type: inference
+        prompt: "What does Alex suggest about the delay?"
+        options:
+          - "Even the passengers have not been given a reason."
+          - "The train has been cancelled."
+          - "The delay is Sam's fault."
+          - "Alex will not come at all."
+        answer: "Even the passengers have not been given a reason."
+
+  - key: text.b1.cafe
+    level: B1
+    skill: reading.familiar_arguments
+    title: "The café on the corner"
+    minutes: 7
+    body: |
+      The café on the corner changed hands again in March. The new owners
+      repainted the front, put the prices down, and started opening an hour
+      earlier.
+
+      You might expect the place to be busier. It isn't. The regulars who used
+      to sit by the window with the same coffee every morning have quietly gone
+      somewhere else, and the tables they used to fill stay empty until
+      lunchtime.
+
+      Nobody has complained, exactly. People just stopped coming.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the writer describing?"
+        options:
+          - "A café that got cheaper but lost its customers."
+          - "A café that became very popular."
+          - "A disagreement between neighbours."
+          - "The opening of a brand-new café."
+        answer: "A café that got cheaper but lost its customers."
+      - key: detail
+        type: detail
+        prompt: "What did the new owners change?"
+        options:
+          - "The paint, the prices, and the opening time."
+          - "Only the menu."
+          - "The name and the location."
+          - "Nothing at all."
+        answer: "The paint, the prices, and the opening time."
+      - key: inference
+        type: inference
+        prompt: "What does the writer imply about the quality?"
+        options:
+          - "Something got worse, even though the price fell."
+          - "The coffee improved a great deal."
+          - "The café was always bad."
+          - "Quality is the only thing that matters."
+        answer: "Something got worse, even though the price fell."
+
+  - key: text.b2.always_on
+    level: B2
+    skill: reading.complex_contemporary
+    title: "Always reachable"
+    minutes: 9
+    body: |
+      Employers who expect staff to answer messages at nine in the evening
+      rarely describe it that way. They talk instead about flexibility, about
+      trusting people to manage their own time, about a culture that does not
+      watch the clock.
+
+      Some of that is sincere. Flexibility genuinely suits people with
+      childcare, long commutes, or a preference for working early. The trouble
+      is that flexibility runs in one direction far more easily than the other.
+      An employee who answers at nine has made themselves available; an
+      employee who does not has, in a quiet and unstated way, become the
+      difficult one.
+
+      Proponents claim the arrangement pays for itself in productivity — an
+      assertion that remains, at best, untested.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the writer's main point?"
+        options:
+          - "Flexibility is often described in ways that hide an expectation."
+          - "Employees should never answer messages in the evening."
+          - "Productivity is easy to measure."
+          - "Childcare is the main reason for flexible work."
+        answer: "Flexibility is often described in ways that hide an expectation."
+      - key: stance
+        type: inference
+        prompt: "What is the writer's attitude to the productivity claim?"
+        options: ["Sceptical", "Enthusiastic", "Neutral and factual", "Alarmed"]
+        answer: "Sceptical"
+      - key: inference
+        type: inference
+        prompt: "What does 'become the difficult one' suggest?"
+        options:
+          - "There is social pressure, even without a formal rule."
+          - "The employee is formally disciplined."
+          - "The employee is promoted."
+          - "Nobody notices either way."
+        answer: "There is social pressure, even without a formal rule."
