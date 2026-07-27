@@ -1,0 +1,323 @@
+version: 1
+description: >
+  The skill graph, hand-authored.
+
+  Until now, edges were derived: every objective at level N in a domain was
+  treated as depending on the objective at level N-1 in the same domain, and
+  nothing else. That is one true claim repeated 45 times, and it says nothing
+  about the dependencies that actually matter — that you cannot narrate what
+  you have no words for, that interaction is listening and speaking happening
+  at once, that mediation is reception and production in the same breath.
+
+  Three kinds of claim are written here, and every one carries a reason. An
+  edge nobody can justify in a sentence is not knowledge about language, it is
+  a guess with a weight attached.
+
+  `ladders`   within one domain, each level depends on the one below it
+  `same_level` a cross-domain claim that holds at every level where both ends exist
+  `edges`     a specific claim about two named objectives
+
+  Relations, from `apps/api/app/models/enums.py`:
+
+  `prerequisite` genuinely blocking. Without it the target is not merely
+                 harder, it is not attemptable. Planning treats a weak
+                 prerequisite as holding back everything downstream of it.
+  `supports`     helps, does not block. Recorded because it is true and
+                 because a later engine can use it, but it never gates.
+
+  `weight` is how strongly the claim is believed, not how important the skill
+  is. 1.0 is "this is definitional"; 0.6 is "this is the consensus and the
+  exceptions are real". The weights below are defensible defaults, not
+  findings — see `docs/ADAPTIVE_ENGINE.md`.
+
+  Validation refuses a prerequisite that runs from a higher CEFR level to a
+  lower one, any cycle among prerequisites, any duplicate triple, any edge
+  naming an objective that does not exist, and any rule that expands to
+  nothing. It also refuses an objective above the floor of its domain with no
+  incoming prerequisite at all: unreachable material is a content bug, not a
+  design choice.
+
+# --- Within a domain ---------------------------------------------------------
+#
+# Declared per domain rather than assumed for all of them, so that a domain
+# where the claim is weaker can say so, and so that adding a domain is a
+# decision rather than an accident.
+
+ladders:
+  - domain: listening
+    weight: 1.0
+    why: >
+      Understanding slower, simpler speech is contained in understanding
+      faster, denser speech. The lower band is not a different skill.
+
+  - domain: reading
+    weight: 1.0
+    why: >
+      As with listening: the lower descriptor names a subset of what the
+      higher one demands.
+
+  - domain: speaking
+    weight: 1.0
+    why: >
+      Sustained production at a level assumes the shorter, simpler production
+      below it. A learner who cannot describe cannot narrate.
+
+  - domain: writing
+    weight: 1.0
+    why: >
+      Each written band adds length, structure and control to the one below
+      rather than replacing it.
+
+  - domain: interaction
+    weight: 1.0
+    why: >
+      Managing a longer, less predictable exchange assumes managing a shorter,
+      more predictable one.
+
+  - domain: vocabulary
+    weight: 1.0
+    why: >
+      Lexical range is cumulative by definition. Nothing at a higher band
+      removes the need for the words below it.
+
+  - domain: grammar
+    weight: 1.0
+    why: >
+      Structural control accumulates. Broad control at B2 includes, rather
+      than replaces, the basic clause at A1.
+
+  - domain: pronunciation
+    weight: 0.8
+    why: >
+      Mostly cumulative, but less cleanly than the rest: a learner can have
+      accurate segments and flat prosody, or fluent rhythm and unclear
+      segments. The ladder holds on average and is weighted to say so.
+
+  - domain: mediation
+    weight: 1.0
+    why: >
+      Summarising one source is contained in combining several, which is
+      contained in reconstructing an argument across them.
+
+  - domain: pragmatics
+    weight: 1.0
+    why: >
+      Choosing a register is the floor for reading nuance, which is the floor
+      for full pragmatic control.
+
+# --- Across domains, at every level -----------------------------------------
+#
+# Each of these is stated once, with its reason, and expanded to every level
+# where both ends exist. Six copies of one claim would not be six pieces of
+# knowledge.
+
+same_level:
+  - from: listening
+    to: speaking
+    relation: prerequisite
+    weight: 0.6
+    why: >
+      Reception runs ahead of production at the same level. This is about as
+      close to consensus as second-language acquisition gets, and the
+      exceptions are real enough — a learner drilled on output can produce
+      what they struggle to follow — that the weight is not 1.0.
+
+  - from: reading
+    to: writing
+    relation: prerequisite
+    weight: 0.6
+    why: >
+      The written counterpart of the same claim, and the mechanism is
+      clearer: the conventions of a genre are met on the page before they can
+      be reproduced on it.
+
+  - from: listening
+    to: interaction
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      Interaction is listening and speaking at once, under time pressure. A
+      learner who cannot follow the turn addressed to them has nothing to
+      respond to, whatever they can produce in a monologue.
+
+  - from: speaking
+    to: interaction
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      The other half of the same definition. Interaction adds turn-taking and
+      repair to production; it does not substitute for it.
+
+  - from: vocabulary
+    to: speaking
+    relation: prerequisite
+    weight: 0.7
+    why: >
+      You cannot describe what you have no words for. Lexical range is the
+      binding constraint on spoken production far more often than grammar is
+      — a learner works around a missing structure and stops dead at a
+      missing word.
+
+  - from: vocabulary
+    to: writing
+    relation: prerequisite
+    weight: 0.7
+    why: >
+      The same constraint, with less room to gesture at the missing word.
+
+  - from: grammar
+    to: writing
+    relation: prerequisite
+    weight: 0.7
+    why: >
+      Writing is where grammatical control is both visible and expected.
+      Readers have no intonation to disambiguate with and no speaker to ask.
+
+  - from: grammar
+    to: speaking
+    relation: supports
+    weight: 0.5
+    why: >
+      Deliberately not a prerequisite. Speech tolerates approximation that
+      writing does not: a learner with shaky tense control communicates
+      perfectly well out loud, and gating spoken practice on grammar would
+      keep them silent for no gain.
+
+  - from: listening
+    to: pronunciation
+    relation: prerequisite
+    weight: 0.6
+    why: >
+      A contrast has to be heard before it can be reliably produced.
+      Perceptual training improves production; production drills on an
+      unperceived contrast mostly train the learner to reproduce their own
+      error.
+
+  - from: pronunciation
+    to: speaking
+    relation: supports
+    weight: 0.5
+    why: >
+      Not a prerequisite, on purpose. The CEFR scales phonological control
+      separately from spoken production because a heavily accented speaker
+      can be entirely successful. Making intelligibility gate speaking would
+      encode an accent standard this product does not hold.
+
+# --- Specific claims ---------------------------------------------------------
+
+edges:
+  # Mediation: reception and production in one act.
+  - from: reading.familiar_arguments
+    to: mediation.basic_summary
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      Summarising is understanding first. A summary of a text the learner
+      misread is fluent and wrong.
+
+  - from: writing.connected_genres
+    to: mediation.basic_summary
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      And producing second. The summary still has to be written in connected
+      prose someone else can use.
+
+  - from: reading.complex_contemporary
+    to: mediation.combine_sources
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      Combining sources requires reading each of them at the level they were
+      written.
+
+  - from: writing.clear_detailed_argument
+    to: mediation.combine_sources
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Two sources become one account only through a structure the learner can
+      actually build.
+
+  - from: reading.demanding_implicit
+    to: mediation.complex_synthesis
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      Synthesis at C1 turns on what the sources imply rather than state, which
+      is precisely the C1 reading descriptor.
+
+  - from: writing.well_structured_complex
+    to: mediation.complex_synthesis
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      A synthesis is a structure. Without control of structure there is only
+      a sequence of summaries.
+
+  - from: reading.near_unrestricted
+    to: mediation.reconstruct_multisource
+    relation: prerequisite
+    weight: 0.9
+    why: >
+      Reconstructing an argument across sources assumes none of them is out
+      of reach.
+
+  - from: writing.rhetorical_mastery
+    to: mediation.reconstruct_multisource
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Reconstruction for a particular audience is a rhetorical act, not a
+      neutral one.
+
+  # Pragmatics: choosing needs alternatives, and nuance is met before it is made.
+  - from: vocabulary.precision_collocation
+    to: pragmatics.register_choice
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Register is chosen between alternatives. A learner with one way to say
+      a thing has no register to choose, only a sentence to produce.
+
+  - from: reading.complex_contemporary
+    to: pragmatics.register_choice
+    relation: supports
+    weight: 0.6
+    why: >
+      Registers are learned mostly by meeting them. Wide contemporary reading
+      is where most learners encounter more than one, though it is not the
+      only route and so does not gate.
+
+  - from: vocabulary.broad_idiomatic
+    to: pragmatics.nuance
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Idiom and connotation are where nuance lives. Without them, implication
+      has nothing to attach to.
+
+  - from: listening.implicit_extended
+    to: pragmatics.nuance
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Implicature is recognised before it is deployed — irony heard, then
+      irony used. The C1 listening descriptor names exactly this.
+
+  - from: vocabulary.fine_shades
+    to: pragmatics.mastery
+    relation: prerequisite
+    weight: 0.8
+    why: >
+      Full pragmatic control is control over fine differences in meaning, so
+      it presupposes having them available.
+
+  - from: pragmatics.nuance
+    to: interaction.subtle_strategic
+    relation: supports
+    weight: 0.6
+    why: >
+      Reading implication makes strategic interaction easier — knowing what a
+      hedge is doing changes how you answer it. Stated in this direction only:
+      the reverse would create a cycle and is the weaker claim anyway.

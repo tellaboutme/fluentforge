@@ -1,6 +1,6 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–5 are complete.** The core learning loop now
+Last updated: 2026-07-27. **Milestones 0–6 are complete.** The core learning loop now
 closes, and **no modality is evidenced by self-report any more**: a learner
 registers, takes an adaptive diagnostic including a written task, receives a
 daily plan that explains itself, opens and completes reading, listening,
@@ -14,10 +14,14 @@ language was produced, at length, covering what was asked — and refuses, in th
 parser, in the service, and on screen, to claim anything about how the learner
 sounded.
 
+The dependency graph behind the plan is now hand-authored rather than derived
+from CEFR levels, so the planner reasons about what actually blocks what
+instead of about which band a skill sits in.
+
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **486 Python tests**; eslint, tsc, and **212 web
+curriculum validation, **536 Python tests**; eslint, tsc, and **212 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -65,9 +69,10 @@ development, PostgreSQL opt-in and proven in CI. Both lockfiles committed. CI
 runs five jobs. The API refuses to start in production with development
 defaults. Tests run in parallel.
 
-### Curriculum 0.5.0
+### Curriculum 0.6.0
 
-55 objectives across A1–C2 with 45 prerequisite edges; a 36-item diagnostic
+55 objectives across A1–C2 with a **hand-authored skill graph of 119 edges**
+(105 prerequisite, 14 supporting), each carrying a written reason; a 36-item diagnostic
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
 C1; **17 study units with 75 practice items spanning A1–C2**; 9 written output
@@ -92,6 +97,31 @@ scored by countable checks at reduced confidence and flagged provisional.
 Ten named priority components, all persisted per item. Constraints applied
 after scoring: session template, time budget, receptive/productive balance, and
 a cap on consecutive heavy work. Every item explains itself.
+
+### Skill graph (Milestone 6 — new)
+
+- **Edges are authored, not derived.** `curriculum/graph.yml` replaces the
+  rule that level N depends on level N-1 in the same domain — one true claim
+  repeated 45 times, which could not express any cross-domain dependency at
+  all.
+- **Every edge states why it exists**, in at least a sentence, enforced by
+  the parser. An edge nobody can justify is a guess with a weight attached.
+- **`supports` is a real relation and never gates.** Pronunciation helps
+  spoken production and must not block it; grammar helps speech and must not
+  block it. Inflating those into prerequisites is how a graph like this goes
+  wrong, so the distinction is enforced.
+- **Pronunciation gates nothing outside its own domain.** Making
+  intelligibility a prerequisite would encode an accent standard this product
+  does not hold. Tested, not merely intended.
+- **Prerequisite importance is a real graph walk.** It used to be
+  `1 - difficulty`, which scored A2 vocabulary and A2 pronunciation
+  identically despite one gating production, interaction and mediation and
+  the other gating nothing.
+- **Six shapes are refused outright**: cycles, backwards prerequisites,
+  orphans above a domain floor, unjustified edges, rules that match nothing,
+  and duplicate triples. Each of those failures is otherwise silent.
+- `make test-curriculum` prints the five most load-bearing skills every run,
+  so a change in what the planner pushes learners towards shows up in a diff.
 
 ### Spaced review (Milestone 2)
 
@@ -239,33 +269,38 @@ is enforced in more than one place.
    editable, recognition confidence is never scored, and evaluator confidence
    is the lowest in the system — but not eliminated. Recognition quality is
    stored on every event so the correlation can actually be checked.
-3. **Writing accuracy is never judged.**
-4. **Two features have no remedy, and the speaking lab cannot give them one.**
+3. **The skill graph is expert judgement, not measurement.** 119 authored
+   claims about what depends on what, each defensible and none validated
+   against learner outcomes. The structure now makes them reviewable — one
+   claim, one reason, one weight, in a versioned file — which is a real
+   improvement on an assumption buried in a loop, but it is still nobody's
+   data. Milestone 6's exit criterion, beating fixed sequencing in offline
+   simulation, has not been demonstrated.
+4. **Writing accuracy is never judged.**
+5. **Two features have no remedy, and the speaking lab cannot give them one.**
    `pronunciation.segment.contrast` and `pronunciation.stress.word` need
    acoustic analysis, not a transcript. `make test-curriculum` reports them
    separately from genuinely missing content, so nobody is tempted to write a
    fake text drill for a sound.
-5. **Hints, replays, transcript use, spoken duration and `typed_instead` are
+6. **Hints, replays, transcript use, spoken duration and `typed_instead` are
    self-reported by the client.** A dishonest or buggy client can overstate
    independence. The blast radius is one mis-weighted observation, except for
    `used_transcript` and `typed_instead`, where the failure mode is recording
    evidence of a modality the learner never used.
-6. **Scheduler, mastery, and plan constants are defensible defaults, not
+7. **Scheduler, mastery, and plan constants are defensible defaults, not
    findings.** Study independence 0.65, hint penalty 0.15, two free replays,
    replay penalty 0.1, transcript confidence 0.35 — all documented guesses.
-7. **No automated colour-contrast or screen-reader check.**
-8. **Token in `sessionStorage`** is readable by any script on the page.
+8. **No automated colour-contrast or screen-reader check.**
+9. **Token in `sessionStorage`** is readable by any script on the page.
 
 ## Next three tasks
 
-1. **Hand-author the prerequisite graph** (Milestone 6). Edges are currently
-   derived across adjacent CEFR levels within a domain — a documented
-   stand-in, not a claim about acquisition order, and now the largest piece
-   of guesswork left in the adaptive engine.
-2. **B2–C2 depth** (Milestone 7): long-form synthesis and multi-source
+1. **B2–C2 depth** (Milestone 7): long-form synthesis and multi-source
    mediation, the tasks that actually separate the top three levels. The
    content bank reaches C2 in reading and writing but stops at C1 in
-   speaking.
-3. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
+   speaking, and the mediation objectives now have prerequisites pointing at
+   them with no activities behind them.
+2. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
    judged without sending a learner's text to a third party. `cloud` exists
    and works; `local` still raises at startup.
+3. **Offline/PWA** (Milestone 8), the last unstarted milestone.

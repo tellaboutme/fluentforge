@@ -1,4 +1,4 @@
-version: 0.5.0
+version: 0.6.0
 levels: [A1, A2, B1, B2, C1, C2]
 domains:
   listening: {weekly_min_share: 0.12}

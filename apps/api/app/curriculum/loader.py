@@ -8,7 +8,6 @@ against an older version stays interpretable.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from itertools import pairwise
 from pathlib import Path
 
 from sqlalchemy import select
@@ -16,7 +15,8 @@ from sqlalchemy.orm import Session
 
 from ..db.types import utcnow
 from ..models.curriculum import CurriculumVersion, LearningObjective, SkillEdge, SkillNode
-from ..models.enums import CefrLevel, CurriculumStatus, SkillRelation
+from ..models.enums import CefrLevel, CurriculumStatus
+from .graph import ParsedGraph, parse_graph
 from .parser import ParsedCurriculum, ParsedObjective, parse_curriculum
 
 
@@ -75,29 +75,25 @@ def _build_objective(parsed: ParsedObjective) -> LearningObjective:
     )
 
 
-def _build_edges(
-    parsed: ParsedCurriculum, nodes: dict[str, SkillNode]
-) -> list[tuple[SkillNode, SkillNode]]:
-    """Derive prerequisite edges within a domain across adjacent CEFR levels.
+def _build_edges(graph: ParsedGraph, nodes: dict[str, SkillNode]) -> list[SkillEdge]:
+    """Turn the authored graph into rows.
 
-    This is a documented default, not a claim about language acquisition:
-    the A2 listening objective is treated as depending on the A1 one. Richer,
-    hand-authored edges land with the Milestone 6 adaptive engine.
+    Edges used to be derived here — level N in a domain depends on level N-1,
+    every relation `prerequisite`, every weight 1.0. They are now read from
+    `curriculum/graph.yml`, which carries relation and weight per edge and a
+    stated reason for each claim. The reason is not persisted: it belongs to
+    the source, which is versioned and hashed, and a column holding a
+    paragraph nobody queries would be a worse home for it.
     """
-    by_domain: dict[str, dict[CefrLevel, list[ParsedObjective]]] = {}
-    for objective in parsed.objectives:
-        by_domain.setdefault(objective.domain.value, {}).setdefault(objective.level, []).append(
-            objective
+    return [
+        SkillEdge(
+            from_skill_id=nodes[edge.source].id,
+            to_skill_id=nodes[edge.target].id,
+            relation=edge.relation,
+            weight=edge.weight,
         )
-
-    pairs: list[tuple[SkillNode, SkillNode]] = []
-    ordered_levels = list(CefrLevel)
-    for levels in by_domain.values():
-        for lower, higher in pairwise(ordered_levels):
-            for source in levels.get(lower, []):
-                for target in levels.get(higher, []):
-                    pairs.append((nodes[source.key], nodes[target.key]))
-    return pairs
+        for edge in graph.edges
+    ]
 
 
 def load_curriculum(
@@ -116,6 +112,9 @@ def load_curriculum(
         ImmutableCurriculumError: a published version's source has changed.
     """
     parsed = parse_curriculum(curriculum_dir)
+    # Parsed before anything is written: a graph that would mislead the
+    # planner should stop the load, not survive it.
+    graph = parse_graph(curriculum_dir, parsed.objectives)
 
     existing = session.execute(
         select(CurriculumVersion).where(
@@ -166,15 +165,7 @@ def load_curriculum(
     session.add_all(nodes.values())
     session.flush()
 
-    edges = [
-        SkillEdge(
-            from_skill_id=source.id,
-            to_skill_id=target.id,
-            relation=SkillRelation.PREREQUISITE,
-            weight=1.0,
-        )
-        for source, target in _build_edges(parsed, nodes)
-    ]
+    edges = _build_edges(graph, nodes)
     session.add_all(edges)
     session.flush()
 

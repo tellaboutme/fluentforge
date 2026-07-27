@@ -32,8 +32,9 @@ from ..learning.planning import (
 from ..learning.planning import (
     Plan as ComputedPlan,
 )
-from ..models.curriculum import SkillNode
-from ..models.enums import PlanStatus, SkillDomain
+from ..learning.skill_graph import Edge, downstream_reach
+from ..models.curriculum import SkillEdge, SkillNode
+from ..models.enums import PlanStatus, SkillDomain, SkillRelation
 from ..models.identity import LearnerProfile
 from ..models.learning import ErrorPattern, SkillState
 from ..models.planning import Plan, PlanItem, ReviewQueueItem
@@ -192,6 +193,10 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
             select(SkillState).where(SkillState.user_id == user_id)
         ).scalars()
     }
+    # How much each skill gates, from the authored graph. Computed once for
+    # the whole plan rather than per candidate: it depends only on the
+    # curriculum, not on the learner.
+    reach = _gating_power(session, nodes)
 
     candidates: list[Candidate] = []
 
@@ -305,7 +310,7 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
                 status=status,
                 is_openable=openable is not None,
                 has_evidence=bool(state and state.evidence_count > 0),
-                prerequisite_weakness=_prerequisite_weakness(node, state),
+                prerequisite_weakness=_prerequisite_weakness(node, state, reach),
                 days_since_practised=(
                     (now - state.last_observed_at).total_seconds() / 86400.0
                     if state and state.last_observed_at
@@ -431,18 +436,63 @@ def _study_for_error(taxonomy_code: str) -> StudyUnit | None:
     return min(units, key=lambda unit: (unit.minutes, unit.key))
 
 
-def _prerequisite_weakness(node: SkillNode, state: SkillState | None) -> float:
+def _gating_power(session: Session, nodes: dict[uuid.UUID, SkillNode]) -> dict[str, float]:
+    """How much each skill gates, walked from the stored prerequisite edges.
+
+    Only `prerequisite` edges count. `supports` is recorded because it is
+    true, and it is deliberately excluded here: a skill that merely helps
+    another is not holding it back, and letting it score as though it were
+    would quietly reinstate the guesswork this replaces.
+    """
+    if not nodes:
+        return {}
+
+    keys = {node.id: node.key for node in nodes.values()}
+    rows = session.execute(
+        select(SkillEdge).where(
+            SkillEdge.from_skill_id.in_(keys),
+            SkillEdge.relation == SkillRelation.PREREQUISITE,
+        )
+    ).scalars()
+
+    edges = [
+        Edge(source=keys[row.from_skill_id], target=keys[row.to_skill_id], weight=row.weight)
+        for row in rows
+        # An edge can point outside this curriculum version only if two
+        # versions are loaded at once. Skipping is right: a plan built from
+        # one version must not be shaped by another's dependencies.
+        if row.from_skill_id in keys and row.to_skill_id in keys
+    ]
+    return dict(downstream_reach(edges, keys.values()))
+
+
+def _prerequisite_weakness(
+    node: SkillNode,
+    state: SkillState | None,
+    reach: dict[str, float],
+) -> float:
     """How much this skill is holding others back.
 
-    Approximated by difficulty and weakness: a low-level skill the learner is
-    weak at blocks more than an advanced one. The real prerequisite graph walk
-    arrives with the Milestone 6 engine; this is a documented stand-in.
+    Two things multiplied: how weak the learner is at it, and how much it
+    gates according to `curriculum/graph.yml`.
+
+    The second factor used to be `1 - difficulty`, on the assumption that a
+    lower-level skill blocks more. Within one domain that is nearly true;
+    across domains it is not, and the assumption was invisible in the plan
+    explanation. A2 vocabulary gates spoken and written production, and
+    through them interaction and mediation. A2 pronunciation gates almost
+    nothing, because the graph deliberately refuses to let intelligibility
+    block production. The old proxy scored the two identically.
+
+    A skill with no evidence scores zero, unchanged: "we have never looked"
+    is not the same claim as "this is weak", and the uncertainty component
+    already covers the first.
     """
     if state is None:
         return 0.0
     weakness = 1.0 - state.mastery_probability
-    foundational = 1.0 - node.difficulty
-    return max(0.0, min(1.0, weakness * foundational))
+    gates = reach.get(node.key, 0.0)
+    return max(0.0, min(1.0, weakness * gates))
 
 
 def domain_shares(session: Session, user_id: uuid.UUID, *, days: int = 7) -> dict[str, float]:

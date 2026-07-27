@@ -15,6 +15,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from apps.api.app.curriculum.content import parse_library
+from apps.api.app.curriculum.graph import parse_graph, prerequisite_edges
 from apps.api.app.curriculum.items import parse_item_bank
 from apps.api.app.curriculum.lexis import parse_lexis
 from apps.api.app.curriculum.listening import parse_listening
@@ -23,6 +24,7 @@ from apps.api.app.curriculum.speaking import parse_speaking_tasks
 from apps.api.app.curriculum.study import parse_study_units
 from apps.api.app.curriculum.tasks import parse_writing_tasks
 from apps.api.app.learning import taxonomy
+from apps.api.app.learning.skill_graph import downstream_reach
 
 
 def main(argv: list[str]) -> int:
@@ -39,6 +41,7 @@ def main(argv: list[str]) -> int:
         tasks = parse_writing_tasks(curriculum_dir, known_skill_keys=known)
         clips = parse_listening(curriculum_dir, known_skill_keys=known)
         spoken = parse_speaking_tasks(curriculum_dir, known_skill_keys=known)
+        graph = parse_graph(curriculum_dir, curriculum.objectives)
     except CurriculumError as exc:
         print("Curriculum validation failed:")
         for error in exc.errors:
@@ -55,6 +58,25 @@ def main(argv: list[str]) -> int:
     )
     for level, count in sorted(by_level.items()):
         print(f"  {level}: {count} objectives")
+
+    by_relation = Counter(edge.relation.value for edge in graph.edges)
+    by_origin = Counter(edge.origin for edge in graph.edges)
+    print(
+        f"Skill graph: {len(graph.edges)} authored edges "
+        f"({by_relation.get('prerequisite', 0)} prerequisite, "
+        f"{by_relation.get('supports', 0)} supporting)."
+    )
+    for origin, count in sorted(by_origin.items()):
+        print(f"  from {origin}: {count}")
+
+    # The five most load-bearing skills, printed every run. A change here is
+    # a change in what the planner will push learners towards, and it should
+    # be seen in a diff rather than discovered in a plan.
+    reach = downstream_reach(prerequisite_edges(graph), [o.key for o in curriculum.objectives])
+    ranked = sorted(reach.items(), key=lambda pair: (-pair[1], pair[0]))[:5]
+    print("  gates the most:")
+    for key, score in ranked:
+        print(f"    {score:.2f}  {key}")
 
     by_item_type = Counter(item.item_type.value for item in items)
     print(f"Item bank: {len(items)} items across {len({i.skill_key for i in items})} skills.")

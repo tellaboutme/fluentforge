@@ -18,7 +18,7 @@ from apps.api.app.curriculum import (
     parse_curriculum,
 )
 from apps.api.app.models.curriculum import CurriculumVersion, SkillEdge, SkillNode
-from apps.api.app.models.enums import CefrLevel, CurriculumStatus, SkillDomain
+from apps.api.app.models.enums import CefrLevel, CurriculumStatus, SkillDomain, SkillRelation
 from apps.api.tests.helpers import CURRICULUM_VERSION
 
 # --- Parser ----------------------------------------------------------------------
@@ -177,9 +177,17 @@ def test_draft_version_can_be_replaced(
     assert len(versions) == 1
 
 
-def test_prerequisite_edges_connect_adjacent_levels(
+def test_edges_are_loaded_from_the_authored_graph(
     db_session: Session, curriculum_dir: Path
 ) -> None:
+    """Edges used to be derived here — same domain, adjacent level, weight 1.0,
+    relation always `prerequisite`. They now come from `curriculum/graph.yml`,
+    so the two things that derivation could never produce must be present:
+    edges that cross a domain, and edges that do not block.
+
+    The graph's own invariants are tested in `test_skill_graph.py`. This test
+    is only about the loader honouring what it was given.
+    """
     load_curriculum(db_session, curriculum_dir)
     db_session.commit()
 
@@ -187,10 +195,19 @@ def test_prerequisite_edges_connect_adjacent_levels(
     edges = db_session.execute(select(SkillEdge)).scalars().all()
     assert edges
 
+    pairs = [(nodes[edge.from_skill_id], nodes[edge.to_skill_id]) for edge in edges]
+    assert any(source.domain is not target.domain for source, target in pairs)
+    assert {edge.relation for edge in edges} == {
+        SkillRelation.PREREQUISITE,
+        SkillRelation.SUPPORTS,
+    }
+    assert len({edge.weight for edge in edges}) > 1, "weights should vary by claim strength"
+
+    # A prerequisite still may not run downhill, whatever else the graph says.
     for edge in edges:
         source, target = nodes[edge.from_skill_id], nodes[edge.to_skill_id]
-        assert source.domain is target.domain
-        assert target.cefr_min.rank == source.cefr_min.rank + 1
+        if edge.relation is SkillRelation.PREREQUISITE:
+            assert source.cefr_min.rank <= target.cefr_min.rank
 
 
 def test_difficulty_increases_with_level(db_session: Session, curriculum_dir: Path) -> None:

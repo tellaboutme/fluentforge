@@ -202,13 +202,13 @@
           "skill_balance": 0.5,
           "transfer_check": 0.0,
           "uncertainty": 0.549811,
-          "weak_prerequisite": 0.326955
+          "weak_prerequisite": 0.134035
         },
         "domain": "written_production",
         "estimated_minutes": 8,
         "explanation": "Right at the edge of what you can already do.",
         "kind": "output",
-        "priority": 1.52108,
+        "priority": 1.328161,
         "reason_codes": [
           "EXPECTED_GAIN",
           "UNCERTAINTY",
@@ -253,7 +253,7 @@
     "unmet_constraints": []
   },
   "profile": {
-    "curriculum_version": "0.5.0",
+    "curriculum_version": "0.6.0",
     "daily_minutes": 40,
     "display_name": "Fixture Learner",
     "domain_summaries": [
@@ -1062,7 +1062,7 @@
       "A short diagnostic cannot confirm a can-do statement. Skills stay marked 'needs evidence' until you have shown them across several different tasks.",
       "Your starting level decides which content you see first. It is not a score."
     ],
-    "curriculum_version": "0.5.0",
+    "curriculum_version": "0.6.0",
     "items_answered": 2,
     "model_version": "0.1.0",
     "outcomes": [
