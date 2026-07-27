@@ -65,3 +65,48 @@ make e2e
 ```
 
 Do not declare completion if a required command is failing. If infrastructure prevents a command from running, document the exact blocker and run the strongest available substitute.
+
+## Verification runner (how Claude runs tests from the sandbox)
+
+Claude's sandbox cannot reach PyPI or npm, so it cannot run pytest, vitest,
+mypy, tsc, or git push itself. The user starts a runner on their machine:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\runner.ps1
+```
+
+The shared folder is the channel. Protocol, from Claude's side:
+
+1. Write the task to `.runner/request.txt` — either a named shortcut
+   (`check`, `check-fast`, `test-python`, `test-web`, `lint`, `typecheck`,
+   `curriculum`, `fixtures`, `format`, `build-web`, `e2e`, `migrate`, `seed`,
+   `status`, `diff`, `commit`, `push`) or `exec: <powershell command>`.
+2. Poll `.runner/status.txt` until it is not `running`
+   (`PASSED|task|exit|seconds` or `FAILED (exit N)|task|exit|seconds`).
+3. Read the full output from `.runner/output.txt`.
+
+Hard-won details, do not relearn them:
+
+- **Quoting does not survive `exec:`.** PowerShell's `-Command` strips inner
+  quotes, so a commit message or anything with braces mangles. For anything
+  non-trivial, write a script to `.runner/task.ps1` and request
+  `exec: powershell -ExecutionPolicy Bypass -File .runner\task.ps1`.
+  For commit messages, write `.runner/commitmsg.txt` and use
+  `git commit -F .runner/commitmsg.txt`.
+- **Sandbox git leaves stale locks.** Committing from the sandbox works but
+  cannot unlink `.git/*.lock`; clear them from the Windows side first:
+  `Get-ChildItem .git -Filter *.lock -Recurse -Force | Remove-Item -Force`.
+  Better: do all git operations through the runner, not the sandbox.
+- **Status/output files carry a UTF-8 BOM and CRLF.** Strip with
+  `tr -d '\r\357\273\277'` when reading from bash.
+- If `.runner/status.txt` does not exist or never leaves `idle`, the runner
+  is not started — ask the user to start it rather than silently skipping
+  verification.
+- GitHub CI state is readable without credentials (public repo):
+  `https://api.github.com/repos/tellaboutme/fluentforge/actions/runs`.
+  From the runner, `Invoke-RestMethod` works; `.runner/task.ps1` has an
+  example that prints per-job conclusions.
+
+Verification policy: run `check` through the runner after every slice, fix
+what it finds, then commit and push through the runner. Do not declare a
+slice complete on sandbox-only verification.

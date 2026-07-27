@@ -51,11 +51,16 @@ defaults. Tests run in parallel.
 ### Curriculum 0.5.0
 
 55 objectives across A1–C2 with 45 prerequisite edges; a 36-item diagnostic
-bank; a 14-entry phrase-first lexical bank (34 review cards); a 4-text reading
-library with 11 comprehension questions; 8 study units with 36 practice items;
-7 written output tasks across 6 genres; and **5 listening clips with 15
-comprehension questions**. All content-hashed and immutable once published,
-all validated by `make test-curriculum`.
+bank (23 items tagged with the linguistic feature they exercise); a 14-entry
+phrase-first lexical bank (34 review cards); a 5-text reading library reaching
+C1; **12 study units with 52 practice items spanning A1–C2**; 9 written output
+tasks across 8 genres reaching C2; and 5 listening clips. All content-hashed
+and immutable once published, all validated by `make test-curriculum`.
+
+The C1/C2 material teaches what actually distinguishes those levels —
+information flow, hedging and stance, register shifting, irony and
+understatement — rather than harder vocabulary quizzes, which is the trap
+`docs/ROADMAP.md` Milestone 7 warns against.
 
 ### Diagnostic, mastery, and writing (Milestone 1)
 
@@ -166,9 +171,9 @@ A due card never ships its own answer.
 3. **Writing accuracy is never judged.**
 4. **The Playwright suite has never actually run.** Its browser download is
    blocked in the sandbox this work was done in.
-5. **Content banks are thin above B2.** C1 has no study units, writing tasks,
-   or clips; C2 has no coverage at all. 18 of 36 features have no study unit,
-   which `make test-curriculum` reports explicitly.
+5. **Listening still stops at B2**, and 16 of 36 features have no study
+   unit, which `make test-curriculum` reports explicitly. Study, writing and
+   reading now reach C1/C2; clips do not yet.
 6. **Hints, replays, and transcript use are self-reported by the client.** A
    dishonest or buggy client can overstate independence. The blast radius is
    one mis-weighted observation, except for `used_transcript`, where the
@@ -181,12 +186,9 @@ A due card never ships its own answer.
 
 ## Next three tasks
 
-1. **Implement a rubric evaluator** behind the existing provider contract, so
-   writing accuracy is judged rather than merely flagged as unjudged.
-   Milestone 4, and the largest remaining honesty gap in the product.
-2. **Move the diagnostic onto the feature taxonomy**, so a mistake made during
-   assessment is as actionable as one made during study. The taxonomy and the
-   remedy lookup already exist; only `services/diagnostics.py` still writes
-   legacy codes.
-3. **Deepen the content banks at C1 and C2**, where the curriculum currently
-   promises levels it has nothing to teach at.
+1. **Implement a concrete rubric provider** (`local` or `cloud`) behind the
+   now-wired evaluator contract, so writing accuracy is actually judged. The
+   wiring, capping, and UI all exist and are tested against a fake.
+2. **Add C1/C2 listening clips**, the one bank still stopping at B2.
+3. **Cover more features with study units** — 16 of 36 still have no unit, so
+   errors logged against them schedule practice but offer no remedy.

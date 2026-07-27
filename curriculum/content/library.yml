@@ -170,3 +170,64 @@ texts:
           - "The employee is promoted."
           - "Nobody notices either way."
         answer: "There is social pressure, even without a formal rule."
+
+  - key: text.c1.review_extract
+    level: C1
+    skill: reading.demanding_implicit
+    title: "From a restaurant review"
+    minutes: 8
+    body: |
+      The dining room has been redecorated at evident expense, and the menu
+      now arrives in a leather folder heavy enough to require both hands.
+      One is clearly meant to be impressed before eating anything.
+
+      To be fair, the kitchen has ambitions of its own. The scallops were
+      precisely cooked, the bread is baked on site, and someone back there
+      plainly understands seasoning. Whether that someone was consulted
+      about the menu's prose -- each dish gets a paragraph of biography --
+      is another question.
+
+      Service was attentive to the point of surveillance. Our waiter
+      introduced himself twice, possibly in case we had forgotten him in
+      the interval, and the wine was topped up with such vigilance that I
+      never learned what my glass looked like empty.
+
+      I will go back. Not, perhaps, for the reasons the owners hope.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the reviewer's overall judgement?"
+        options:
+          - "Good cooking, wrapped in pretension the reviewer finds funny."
+          - "A poor kitchen rescued by excellent service."
+          - "An excellent restaurant in every respect."
+          - "A place to avoid entirely."
+        answer: "Good cooking, wrapped in pretension the reviewer finds funny."
+      - key: detail
+        type: detail
+        prompt: "What does the reviewer praise without irony?"
+        options:
+          - "The cooking of the scallops."
+          - "The menu's descriptions."
+          - "The waiter's introductions."
+          - "The leather menu folder."
+        answer: "The cooking of the scallops."
+      - key: inference
+        type: inference
+        prompt: "'Attentive to the point of surveillance' suggests the service was"
+        options:
+          - "Intrusive, described with deliberate exaggeration."
+          - "Efficient and unobtrusive."
+          - "Neglectful between courses."
+          - "Formally trained and discreet."
+        answer: "Intrusive, described with deliberate exaggeration."
+      - key: inference2
+        type: inference
+        prompt: "The closing line implies the reviewer will return because"
+        options:
+          - "The food is good and the pretension is entertaining."
+          - "The owners have promised improvements."
+          - "The prices are expected to fall."
+          - "The review was commissioned by the owners."
+        answer: "The food is good and the pretension is entertaining."
+

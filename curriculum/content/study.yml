@@ -544,3 +544,277 @@ units:
         note: >
           'I would not be so sure' disagrees without contradicting the person
           directly. 'You are wrong' closes the conversation.
+
+  # --- C1 -----------------------------------------------------------------
+  - key: study.c1.information_flow
+    level: C1
+    skill: grammar.flexible_complexity
+    title: "Putting the news at the end"
+    minutes: 10
+    explanation: |
+      At C1 accuracy is assumed; what distinguishes writing is control of
+      information flow. English sentences tend to move from known to new: the
+      start of a sentence anchors it in what the reader already has, and the
+      end carries the news. Grammar gives you tools to arrange that.
+
+      Fronting moves an element forward for contrast: "This point, nobody
+      disputes." Clefts pick one element out and make everything else
+      background: "It was the cost that killed the project" answers a
+      different question than "The cost killed the project."
+
+      The passive is often taught as a formality marker, but its real use is
+      flow: "The proposal was rejected by the board" keeps 'the proposal' as
+      the anchor when the previous sentence was about the proposal.
+
+      None of these forms is better in isolation. Each is an answer to the
+      question: what does the reader hold right now, and what am I adding?
+    examples:
+      - "It was the cost, not the schedule, that killed the project."
+      - "What worries me most is the maintenance burden."
+      - "The proposal was rejected -- and rejected unanimously."
+      - "This much, at least, nobody disputes."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.word_order.statement
+        prompt: "The previous sentence was about the report. Best continuation: ___"
+        options:
+          - "The report was praised by both reviewers."
+          - "Both reviewers praised the report."
+          - "There was praise for the report from both reviewers."
+          - "Praising the report were both reviewers."
+        answer: "The report was praised by both reviewers."
+        note: >
+          Known-to-new: the reader is holding 'the report', so it anchors the
+          sentence and the news -- the praise -- lands at the end. This is the
+          passive doing its real job.
+      - key: i2
+        type: gap_fill
+        feature: grammar.clause.subordination
+        prompt: "___ was the delay that annoyed them, not the cost. (cleft with 'it')"
+        answer: "it"
+        note: >
+          The it-cleft "It was X that..." picks one element out as the answer
+          to an implied question and backgrounds the rest.
+      - key: i3
+        type: choice
+        feature: grammar.word_order.statement
+        prompt: "To emphasise the object: '___'"
+        options:
+          - "This argument I find unconvincing."
+          - "I find this argument unconvincing."
+          - "Unconvincing is what I find this argument."
+          - "I this argument find unconvincing."
+        answer: "This argument I find unconvincing."
+        note: >
+          Fronting the object marks contrast: this argument, as opposed to the
+          others. The neutral order states; the fronted order positions.
+      - key: i4
+        type: choice
+        feature: grammar.clause.relative
+        prompt: "Most natural: 'The committee raised two objections, ___ was answered.'"
+        options:
+          - "neither of which"
+          - "which neither"
+          - "that neither"
+          - "neither that"
+        answer: "neither of which"
+        note: >
+          Quantifier + 'of which' carries a whole clause of information in
+          four words -- a C1 pattern for dense, controlled sentences.
+
+  - key: study.c1.hedging_and_stance
+    level: C1
+    skill: pragmatics.nuance
+    title: "Saying how far you will go"
+    minutes: 9
+    explanation: |
+      Advanced English marks *stance*: how confident you are, how much you
+      are conceding, and how much room you leave the other person. Getting
+      this wrong does not make you hard to understand -- it makes you sound
+      more certain, more dismissive, or more committed than you meant to be.
+
+      Hedges soften a claim without withdrawing it: "arguably", "to some
+      extent", "it would seem". Boosters do the opposite: "clearly",
+      "undoubtedly". A concession clause gives ground on purpose: "While the
+      data is thin, the trend is consistent" -- and the main clause is where
+      you actually stand.
+
+      The order matters. Concede first, then assert: putting the concession
+      after the claim reads as backing down rather than as balance.
+    examples:
+      - "While the sample is small, the effect is consistent."
+      - "This is, arguably, the weakest part of the proposal."
+      - "It would seem that the figures were never checked."
+      - "That may be so. The deadline, however, has not moved."
+    items:
+      - key: i1
+        type: choice
+        feature: discourse.cohesion.connective
+        prompt: "Concede then assert: '___ the sample is small, the trend is consistent.'"
+        options: ["While", "Because", "Unless", "So that"]
+        answer: "While"
+        note: >
+          'While' opens a concession: you grant the weakness and then stand
+          your ground in the main clause.
+      - key: i2
+        type: gap_fill
+        feature: grammar.modality.obligation
+        prompt: "Distancing yourself from a claim: 'It ___ seem that the figures were never checked.'"
+        answer: "would"
+        accept: ["would", "'d"]
+        note: >
+          'It would seem' reports an impression while declining to fully own
+          it -- the writer leaves room to be wrong.
+      - key: i3
+        type: choice
+        feature: pragmatics.politeness.directness
+        prompt: "Firm but not aggressive: 'That may be so. The deadline, ___, has not moved.'"
+        options: ["however", "therefore", "moreover", "instead"]
+        answer: "however"
+        note: >
+          Granting the point first ('that may be so') costs nothing and buys
+          the contrast that follows its full force.
+      - key: i4
+        type: choice
+        feature: lexis.precision.approximation
+        prompt: "Softening without withdrawing: 'This is ___ the weakest part of the proposal.'"
+        options: ["arguably", "definitely", "completely", "absolutely"]
+        answer: "arguably"
+        note: >
+          'Arguably' claims the position while conceding that someone could
+          argue back. The other options close that door.
+
+  # --- C2 -----------------------------------------------------------------
+  - key: study.c2.register_shifting
+    level: C2
+    skill: vocabulary.fine_shades
+    title: "The same fact, four temperatures"
+    minutes: 10
+    explanation: |
+      At C2 the question is no longer whether a word is correct but what it
+      does to the room. English keeps near-synonyms at different temperatures
+      -- Anglo-Saxon words run warm and direct, Latinate words run cool and
+      institutional -- and shifting between them is a stylistic instrument.
+
+      "The plan died" and "the initiative was discontinued" report the same
+      fact. The first belongs in an honest retrospective, the second in a
+      shareholder letter, and swapping them changes the writer, not the fact.
+
+      Fine shades also separate words that dictionaries call synonyms:
+      'childish' condemns what 'childlike' admires; 'economical with the
+      truth' is an accusation wearing a suit. A C2 writer chooses these on
+      purpose, and hears when someone else has.
+    examples:
+      - "The plan died. / The initiative was discontinued."
+      - "Her childlike curiosity -- not childish, childlike."
+      - "He was, let us say, economical with the truth."
+      - "We let people go. We do not 'right-size the organisation'."
+    items:
+      - key: i1
+        type: choice
+        feature: lexis.confusable.pair
+        prompt: "Admiring her openness and wonder: 'her ___ curiosity'"
+        options: ["childlike", "childish", "infantile", "juvenile"]
+        answer: "childlike"
+        note: >
+          'Childlike' keeps the good qualities of childhood; the other three
+          are all, in different registers, insults.
+      - key: i2
+        type: choice
+        feature: pragmatics.register.formality
+        prompt: "In a candid internal retrospective: 'The plan ___.'"
+        options: ["died", "was discontinued", "underwent termination", "was sunsetted"]
+        answer: "died"
+        note: >
+          Candour calls for the warm, direct register. The Latinate options
+          are for documents that want distance from the fact.
+      - key: i3
+        type: choice
+        feature: lexis.precision.approximation
+        prompt: "An accusation phrased with deniability: 'He was ___ with the truth.'"
+        options: ["economical", "generous", "careless", "flexible"]
+        answer: "economical"
+        note: >
+          'Economical with the truth' is a fixed ironic phrase: it accuses
+          someone of lying while formally saying only that they said little.
+      - key: i4
+        type: gap_fill
+        feature: lexis.word_form.derivation
+        prompt: "Cooling the register: 'we fired him' becomes 'his employment was ___ (terminate).'"
+        answer: "terminated"
+        note: >
+          Nominalisation and the passive together remove the actor and the
+          heat. Knowing how to do this -- and when not to -- is one skill.
+
+  - key: study.c2.irony_and_understatement
+    level: C2
+    skill: pragmatics.mastery
+    title: "Meaning more by saying less"
+    minutes: 9
+    explanation: |
+      English, especially British English, does heavy work with
+      understatement. "Not ideal" can mean catastrophic; "quite good" can be
+      faint praise or real praise depending on stress; "with respect" often
+      opens an attack. A C2 user reads these correctly and deploys them
+      knowing they will be read.
+
+      The mechanism is a gap between the scale of the words and the scale of
+      the facts, which the listener is trusted to notice. That trust is the
+      point: understatement is a compliment to the audience.
+
+      The risk is real: used on someone who takes words at face value, "not
+      ideal" simply misinforms. Register judgement includes knowing when
+      plain speech is the only honest option.
+    examples:
+      - "The server room flooded. This is not ideal."
+      - "With respect, that is not what the contract says."
+      - "I have one or two concerns. (Meaning: a great many.)"
+      - "That went about as well as expected. (Meaning: badly.)"
+    items:
+      - key: i1
+        type: choice
+        feature: lexis.precision.approximation
+        prompt: "The building burned down. A colleague says the situation is '___'. Understatement:"
+        options: ["not ideal", "catastrophic", "unprecedented", "actionable"]
+        answer: "not ideal"
+        note: >
+          The gap between 'not ideal' and a burned-down building is the
+          message. The listener is trusted to measure it.
+      - key: i2
+        type: choice
+        feature: pragmatics.politeness.directness
+        prompt: "'___, that is not what the contract says' -- softening a direct challenge:"
+        options: ["With respect", "Obviously", "As everyone knows", "Wrong --"]
+        answer: "With respect"
+        note: >
+          'With respect' concedes status while withdrawing agreement. It is
+          famously the polite form of a sharp disagreement.
+      - key: i3
+        type: choice
+        feature: discourse.reference.given_new
+        prompt: "'I have one or two concerns' about a disastrous draft most likely signals ___"
+        options:
+          - "Many serious concerns, stated with irony."
+          - "Exactly one or two minor concerns."
+          - "No concerns worth discussing."
+          - "That the speaker has not read it."
+        answer: "Many serious concerns, stated with irony."
+        note: >
+          The formula 'one or two' plus a visibly bad referent flips the
+          literal count. Reading that flip is a C2 listening skill as much as
+          a speaking one.
+      - key: i4
+        type: choice
+        feature: pragmatics.register.formality
+        prompt: "When understatement would misinform -- a safety briefing -- the right register is ___"
+        options:
+          - "Plain and literal."
+          - "Ironic but gentle."
+          - "Formal and nominalised."
+          - "Warm and idiomatic."
+        answer: "Plain and literal."
+        note: >
+          Judgement includes knowing when the instrument must stay in the
+          case. Safety-critical speech takes no trust-me gaps.
+

@@ -217,3 +217,73 @@ tasks:
       - grammar.comparison.form
       - lexis.collocation.verb_noun
       - pragmatics.register.formality
+
+  # --- C1 -----------------------------------------------------------------
+  - key: write.c1.position_paper
+    level: C1
+    skill: writing.well_structured_complex
+    title: "A recommendation your reader does not want"
+    genre: proposal
+    minutes: 25
+    prompt: |
+      You are advising a small organisation that has asked whether to rebuild
+      its ageing booking system in-house or buy an off-the-shelf product. You
+      know the director strongly favours rebuilding; you have concluded the
+      opposite.
+
+      Write the recommendation. Acknowledge the appeal of rebuilding and the
+      real costs of your own option, state your recommendation unambiguously,
+      and support it so that a sceptical reader can follow every step. End
+      with what you would do first.
+    guidance:
+      - "Concede before you assert -- give the rebuild case its full strength first."
+      - "Hedge claims you cannot prove; commit plainly to the recommendation itself."
+      - "Control information flow: each paragraph should open from known ground."
+      - "Keep the register professional without going cold -- you are advising, not announcing."
+    min_words: 220
+    max_words: 400
+    min_sentences: 12
+    min_connectives: 6
+    required_elements: ["recommend"]
+    target_features:
+      - discourse.organisation.paragraphing
+      - grammar.clause.subordination
+      - grammar.modality.obligation
+      - pragmatics.politeness.directness
+      - lexis.precision.approximation
+
+  # --- C2 -----------------------------------------------------------------
+  - key: write.c2.two_registers
+    level: C2
+    skill: writing.rhetorical_mastery
+    title: "The same news, told twice"
+    genre: report
+    minutes: 25
+    prompt: |
+      A product your team spent a year on is being cancelled.
+
+      Write the announcement twice. First, an internal note to the team who
+      built it: honest, warm, and plain about what was learned and lost.
+      Second, three or four sentences for the public changelog: factual,
+      composed, and giving nothing away that was not decided.
+
+      Label the two parts "To the team" and "Changelog". The reader of this
+      task is judging one thing: whether the two registers are genuinely
+      different instruments in your hands, and both under control.
+    guidance:
+      - "Let the internal note run warm: direct verbs, first person, the fact stated plainly."
+      - "Let the changelog run cool: measured, impersonal, no visible emotion."
+      - "The facts must agree exactly across both. Register is tone, not content."
+      - "No corporate euphemism in either -- 'sunsetted' is banned in both registers."
+    min_words: 180
+    max_words: 380
+    min_sentences: 10
+    min_connectives: 4
+    required_elements: ["to the team", "changelog"]
+    target_features:
+      - pragmatics.register.formality
+      - lexis.precision.approximation
+      - lexis.word_form.derivation
+      - discourse.organisation.paragraphing
+      - grammar.passive.form
+
