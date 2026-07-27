@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **672 Python tests**; eslint, tsc, and **260 web
+curriculum validation, **694 Python tests**; eslint, tsc, and **273 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -368,6 +368,28 @@ The strongest evidence the system can hold was a category with no producer.
   hardest. It is placed before the session template runs, because it should
   not have to out-score a reading task to appear.
 
+### Reflection (new)
+
+The last plan kind with nothing behind it. Every session template has
+reserved four minutes for it since Milestone 1, and the slot rendered
+unlinked the whole time.
+
+- **The material is what the system actually noticed**: the errors that
+  recurred, what has gone stale, the learner's previous note. A generic
+  question produces nothing worth reading, and a learner asked it twice
+  stops answering. Someone with no history gets empty lists, not invented
+  material.
+- **It reports how much of their own work went unjudged.** That is the
+  product's blind spot, and reflecting on your progress should not mean
+  reading silence as approval.
+- **Nothing is scored and no evidence is recorded.** A stated intention is
+  not a demonstrated skill. The API says `scored: false` out loud, because a
+  client has no other way to know.
+- **No minimum length.** Refusing an empty reflection would make the learner
+  perform one.
+- Writing the tests found a real defect: two reflections in one sitting
+  collided on the attempt uniqueness constraint and crashed.
+
 ### Accessibility gate (new)
 
 - **axe runs in the browser suite** against sign-in, register and the
@@ -404,8 +426,6 @@ The strongest evidence the system can hold was a category with no producer.
   companions in `docs/API_CONTRACTS.md` remain unimplemented — and until that
   exists, `pronunciation.segment.contrast` and `pronunciation.stress.word`
   have no honest route to evidence.
-- **`reflect:` plan items**, the last kind with nothing behind them. They
-  render unlinked rather than pointing somewhere wrong.
 - **A judged deployment.** All three provider modes now exist, and the
   default is still `disabled`, so writing and mediation stay provisional out
   of the box and every test runs against the no-AI path. Nothing here has

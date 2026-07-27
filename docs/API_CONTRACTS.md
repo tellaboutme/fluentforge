@@ -278,6 +278,40 @@ provisional until a rubric judges them, so including them would mean either
 claiming certainty the checks cannot support or recording a benchmark that
 is not one. Productive benchmarking waits for a judged deployment.
 
+### Reflection
+
+- `GET /reflection` — **implemented**. What the system has actually noticed.
+- `POST /reflection` — **implemented**. Stores a note.
+
+The only endpoint pair where a learner sends prose and **nothing judges it**.
+That is stated on the wire — the response carries `scored: false` and
+`evidence_recorded: false` — because a client has no other way to know, and a
+screen implying otherwise would teach the learner to write reflections that
+pass checks.
+
+`GET` returns material rather than a question: at most three recurring errors
+(each with a rendered `label`, never just the code, and `blocks_meaning` so
+the client can order them), the skills nothing has observed lately, a count of
+the learner's own work that stayed provisional, and their previous note. A
+prompt built from nothing would have to invent something, so a learner with no
+history gets empty lists and the client says so.
+
+`unjudged_count` is the product admitting its own blind spot. Someone
+reflecting on their progress should not read silence as approval.
+
+`POST` has no minimum length. "Nothing new this week" is a legitimate
+reflection and sometimes the true one; refusing it would make the learner
+perform reflection rather than do it.
+
+**No evidence is recorded, of any kind.** A learner who writes "I need to work
+on the past simple" has not demonstrated the past simple, and counting the
+sentence would record an intention as an achievement. The attempt is stored
+because it is the learner's own history, and it touches no skill state.
+
+Reflection has no `activity_key` and is not served by the activity endpoints:
+its content is whatever the system noticed about this learner, so there is
+nothing a client could name.
+
 ### Reviews
 
 - `GET /reviews/due` — **implemented**. Capped; `due_now` reports the true total.

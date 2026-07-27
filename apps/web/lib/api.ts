@@ -828,3 +828,46 @@ export async function completeBenchmark(
     token,
   });
 }
+
+// --- Reflection ------------------------------------------------------------
+
+export interface RecurringError {
+  code: string;
+  /** Rendered, never the raw code. */
+  label: string;
+  description: string;
+  occurrences: number;
+  blocksMeaning: boolean;
+}
+
+export interface ReflectionPrompt {
+  recurringErrors: RecurringError[];
+  untouchedSkills: string[];
+  /** How much of the learner's own work nothing has judged. */
+  unjudgedCount: number;
+  previousNote: string | null;
+}
+
+export interface ReflectionSaved {
+  saved: boolean;
+  /** Always false. Nothing here was checked, corrected, or counted. */
+  scored: boolean;
+  evidenceRecorded: boolean;
+}
+
+export async function fetchReflectionPrompt(
+  token: string,
+): Promise<ReflectionPrompt> {
+  return request<ReflectionPrompt>("/api/v1/reflection", { token });
+}
+
+export async function saveReflection(
+  token: string,
+  note: string,
+): Promise<ReflectionSaved> {
+  return request<ReflectionSaved>("/api/v1/reflection", {
+    method: "POST",
+    token,
+    body: { note },
+  });
+}

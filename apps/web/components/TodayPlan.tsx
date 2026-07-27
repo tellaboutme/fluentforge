@@ -137,6 +137,9 @@ function openableHref(item: PlanItem): string | null {
   // A benchmark has its own screen rather than an activity key: the server
   // chooses its items, so there is nothing for the client to name.
   if (item.kind === "benchmark") return "/benchmark";
+  // Reflection likewise. Its content is whatever the system has noticed
+  // about this learner, so there is no key that could identify it.
+  if (item.kind === "reflection") return "/reflect";
   return null;
 }
 
