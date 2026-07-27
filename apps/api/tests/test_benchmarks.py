@@ -542,3 +542,82 @@ def _prepared_learner(session: Session, *, correct: bool = False) -> uuid.UUID:
     recompute_all_skill_states(session, user_id=user.id)
     session.commit()
     return user.id
+
+
+# --- In the daily plan ------------------------------------------------------
+
+
+def test_a_due_benchmark_appears_in_the_plan(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    """Not just on the dashboard. A benchmark that arrived on top of a full
+    plan would break the plan's promise about session length on the one day
+    the learner is asked to concentrate hardest."""
+    from apps.api.app.services.plans import generate_plan
+
+    user_id = _prepared_learner(db_session)
+    plan = generate_plan(db_session, user_id)
+    db_session.commit()
+
+    kinds = [item.priority_components["kind"] for item in plan.items]
+    assert "benchmark" in kinds
+
+
+def test_the_benchmark_is_first_in_the_day(loaded_curriculum: Session, db_session: Session) -> None:
+    """Taking it after half an hour of practice would measure the practice as
+    much as the learner."""
+    from apps.api.app.services.plans import generate_plan
+
+    user_id = _prepared_learner(db_session)
+    plan = generate_plan(db_session, user_id)
+    db_session.commit()
+
+    ordered = sorted(plan.items, key=lambda item: item.sequence)
+    assert ordered[0].priority_components["kind"] == "benchmark"
+
+
+def test_the_benchmark_takes_its_time_from_the_budget(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    """The plan promises a session of a stated length. A benchmark added on
+    top would quietly break that promise."""
+    from apps.api.app.services.plans import generate_plan
+
+    user_id = _prepared_learner(db_session)
+    plan = generate_plan(db_session, user_id)
+    db_session.commit()
+
+    total = sum(item.estimated_minutes for item in plan.items)
+    assert total <= plan.requested_minutes
+
+
+def test_no_benchmark_in_the_plan_when_none_is_due(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    from apps.api.app.models.identity import LearnerProfile, User
+    from apps.api.app.services.plans import generate_plan
+
+    user = User(email=f"plain-{uuid.uuid4().hex[:8]}@example.com", password_hash="x")
+    user.profile = LearnerProfile(display_name="Plain")
+    db_session.add(user)
+    db_session.commit()
+
+    plan = generate_plan(db_session, user.id)
+    db_session.commit()
+
+    kinds = [item.priority_components["kind"] for item in plan.items]
+    assert "benchmark" not in kinds
+
+
+def test_the_plan_item_points_at_the_benchmark_screen(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    """A plan item a learner cannot start is worse than no plan item."""
+    from apps.api.app.services.plans import generate_plan
+
+    user_id = _prepared_learner(db_session)
+    plan = generate_plan(db_session, user_id)
+    db_session.commit()
+
+    item = next(item for item in plan.items if item.priority_components["kind"] == "benchmark")
+    assert item.activity_key.startswith("benchmark:")

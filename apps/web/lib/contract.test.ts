@@ -200,6 +200,7 @@ describe("daily plan contract", () => {
   it("only uses activity kinds the UI has wording for", () => {
     const known = [
       "review",
+      "benchmark",
       "input",
       "study",
       "output",

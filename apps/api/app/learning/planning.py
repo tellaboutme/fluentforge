@@ -37,6 +37,9 @@ class ActivityKind:
     """What a learner actually does. Drives the receptive/productive balance."""
 
     REVIEW = "review"
+    #: The one measurement. Not practice, and not in any session template:
+    #: see `build_plan` for why it is placed before the template runs.
+    BENCHMARK = "benchmark"
     INPUT = "input"
     STUDY = "study"
     OUTPUT = "output"
@@ -49,7 +52,14 @@ RECEPTIVE_KINDS = frozenset({ActivityKind.REVIEW, ActivityKind.INPUT, ActivityKi
 PRODUCTIVE_KINDS = frozenset({ActivityKind.OUTPUT, ActivityKind.SPEAKING})
 
 #: Kinds that demand sustained effort. No more than two may run consecutively.
-HEAVY_KINDS = frozenset({ActivityKind.OUTPUT, ActivityKind.SPEAKING, ActivityKind.INPUT})
+HEAVY_KINDS = frozenset(
+    {
+        ActivityKind.OUTPUT,
+        ActivityKind.SPEAKING,
+        ActivityKind.INPUT,
+        ActivityKind.BENCHMARK,
+    }
+)
 
 MAX_CONSECUTIVE_HEAVY = 2
 
@@ -365,6 +375,24 @@ def build_plan(
     chosen: list[tuple[ScoredCandidate, str]] = []
     minutes_used = 0
 
+    # A due benchmark is placed before the template runs, and its minutes come
+    # out of the same budget. It is not practice, so there is no slot it
+    # belongs in, and it must not have to out-score a reading task to appear:
+    # the point of a benchmark is that it happens on the day it is due.
+    #
+    # Taking the time from the budget rather than adding to it is what makes
+    # this honest. The plan promises a session of a stated length, and a
+    # benchmark that arrived on top of a full plan would quietly break that
+    # promise on the one day the learner is asked to concentrate hardest.
+    benchmark = next(
+        (item for item in remaining if item.candidate.kind == ActivityKind.BENCHMARK),
+        None,
+    )
+    if benchmark is not None and benchmark.candidate.estimated_minutes <= requested_minutes:
+        chosen.append((benchmark, ActivityKind.BENCHMARK))
+        remaining.remove(benchmark)
+        minutes_used += benchmark.candidate.estimated_minutes
+
     for slot in template.slots:
         best = _best_for_slot(remaining, slot)
         if best is None:
@@ -393,6 +421,11 @@ def build_plan(
             unmet.append("no receptive activity was available")
 
     ordered = _order_for_fatigue([item for item, _ in chosen], [slot for _, slot in chosen])
+
+    # The benchmark goes first whatever the fatigue ordering preferred. It is
+    # the only unaided measurement in the day, and taking it after half an
+    # hour of practice would measure the practice as much as the learner.
+    ordered.sort(key=lambda pair: pair[1] != ActivityKind.BENCHMARK)
 
     items = tuple(
         PlannedItem(scored=scored_candidate, sequence=index, slot=slot)

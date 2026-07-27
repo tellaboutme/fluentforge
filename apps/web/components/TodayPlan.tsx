@@ -134,6 +134,9 @@ function openableHref(item: PlanItem): string | null {
     return `/activity/${encodeURIComponent(item.activityKey)}`;
   }
   if (item.kind === "review") return "/review";
+  // A benchmark has its own screen rather than an activity key: the server
+  // chooses its items, so there is nothing for the client to name.
+  if (item.kind === "benchmark") return "/benchmark";
   return null;
 }
 

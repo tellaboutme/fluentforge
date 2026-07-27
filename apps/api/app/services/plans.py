@@ -38,12 +38,15 @@ from ..models.enums import PlanStatus, SkillDomain, SkillRelation
 from ..models.identity import LearnerProfile
 from ..models.learning import ErrorPattern, SkillState
 from ..models.planning import Plan, PlanItem, ReviewQueueItem
-from . import activities
+from . import activities, benchmarks
 
 #: How long each kind of activity is assumed to take. Replaced by real
 #: activity durations when the `activities` table lands in Milestone 3.
 NOMINAL_MINUTES = {
     ActivityKind.REVIEW: 8,
+    # Eight closed items, unaided. Short by design: a long benchmark measures
+    # stamina alongside everything else.
+    ActivityKind.BENCHMARK: 10,
     ActivityKind.INPUT: 10,
     ActivityKind.STUDY: 8,
     ActivityKind.OUTPUT: 10,
@@ -199,6 +202,29 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
     reach = _gating_power(session, nodes)
 
     candidates: list[Candidate] = []
+
+    # 0. A benchmark, when one is due. First in the list and first in the day:
+    # it is the only unaided measurement, and taking it after half an hour of
+    # practice would measure the practice as much as the learner.
+    if benchmarks.check_eligibility(session, user_id).due:
+        candidates.append(
+            Candidate(
+                activity_key="benchmark:due",
+                activity_type="benchmark",
+                kind=ActivityKind.BENCHMARK,
+                skill_key="benchmark",
+                domain=SkillDomain.LEARNING_STRATEGIES,
+                estimated_minutes=NOMINAL_MINUTES[ActivityKind.BENCHMARK],
+                title="Benchmark: what you can do unaided",
+                # As urgent as a fully overdue review. A benchmark that waited
+                # for a quiet day would never happen.
+                due_pressure=1.0,
+                is_openable=True,
+                # Not a competency. It measures many at once, so scoring it as
+                # though it were one would be wrong in both directions.
+                targets_a_skill=False,
+            )
+        )
 
     # 1. Due reviews — the most time-sensitive item a plan can carry.
     for review in session.execute(

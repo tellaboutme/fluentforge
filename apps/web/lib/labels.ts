@@ -78,6 +78,7 @@ export function domainLabel(domain: string): string {
 /** What kind of work a plan item is, in words a learner recognises. */
 export const KIND_LABELS: Record<string, string> = {
   review: "Review",
+  benchmark: "Benchmark",
   input: "Read or listen",
   study: "Focused practice",
   output: "Write",

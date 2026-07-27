@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **667 Python tests**; eslint, tsc, and **260 web
+curriculum validation, **672 Python tests**; eslint, tsc, and **260 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -359,6 +359,12 @@ The strongest evidence the system can hold was a category with no producer.
 - The dashboard shows the invitation **only when one is due**. A permanent
   button would let a learner take one whenever they felt ready, which is the
   single thing the feature is arranged to avoid.
+- **A due benchmark goes into the daily plan, first, and takes its minutes
+  out of the budget** rather than being added on top. The plan promises a
+  session of a stated length, and a benchmark arriving on top of a full plan
+  would break that promise on the day the learner is asked to concentrate
+  hardest. It is placed before the session template runs, because it should
+  not have to out-score a reading task to appear.
 
 ### Accessibility gate (new)
 
@@ -459,15 +465,14 @@ The strongest evidence the system can hold was a category with no producer.
 
 ## Next three tasks
 
-1. **Put a due benchmark in the daily plan.** The screen and the dashboard
-   invitation exist, but the planner has no benchmark slot, so a benchmark
-   competes with nothing and is scheduled by nothing. It should displace
-   practice on the day it is due rather than sitting beside it.
-2. **Run a provider against a real model.** Both `cloud` and `local` are
-   built and tested against stub transports, which proves they handle every
-   way the outside world can misbehave and proves nothing about whether a
-   real model produces judgements worth having. The abstention rate on a
-   small local model is the number to look at first.
+1. **Run a rubric provider against a real model.** Both `cloud` and `local`
+   are tested against stub transports, which proves they survive every way
+   the outside world can misbehave and proves nothing about whether a real
+   model produces judgements worth having.
+2. **Validate the constants.** Study independence 0.65, transcript
+   confidence 0.35, the 21-day benchmark cadence, 119 graph weights — all
+   defensible defaults and none of them findings. `docs/LEARNING_SCIENCE.md`
+   asks for them to be checked against usage, and nothing has been.
 3. **The worker and deployment.** `services/worker` is still a stub and
    there are no container images. Nothing in the product needs asynchronous
    work yet, which is why it has stayed a stub honestly rather than
