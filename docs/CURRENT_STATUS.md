@@ -57,9 +57,10 @@ development machine, driven through the shared project folder. The protocol is
 documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
-The Playwright suite has now **actually run and passed**: 26 tests across
-desktop and mobile viewports, including an automated accessibility gate, on
-the development machine via the runner. Its
+The Playwright suite has now **actually run and passed**: 38 tests across
+desktop and mobile viewports, covering registration, the diagnostic, the
+learning loop itself, reflection, a benchmark refusal, and an automated
+accessibility gate. Its
 first-ever execution found four real defects — a bash-only launcher that
 failed on Windows, hydration blocked by Next 16's cross-origin default (which
 made the register form fall back to a native GET submit, password in the URL),
