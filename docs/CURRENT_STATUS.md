@@ -1,6 +1,6 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–6 are complete, and Milestone 7 has started.** The core learning loop now
+Last updated: 2026-07-27. **Milestones 0–6 are complete; 7 and 8 have started.** The core learning loop now
 closes, and **no modality is evidenced by self-report any more**: a learner
 registers, takes an adaptive diagnostic including a written task, receives a
 daily plan that explains itself, opens and completes reading, listening,
@@ -26,7 +26,7 @@ learner has to notice that the sources disagree.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **618 Python tests**; eslint, tsc, and **232 web
+curriculum validation, **618 Python tests**; eslint, tsc, and **243 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -282,6 +282,36 @@ is enforced in more than one place.
   Writing the local provider's tests is what found it.
 - The default is still `disabled`, so the whole suite proves the product
   works with no AI configured.
+
+### Offline and installable (Milestone 8 — new)
+
+Offline support is easy to make dishonest, and the shape of this is the
+argument for what it can and cannot be.
+
+Everything a learner submits is scored on the server, against curriculum the
+browser does not have and by a mastery model it does not run. So:
+
+- **Reading works offline.** Today's plan, an activity already opened, the
+  profile. A hand-written service worker caches page navigations and API
+  reads.
+- **A cached API response is served only while offline.** A cache answering
+  while the network is up would show yesterday's plan with nothing on screen
+  to say so. Offline is the one situation where a stale answer beats no
+  answer.
+- **Submitting offline fails immediately, with its own error code**, and the
+  message says the work is still on screen and has not been sent. It is
+  marked retryable, because it is the most retryable failure there is.
+- **Nothing is queued or replayed.** A submission fired later would be
+  scored at a moment the learner was not present for, and would need a
+  timestamp the client chose — which is not something a client may be
+  trusted with, since it feeds the review scheduler.
+- **A banner says what still works before it says what does not.** "You are
+  offline" alone leaves someone guessing whether their half-written essay is
+  about to be lost.
+- **Signing out clears the cache.** A shared browser must not hand the next
+  person a cached profile.
+- The app is installable: manifest, icons, theme colour. Zoom is not locked,
+  because zooming is how a low-vision learner reads.
 
 ### Accessibility gate (new)
 

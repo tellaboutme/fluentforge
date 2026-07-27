@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FluentForge">
+  <title>FluentForge</title>
+  <rect width="512" height="512" rx="96" fill="#0f1419"/>
+  <path d="M168 132h176v46H214v70h114v46H214v86h-46z" fill="#e8eef2"/>
+  <rect x="214" y="330" width="130" height="14" rx="7" fill="#5aa9e6"/>
+  <rect x="214" y="356" width="86" height="14" rx="7" fill="#5aa9e6" opacity="0.6"/>
+</svg>

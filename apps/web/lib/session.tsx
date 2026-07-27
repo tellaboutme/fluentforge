@@ -25,6 +25,8 @@ import {
   useSyncExternalStore,
 } from "react";
 
+import { clearCachedLearnerData } from "@/components/Offline";
+
 const STORAGE_KEY = "fluentforge.session";
 
 const listeners = new Set<() => void>();
@@ -87,7 +89,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const ready = useSyncExternalStore(subscribe, clientReady, serverReady);
 
   const signIn = useCallback((next: string) => writeToken(next), []);
-  const signOut = useCallback(() => writeToken(null), []);
+  const signOut = useCallback(() => {
+    writeToken(null);
+    // A shared browser must not hand the next person a cached profile and
+    // plan. The service worker owns the cache, so it owns the deletion.
+    clearCachedLearnerData();
+  }, []);
 
   const value = useMemo<SessionValue>(
     () => ({ token, ready, signIn, signOut }),

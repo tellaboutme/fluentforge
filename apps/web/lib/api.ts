@@ -10,6 +10,8 @@
 
 import type { ApiErrorCode, Profile } from "@fluentforge/contracts";
 
+import { isOffline } from "./online";
+
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -36,7 +38,14 @@ export class ApiError extends Error {
 
   /** True when retrying could plausibly succeed. */
   get isTransient(): boolean {
-    return this.status >= 500 || this.code === "curriculum_not_loaded";
+    return (
+      this.status >= 500 ||
+      this.code === "curriculum_not_loaded" ||
+      // Offline is the most transient failure there is: the same request
+      // will work unchanged the moment the network returns.
+      this.code === "offline" ||
+      this.code === "network_unavailable"
+    );
   }
 }
 
@@ -72,6 +81,28 @@ export async function request<T>(
   path: string,
   { method = "GET", body, token, signal }: RequestOptions = {},
 ): Promise<T> {
+  // Refuse to start a mutation with no network, rather than letting it fail
+  // as a generic connection error.
+  //
+  // Everything the learner submits is scored on the server, against
+  // curriculum the browser does not have and by a mastery model it does not
+  // run. So there is no honest way to complete an activity offline: scoring
+  // locally would give a mark the server would not have given, and queuing
+  // the submission to fire later would record evidence at a moment the
+  // learner was not present for -- and would need a timestamp the client
+  // chose, which is not a thing a client may be trusted with.
+  //
+  // Reads are still attempted: the service worker may have a saved copy, and
+  // it is the one that decides whether it does.
+  if (method !== "GET" && isOffline()) {
+    throw new ApiError(
+      0,
+      "offline",
+      "You are offline, so this cannot be checked yet.",
+      {},
+    );
+  }
+
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;

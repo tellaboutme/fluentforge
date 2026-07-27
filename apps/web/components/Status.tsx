@@ -49,6 +49,15 @@ export function ErrorNotice({
           Is the API running? Start it with <code>make api</code>.
         </p>
       ) : null}
+      {/* Offline is not a fault, and nothing has been lost. What matters is
+          being explicit that the work has *not* been recorded: a learner who
+          assumed it had would stop looking for the answer they never got. */}
+      {apiError?.code === "offline" ? (
+        <p className="hint">
+          Your work is still on screen and nothing has been sent yet. Checking
+          it needs the server, so try again once you are back online.
+        </p>
+      ) : null}
       {onRetry && (apiError === null || apiError.isTransient) ? (
         <button type="button" onClick={onRetry}>
           Try again
