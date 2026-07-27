@@ -309,3 +309,13 @@ def test_cloud_mode_starts_even_with_no_key(monkeypatch: pytest.MonkeyPatch) -> 
         assert evaluator.evaluate(REQUEST) is None
     finally:
         providers.get_writing_evaluator.cache_clear()
+
+
+def test_a_dimension_with_no_evidence_is_rejected_here_too() -> None:
+    """The same rule as the local provider, asserted for both. Two rubric
+    providers disagreeing about what counts as a usable judgement would make
+    the mastery model's numbers incomparable between deployments."""
+    payload = _valid_payload(
+        dimensions=[{"name": "accuracy", "score": 0.9, "confidence": 0.9, "evidence": []}]
+    )
+    assert CloudWritingEvaluator(client=_responds(_body(payload))).evaluate(REQUEST) is None

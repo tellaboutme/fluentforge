@@ -219,7 +219,7 @@ def test_unknown_provider_mode_fails_loudly(monkeypatch: pytest.MonkeyPatch) -> 
 def test_low_confidence_evaluation_is_not_usable() -> None:
     """AI feedback must not move mastery without clearing a confidence bar."""
     evaluation = WritingEvaluation(
-        dimensions=[RubricDimension(name="range", score=0.9, confidence=0.9)],
+        dimensions=[RubricDimension(name="range", score=0.9, confidence=0.9, evidence=["cited"])],
         confidence=MIN_USABLE_CONFIDENCE - 0.01,
     )
     assert not evaluation.is_usable
@@ -234,8 +234,8 @@ def test_abstention_is_never_usable() -> None:
 def test_overall_score_weights_by_dimension_confidence() -> None:
     evaluation = WritingEvaluation(
         dimensions=[
-            RubricDimension(name="a", score=1.0, confidence=1.0),
-            RubricDimension(name="b", score=0.0, confidence=0.0),
+            RubricDimension(name="a", score=1.0, confidence=1.0, evidence=["cited"]),
+            RubricDimension(name="b", score=0.0, confidence=0.0, evidence=["cited"]),
         ],
         confidence=0.9,
     )
@@ -250,7 +250,7 @@ def test_priority_feedback_is_capped_at_three() -> None:
     with pytest.raises(ValidationError):
         WritingEvaluation(
             confidence=0.9,
-            dimensions=[RubricDimension(name="a", score=1.0, confidence=1.0)],
+            dimensions=[RubricDimension(name="a", score=1.0, confidence=1.0, evidence=["cited"])],
             priority_feedback=[
                 {"category": "grammar", "original": "x", "improved": "y", "explanation": "z"}
             ]

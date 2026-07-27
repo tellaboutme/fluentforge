@@ -26,7 +26,7 @@ learner has to notice that the sources disagree.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **590 Python tests**; eslint, tsc, and **232 web
+curriculum validation, **618 Python tests**; eslint, tsc, and **232 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -265,6 +265,21 @@ is enforced in more than one place.
   learner keeps exactly the deterministic feedback they would have had. 27
   tests, one per way the outside world can misbehave.
 - **Confidence is capped at 0.85** before reaching the mastery model.
+- **`ai_provider=local` judges writing without the text leaving the
+  deployment.** It speaks the OpenAI chat-completions shape, so Ollama,
+  vLLM, llama.cpp and LM Studio all work. Same versioned prompt, same
+  schema, same fabricated-quotation check as `cloud`: two providers that
+  disagreed about what counts as a usable judgement would make the mastery
+  numbers incomparable between deployments.
+- Three deliberate differences in `local`: no key is required (a model on a
+  private network usually has no auth), the timeout is six times longer (a
+  7B model on a CPU is slow, and the learner already has their deterministic
+  feedback on screen), and the hosted default address is never used — that
+  would defeat the only reason to run a model yourself.
+- **A rubric dimension must now cite evidence, enforced in the schema.** The
+  rule was written in a comment and in `docs/DECISION_LOG.md` and enforced
+  nowhere: an uncited score validated cleanly and reached the mastery model.
+  Writing the local provider's tests is what found it.
 - The default is still `disabled`, so the whole suite proves the product
   works with no AI configured.
 
@@ -290,9 +305,10 @@ is enforced in more than one place.
   have no honest route to evidence.
 - **`reflect:` plan items**, the last kind with nothing behind them. They
   render unlinked rather than pointing somewhere wrong.
-- **A self-hosted (`local`) provider.** `cloud` now exists and works; `local`
-  still raises at startup. The default remains `disabled`, so writing stays
-  provisional out of the box and every test runs against the no-AI path.
+- **A judged deployment.** All three provider modes now exist, and the
+  default is still `disabled`, so writing and mediation stay provisional out
+  of the box and every test runs against the no-AI path. Nothing here has
+  been run against a real model.
 - **Diagnostic errors still use legacy codes.** `services/diagnostics.py` logs
   `item.<skill_key>`; the taxonomy exists but the diagnostic does not use it
   yet. Study activities do.
@@ -346,9 +362,9 @@ is enforced in more than one place.
 1. **Finish Milestone 7.** Mediation has landed and the speaking bank now
    reaches C2. The academic and professional tracks, literature and advanced
    media, and advanced benchmark portfolios have not been started.
-2. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
-   judged without sending a learner's text to a third party. `cloud` exists
-   and works; `local` still raises at startup. This matters more now: a
-   mediation account is the piece of work most in need of a rubric and least
-   served by countable checks.
+2. **Run a provider against a real model.** Both `cloud` and `local` are
+   built and tested against stub transports, which proves they handle every
+   way the outside world can misbehave and proves nothing about whether a
+   real model produces judgements worth having. The abstention rate on a
+   small local model is the number to look at first.
 3. **Offline/PWA** (Milestone 8), the last unstarted milestone.

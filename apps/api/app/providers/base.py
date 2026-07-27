@@ -28,8 +28,18 @@ class RubricDimension(BaseModel):
     score: float = Field(ge=0, le=1)
     confidence: float = Field(ge=0, le=1)
     #: Short quotations from the learner's own text. An evaluator that cannot
-    #: cite evidence is guessing.
-    evidence: list[str] = Field(default_factory=list)
+    #: cite evidence is guessing, so at least one is required rather than
+    #: merely requested: the prompt asks for citations, and a model that
+    #: ignored that instruction has probably ignored others.
+    #:
+    #: Strict on purpose. Dropping the uncited dimensions and keeping the
+    #: rest would silently reshape what the model actually said, and the
+    #: learner would be shown a judgement nobody made. An abstention costs
+    #: them nothing — they keep the deterministic feedback either way.
+    #:
+    #: A dimension there is genuinely nothing to quote for should be omitted
+    #: by the evaluator, not scored blind.
+    evidence: list[str] = Field(min_length=1)
 
 
 class PriorityFeedback(BaseModel):
