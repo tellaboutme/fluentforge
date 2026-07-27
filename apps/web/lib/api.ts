@@ -284,7 +284,11 @@ export async function regeneratePlan(token: string): Promise<DailyPlan> {
 
 /** The stable machine values the API discriminates on. */
 export type ActivityType =
-  "reading_task" | "study_task" | "writing_task" | "listening_task";
+  | "reading_task"
+  | "study_task"
+  | "writing_task"
+  | "listening_task"
+  | "speaking_task";
 
 export interface ActivityQuestion {
   key: string;
@@ -358,8 +362,25 @@ export interface ListeningActivity extends ActivityBase {
   questions: ActivityQuestion[];
 }
 
+export interface SpeakingActivity extends ActivityBase {
+  activityType: "speaking_task";
+  format: string;
+  prompt: string;
+  guidance: string[];
+  /** Planning time is part of the task: it changes what is measured. */
+  preparationSeconds: number;
+  minSeconds: number;
+  maxSeconds: number;
+  minWords: number;
+  requiredElements: string[];
+}
+
 export type Activity =
-  ReadingActivity | StudyActivity | WritingActivity | ListeningActivity;
+  | ReadingActivity
+  | StudyActivity
+  | WritingActivity
+  | ListeningActivity
+  | SpeakingActivity;
 
 export interface QuestionOutcome {
   key: string;
@@ -462,13 +483,41 @@ export interface ListeningResult {
   usedTranscript: boolean;
 }
 
+export interface SpeakingResult {
+  activityType: "speaking_task";
+  activityKey: string;
+  score: number;
+  explanation: string;
+  checks: WritingCheckOutcome[];
+  wordCount: number;
+  spokenSeconds: number;
+  /** What the browser heard. Shown so the learner can judge it themselves. */
+  transcript: string;
+  /** Displayed, never scored: recognisers are worse on accented speech. */
+  recognitionConfidence: number | null;
+  evidenceRecorded: boolean;
+  typedInstead: boolean;
+  /** Always true: nothing judged delivery. The UI must not hide this. */
+  provisional: boolean;
+}
+
 export type ActivityResult =
-  ReadingResult | StudyResult | WritingResult | ListeningResult;
+  | ReadingResult
+  | StudyResult
+  | WritingResult
+  | ListeningResult
+  | SpeakingResult;
 
 /** What the client sends back, by kind. */
 export type ActivitySubmission =
   | { answers: Record<string, string>; hintsUsed?: number }
   | { answers: Record<string, string>; plays: number; usedTranscript: boolean }
+  | {
+      text: string;
+      spokenSeconds: number;
+      recognitionConfidence: number | null;
+      typedInstead: boolean;
+    }
   | { text: string };
 
 export async function fetchActivity(
@@ -484,7 +533,14 @@ export async function completeActivity(
   submission: ActivitySubmission,
 ): Promise<ActivityResult> {
   let body: Record<string, unknown>;
-  if ("text" in submission) {
+  if ("spokenSeconds" in submission) {
+    body = {
+      text: submission.text,
+      spoken_seconds: submission.spokenSeconds,
+      recognition_confidence: submission.recognitionConfidence,
+      typed_instead: submission.typedInstead,
+    };
+  } else if ("text" in submission) {
     body = { text: submission.text };
   } else if ("plays" in submission) {
     body = {

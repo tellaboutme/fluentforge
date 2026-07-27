@@ -1,17 +1,23 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–4 are complete.** The core learning loop now closes,
-and **every plan-item kind that has an activity behind it can be opened**: a
-learner registers, takes an adaptive diagnostic including a written task,
-receives a daily plan that explains itself, opens and completes reading,
-listening, focused study, and written output from that plan, works through
-spaced reviews, and sees a profile built only from evidence they actually
-produced.
+Last updated: 2026-07-27. **Milestones 0–5 are complete.** The core learning loop now
+closes, and **no modality is evidenced by self-report any more**: a learner
+registers, takes an adaptive diagnostic including a written task, receives a
+daily plan that explains itself, opens and completes reading, listening,
+focused study, written output, **and spoken output** from that plan, works
+through spaced reviews, and sees a profile built only from evidence they
+actually produced.
+
+Speaking is the newest and the most carefully bounded. What the system sees is
+a transcript, so it says what a transcript can support — that connected spoken
+language was produced, at length, covering what was asked — and refuses, in the
+parser, in the service, and on screen, to claim anything about how the learner
+sounded.
 
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **460 Python tests**; eslint, tsc, and **192 web
+curriculum validation, **486 Python tests**; eslint, tsc, and **212 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -65,7 +71,8 @@ defaults. Tests run in parallel.
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
 C1; **17 study units with 75 practice items spanning A1–C2**; 9 written output
-tasks across 8 genres reaching C2; and **7 listening clips reaching C2**. All content-hashed
+tasks across 8 genres reaching C2; 7 listening clips reaching C2; and **5
+spoken output tasks reaching C1**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
 The C1/C2 material teaches what actually distinguishes those levels —
@@ -120,11 +127,42 @@ A due card never ships its own answer.
 - **Comprehension questions are now defined once** in
   `curriculum/questions.py` and shared by both receptive labs.
 
+### Speaking lab (Milestone 5 — new)
+
+The last modality resting on self-report. Three refusals define it, and each
+is enforced in more than one place.
+
+- **Speaking is evidenced by something the learner did.** Five tasks A1–C1,
+  each with a preparation time, a speaking time, and countable content
+  requirements. The browser transcribes; the transcript is checked by the
+  same machinery writing uses. Evidence is `contextual_production` against a
+  speaking skill.
+- **Nothing claims to judge pronunciation.** A transcript cannot tell a
+  clearly spoken word from a badly spoken one the recogniser guessed
+  correctly. The curriculum parser *refuses* a task targeting a
+  `pronunciation.*` skill, every evidence event carries
+  `pronunciation_unassessed: true`, and the result screen says so in as many
+  words.
+- **Recognition confidence is stored and never scored.** Browser recognition
+  is measurably worse on accented speech — this product's entire audience —
+  so the same answer scores identically however well it was heard. It is
+  shown as a fact about the software and kept for audit.
+- **Typing is always available and always reported as typing.** A learner
+  with no microphone, or a browser that cannot listen, can still finish. The
+  attempt is kept and no speaking evidence is recorded, exactly as reading a
+  listening transcript records no listening evidence.
+- **A transcript is weaker evidence than typed writing** — confidence 0.35
+  against 0.45. Independence is full in both: the learner composed it. The
+  extra doubt is in the record, not the performance.
+- **The learner sees and can edit what was heard.** Correcting a machine that
+  misheard an accent is not cheating.
+
 ### Study and output activities
 
-- **All three working slots open.** `read:`, `study:`, and `write:` keys
-  resolve at `GET /activities/{key}`; the response is a discriminated union on
-  `activity_type`, so the web player handles all three exhaustively.
+- **All five working slots open.** `read:`, `study:`, `write:`, `listen:` and
+  `speak:` keys resolve at `GET /activities/{key}`; the response is a
+  discriminated union on `activity_type`, so the web player handles all five
+  exhaustively.
 - **Study units** explain one point, then practise it. The explanation stays
   on screen, so evidence is recorded as `controlled_recall` at independence
   0.65, reduced further by self-reported hints. The result page says why a
@@ -170,9 +208,14 @@ A due card never ships its own answer.
 
 ## What is not yet implemented
 
-- **Speaking.** No recorder, transcription, or acoustic analysis. The
-  `speaking` slot is the last plan-item kind with nothing behind it, and
-  speaking skills are still evidenced only by self-rating.
+- **Pronunciation assessment.** The speaking lab evidences spoken production
+  from a transcript and says plainly that it judges nothing about delivery.
+  Acoustic analysis needs audio upload — `POST /speech/uploads` and its two
+  companions in `docs/API_CONTRACTS.md` remain unimplemented — and until that
+  exists, `pronunciation.segment.contrast` and `pronunciation.stress.word`
+  have no honest route to evidence.
+- **`reflect:` plan items**, the last kind with nothing behind them. They
+  render unlinked rather than pointing somewhere wrong.
 - **A self-hosted (`local`) provider.** `cloud` now exists and works; `local`
   still raises at startup. The default remains `disabled`, so writing stays
   provisional out of the box and every test runs against the no-AI path.
@@ -190,31 +233,39 @@ A due card never ships its own answer.
    has not proved they cope with a recording of two people in a cafe. Evidence
    is flagged `synthesised: true` so this is auditable, and `audio` on each
    clip accepts real recordings with no schema change.
-2. **The speaking slot still has nothing behind it**, and renders unlinked.
+2. **Speaking is measured through a recogniser that is worse on the accents
+   this product serves.** A dropped or mangled word costs the learner content
+   marks it should not. Mitigated three ways — the transcript is shown and
+   editable, recognition confidence is never scored, and evaluator confidence
+   is the lowest in the system — but not eliminated. Recognition quality is
+   stored on every event so the correlation can actually be checked.
 3. **Writing accuracy is never judged.**
-4. **Two features have no remedy, and cannot get one from a study unit.**
-   `pronunciation.segment.contrast` and `pronunciation.stress.word` are read
-   and typed nowhere — they need the speaking lab. `make test-curriculum`
-   now reports them separately from genuinely missing content, so nobody is
-   tempted to write a fake text drill for a sound.
-5. **Hints, replays, and transcript use are self-reported by the client.** A
-   dishonest or buggy client can overstate independence. The blast radius is
-   one mis-weighted observation, except for `used_transcript`, where the
-   failure mode is recording listening evidence that was really reading.
-7. **Scheduler, mastery, and plan constants are defensible defaults, not
+4. **Two features have no remedy, and the speaking lab cannot give them one.**
+   `pronunciation.segment.contrast` and `pronunciation.stress.word` need
+   acoustic analysis, not a transcript. `make test-curriculum` reports them
+   separately from genuinely missing content, so nobody is tempted to write a
+   fake text drill for a sound.
+5. **Hints, replays, transcript use, spoken duration and `typed_instead` are
+   self-reported by the client.** A dishonest or buggy client can overstate
+   independence. The blast radius is one mis-weighted observation, except for
+   `used_transcript` and `typed_instead`, where the failure mode is recording
+   evidence of a modality the learner never used.
+6. **Scheduler, mastery, and plan constants are defensible defaults, not
    findings.** Study independence 0.65, hint penalty 0.15, two free replays,
-   replay penalty 0.1 — all documented guesses.
+   replay penalty 0.1, transcript confidence 0.35 — all documented guesses.
 7. **No automated colour-contrast or screen-reader check.**
 8. **Token in `sessionStorage`** is readable by any script on the page.
 
 ## Next three tasks
 
-1. **Implement a concrete rubric provider** (`local` or `cloud`) behind the
-   now-wired evaluator contract, so writing accuracy is actually judged. The
-   wiring, capping, and UI all exist and are tested against a fake.
-2. **Speaking**, the last plan-item kind with nothing behind it. Milestone 5,
-   the only modality still resting entirely on self-report, and the only way
-   the last two taxonomy features can ever be practised.
-3. **Hand-author the prerequisite graph.** Edges are currently derived across
-   adjacent CEFR levels within a domain — a documented stand-in, not a claim
-   about acquisition order.
+1. **Hand-author the prerequisite graph** (Milestone 6). Edges are currently
+   derived across adjacent CEFR levels within a domain — a documented
+   stand-in, not a claim about acquisition order, and now the largest piece
+   of guesswork left in the adaptive engine.
+2. **B2–C2 depth** (Milestone 7): long-form synthesis and multi-source
+   mediation, the tasks that actually separate the top three levels. The
+   content bank reaches C2 in reading and writing but stops at C1 in
+   speaking.
+3. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
+   judged without sending a learner's text to a third party. `cloud` exists
+   and works; `local` still raises at startup.

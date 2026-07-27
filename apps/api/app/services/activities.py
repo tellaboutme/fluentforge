@@ -4,7 +4,7 @@ This is what closes the loop. A plan that says "read something at your level"
 but cannot be opened is a promise the product does not keep, so every activity
 kind a plan can contain must resolve to something a learner can start.
 
-Four kinds exist, covering every non-review slot in the session templates:
+Five kinds exist, covering every non-review slot in the session templates:
 
 - ``read:``  a library text with comprehension questions. Receptive.
 - ``study:`` one point explained, then practice on that point. Scaffolded:
@@ -14,12 +14,14 @@ Four kinds exist, covering every non-review slot in the session templates:
              recorded at reduced *evaluator confidence*.
 - ``listen:`` a spoken clip with comprehension questions. Receptive, and
              the transcript stays hidden unless the learner asks for it.
+- ``speak:`` a spoken output task. The browser transcribes; the transcript
+             evidences speaking and never pronunciation.
 
 Activities are derived from versioned source rather than stored as rows. That
 keeps them immutable and reviewable in the same way the curriculum is; a
 persisted `activities` table arrives when generation and imports do.
 
-All four grade deterministically. `docs/PRODUCT_SPEC.md` requires the core
+All five grade deterministically. `docs/PRODUCT_SPEC.md` requires the core
 learning loop to work with AI disabled, and it does.
 """
 
@@ -36,6 +38,7 @@ from sqlalchemy.orm import Session
 from ..curriculum.content import LibraryText, parse_library
 from ..curriculum.listening import ListeningClip, parse_listening
 from ..curriculum.loader import active_curriculum_version
+from ..curriculum.speaking import SpeakingTask, parse_speaking_tasks
 from ..curriculum.study import StudyUnit, parse_study_units
 from ..curriculum.tasks import WritingTask, parse_writing_tasks
 from ..db.types import utcnow
@@ -66,6 +69,7 @@ READING_TYPE = "reading_task"
 STUDY_TYPE = "study_task"
 WRITING_TYPE = "writing_task"
 LISTENING_TYPE = "listening_task"
+SPEAKING_TYPE = "speaking_task"
 
 #: Kept for callers written against the single-kind version of this module.
 ACTIVITY_TYPE = READING_TYPE
@@ -74,11 +78,13 @@ READ_PREFIX = "read:"
 STUDY_PREFIX = "study:"
 WRITE_PREFIX = "write:"
 LISTEN_PREFIX = "listen:"
+SPEAK_PREFIX = "speak:"
 
 READING_CONTEXT = "reading_lab"
 STUDY_CONTEXT = "study_lab"
 WRITING_CONTEXT = "writing_lab"
 LISTENING_CONTEXT = "listening_lab"
+SPEAKING_CONTEXT = "speaking_lab"
 
 EVALUATOR_ID = "deterministic/0.1.0"
 
@@ -107,6 +113,15 @@ LISTENING_EVIDENCE = EvidenceType.COMPREHENSION
 FREE_PLAYS = 2
 REPLAY_PENALTY = 0.1
 MIN_LISTENING_INDEPENDENCE = 0.4
+
+#: Speech evidences production, like writing. The learner composed and
+#: delivered it; what is uncertain is the record, not the act.
+SPEAKING_EVIDENCE = EvidenceType.CONTEXTUAL_PRODUCTION
+
+#: Lower than writing's 0.45 because a transcript is a *lossy* record: the
+#: recogniser may have misheard, dropped, or silently corrected what was
+#: said. Countable checks on writing at least see exactly what was written.
+TRANSCRIPT_CONFIDENCE = 0.35
 
 #: Independence for study practice with the explanation visible. Below 1.0
 #: because `docs/LEARNING_SCIENCE.md` is explicit that a correct answer with
@@ -153,6 +168,11 @@ def _load_listening(curriculum_dir: str) -> tuple[ListeningClip, ...]:
     return parse_listening(Path(curriculum_dir))
 
 
+@lru_cache(maxsize=4)
+def _load_speaking(curriculum_dir: str) -> tuple[SpeakingTask, ...]:
+    return parse_speaking_tasks(Path(curriculum_dir))
+
+
 def library() -> tuple[LibraryText, ...]:
     return _load_library(str(settings.curriculum_dir))
 
@@ -169,6 +189,10 @@ def listening_clips() -> tuple[ListeningClip, ...]:
     return _load_listening(str(settings.curriculum_dir))
 
 
+def speaking_tasks() -> tuple[SpeakingTask, ...]:
+    return _load_speaking(str(settings.curriculum_dir))
+
+
 def library_by_key() -> dict[str, LibraryText]:
     return {text.key: text for text in library()}
 
@@ -183,6 +207,10 @@ def tasks_by_key() -> dict[str, WritingTask]:
 
 def listening_by_key() -> dict[str, ListeningClip]:
     return {clip.key: clip for clip in listening_clips()}
+
+
+def speaking_by_key() -> dict[str, SpeakingTask]:
+    return {task.key: task for task in speaking_tasks()}
 
 
 # --- Selection --------------------------------------------------------------
@@ -202,6 +230,10 @@ def tasks_for_skill(skill_key: str) -> tuple[WritingTask, ...]:
 
 def clips_for_skill(skill_key: str) -> tuple[ListeningClip, ...]:
     return tuple(clip for clip in listening_clips() if clip.skill_key == skill_key)
+
+
+def speaking_for_skill(skill_key: str) -> tuple[SpeakingTask, ...]:
+    return tuple(task for task in speaking_tasks() if task.skill_key == skill_key)
 
 
 def study_for_feature(feature_code: str) -> tuple[StudyUnit, ...]:
@@ -232,6 +264,10 @@ def listening_key_for(clip: ListeningClip) -> str:
     return f"{LISTEN_PREFIX}{clip.key}"
 
 
+def speaking_key_for(task: SpeakingTask) -> str:
+    return f"{SPEAK_PREFIX}{task.key}"
+
+
 def activity_type_for(activity_key: str) -> str | None:
     """The wire type for a key, or None if nothing can open it."""
     if activity_key.startswith(READ_PREFIX):
@@ -242,6 +278,8 @@ def activity_type_for(activity_key: str) -> str | None:
         return WRITING_TYPE
     if activity_key.startswith(LISTEN_PREFIX):
         return LISTENING_TYPE
+    if activity_key.startswith(SPEAK_PREFIX):
+        return SPEAKING_TYPE
     return None
 
 
@@ -284,7 +322,18 @@ def get_listening(activity_key: str) -> ListeningClip:
     return clip
 
 
-def get_activity(activity_key: str) -> LibraryText | StudyUnit | WritingTask | ListeningClip:
+def get_speaking(activity_key: str) -> SpeakingTask:
+    if not activity_key.startswith(SPEAK_PREFIX):
+        raise ActivityNotFoundError(activity_key)
+    task = speaking_by_key().get(activity_key.removeprefix(SPEAK_PREFIX))
+    if task is None:
+        raise ActivityNotFoundError(activity_key)
+    return task
+
+
+def get_activity(
+    activity_key: str,
+) -> LibraryText | StudyUnit | WritingTask | ListeningClip | SpeakingTask:
     """Resolve a plan item's activity key to something openable."""
     kind = activity_type_for(activity_key)
     if kind == READING_TYPE:
@@ -295,6 +344,8 @@ def get_activity(activity_key: str) -> LibraryText | StudyUnit | WritingTask | L
         return get_writing(activity_key)
     if kind == LISTENING_TYPE:
         return get_listening(activity_key)
+    if kind == SPEAKING_TYPE:
+        return get_speaking(activity_key)
     raise ActivityNotFoundError(activity_key)
 
 
@@ -421,6 +472,46 @@ class ListeningResult:
                 "\u2014 that is the usual shape of listening, and it improves."
             )
         return "The main idea did not quite land. Listen once more before reading the transcript."
+
+
+@dataclass(frozen=True)
+class SpeakingResult:
+    activity_key: str
+    score: float
+    analysis: WritingAnalysis
+    evidence_recorded: bool
+    spoken_seconds: int
+    #: What the browser heard. Returned so the learner can see it and judge
+    #: for themselves whether the recogniser got them right.
+    transcript: str
+    #: The recogniser's own confidence, stored and displayed but never
+    #: scored. See `curriculum/speaking.py` for why.
+    recognition_confidence: float | None
+    #: True when the learner typed instead of speaking.
+    typed_instead: bool
+
+    @property
+    def provisional(self) -> bool:
+        """Always true. Nothing here judged delivery, only the transcript."""
+        return True
+
+    @property
+    def explanation(self) -> str:
+        if self.typed_instead:
+            return (
+                "You typed this rather than saying it, so it tells us about "
+                "your writing, not your speaking. That is a perfectly good "
+                "way to do the task \u2014 it just cannot count as speaking."
+            )
+        if not self.analysis.met_minimum:
+            return (
+                "That was too short to tell us much. Try again and keep "
+                "going a little longer than feels comfortable."
+            )
+        return (
+            "These are automatic checks on length and content, made from what "
+            "the browser heard. Nothing here has judged your pronunciation."
+        )
 
 
 @dataclass(frozen=True)
@@ -804,6 +895,119 @@ def complete_listening(
     )
 
 
+# --- Completion: speaking ---------------------------------------------------
+
+
+def complete_speaking(
+    session: Session,
+    user_id: uuid.UUID,
+    *,
+    activity_key: str,
+    transcript: str,
+    spoken_seconds: int = 0,
+    recognition_confidence: float | None = None,
+    typed_instead: bool = False,
+    duration_ms: int | None = None,
+) -> SpeakingResult:
+    """Score a spoken task from its transcript.
+
+    Three rules, each of them a refusal:
+
+    **No pronunciation claim.** Evidence lands on the task's speaking skill
+    and never on a `pronunciation.*` skill. The curriculum parser already
+    refuses a task that aims at one; this is the same rule at the other end.
+
+    **Recognition confidence is never scored.** It is recorded for audit and
+    shown to the learner, because a recogniser is measurably worse on
+    accented speech and penalising that would be discrimination rather than
+    assessment.
+
+    **Typing is not speaking.** The fallback exists so a learner without a
+    microphone, or with a browser that cannot listen, can still do the task.
+    It records no speaking evidence, exactly as reading a listening
+    transcript records no listening evidence.
+    """
+    task = get_speaking(activity_key)
+    analysis = analyse(transcript, task.requirements)
+    spoken_seconds = max(0, spoken_seconds)
+
+    learning_session = _open_session(session, user_id, SPEAKING_CONTEXT)
+    attempt = Attempt(
+        user_id=user_id,
+        session_id=learning_session.id,
+        activity_key=activity_key,
+        activity_type=SPEAKING_TYPE,
+        attempt_number=_next_attempt_number(session, user_id, activity_key),
+        response={
+            "transcript": transcript,
+            "score": analysis.score,
+            "correct": analysis.met_minimum,
+            "word_count": analysis.word_count,
+            "spoken_seconds": spoken_seconds,
+            "recognition_confidence": recognition_confidence,
+            "typed_instead": typed_instead,
+            "checks": [
+                {"code": c.code, "passed": c.passed, "message": c.message} for c in analysis.checks
+            ],
+            "provisional": True,
+        },
+        submitted_at=utcnow(),
+        duration_ms=duration_ms,
+        hints_used=0,
+        scaffolding_level=1.0 if typed_instead else 0.0,
+        evaluator_id=EVALUATOR_ID,
+    )
+    session.add(attempt)
+    session.flush()
+
+    long_enough = spoken_seconds >= task.min_seconds
+    node = _skill_node(session, task.skill_key)
+    recorded = False
+
+    if node is not None and analysis.met_minimum and long_enough and not typed_instead:
+        record_evidence(
+            session,
+            user_id=user_id,
+            skill_node_id=node.id,
+            attempt_id=attempt.id,
+            evidence_type=SPEAKING_EVIDENCE,
+            score=analysis.score,
+            difficulty=_difficulty_for(task.cefr_level.rank),
+            confidence=TRANSCRIPT_CONFIDENCE,
+            independence=1.0,
+            novelty=1.0,
+            context_key=f"speak:{task.key}",
+            metadata={
+                "source": SPEAKING_CONTEXT,
+                "format": task.speaking_format,
+                "provisional": True,
+                "spoken_seconds": spoken_seconds,
+                "word_count": analysis.word_count,
+                # Recorded so a later audit can ask whether recognition
+                # quality correlated with scores. Never used to score.
+                "recognition_confidence": recognition_confidence,
+                "unjudged_features": list(task.target_features),
+                # Named explicitly: this evidence says nothing about how the
+                # learner sounded, and a future reader should not assume it.
+                "pronunciation_unassessed": True,
+            },
+        )
+        recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
+        recorded = True
+
+    session.flush()
+    return SpeakingResult(
+        activity_key=activity_key,
+        score=analysis.score,
+        analysis=analysis,
+        evidence_recorded=recorded,
+        spoken_seconds=spoken_seconds,
+        transcript=transcript,
+        recognition_confidence=recognition_confidence,
+        typed_instead=typed_instead,
+    )
+
+
 # --- Completion: writing ----------------------------------------------------
 
 
@@ -972,8 +1176,11 @@ def complete(
     hints_used: int = 0,
     plays: int = 1,
     used_transcript: bool = False,
+    spoken_seconds: int = 0,
+    recognition_confidence: float | None = None,
+    typed_instead: bool = False,
     duration_ms: int | None = None,
-) -> ActivityResult | StudyResult | WritingResult | ListeningResult:
+) -> ActivityResult | StudyResult | WritingResult | ListeningResult | SpeakingResult:
     """Complete any activity, validating that the payload suits its kind."""
     kind = activity_type_for(activity_key)
 
@@ -1010,6 +1217,20 @@ def complete(
             answers=answers,
             plays=plays,
             used_transcript=used_transcript,
+            duration_ms=duration_ms,
+        )
+
+    if kind == SPEAKING_TYPE:
+        if text is None:
+            raise ActivityPayloadError(activity_key, "text")
+        return complete_speaking(
+            session,
+            user_id,
+            activity_key=activity_key,
+            transcript=text,
+            spoken_seconds=spoken_seconds,
+            recognition_confidence=recognition_confidence,
+            typed_instead=typed_instead,
             duration_ms=duration_ms,
         )
 
@@ -1082,11 +1303,13 @@ __all__ = [
     "ACTIVITY_TYPE",
     "LISTENING_TYPE",
     "READING_TYPE",
+    "SPEAKING_TYPE",
     "STUDY_TYPE",
     "WRITING_TYPE",
     "ActivityResult",
     "ListeningResult",
     "QuestionResult",
+    "SpeakingResult",
     "StudyItemResult",
     "StudyResult",
     "WritingResult",
@@ -1096,11 +1319,13 @@ __all__ = [
     "complete",
     "complete_listening",
     "complete_reading",
+    "complete_speaking",
     "complete_study",
     "complete_writing",
     "get_activity",
     "get_listening",
     "get_reading",
+    "get_speaking",
     "get_study",
     "get_writing",
     "is_openable",
@@ -1109,6 +1334,10 @@ __all__ = [
     "listening_clips",
     "listening_independence",
     "listening_key_for",
+    "speaking_by_key",
+    "speaking_for_skill",
+    "speaking_key_for",
+    "speaking_tasks",
     "study_for_feature",
     "study_for_skill",
     "study_key_for",

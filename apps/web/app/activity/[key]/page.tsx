@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type FormEvent,
@@ -19,6 +20,8 @@ import {
   type ListeningActivity,
   type ListeningResult,
   type ReadingActivity,
+  type SpeakingActivity,
+  type SpeakingResult,
   type ReadingResult,
   type StudyActivity,
   type StudyResult,
@@ -43,6 +46,10 @@ import { ErrorNotice, Loading } from "@/components/Status";
  *   only countable properties were checked. Claiming a piece of writing is
  *   fine when nothing judged its accuracy is the dishonesty
  *   `docs/AI_TUTOR_BEHAVIOR.md` forbids.
+ * - **Speaking** records what the browser hears and checks the transcript for
+ *   length and content. It never claims anything about pronunciation, and it
+ *   never scores recognition confidence: recognisers are measurably worse on
+ *   accented speech, which is this product's whole audience.
  * - **Listening** inverts the reading rule: the transcript is *hidden*, because
  *   a visible transcript turns listening into reading. It stays one click
  *   away, because a learner who cannot use audio must still be able to take
@@ -152,6 +159,15 @@ export default function ActivityPage() {
         <Listening
           activity={activity}
           result={result?.activityType === "listening_task" ? result : null}
+          onSubmit={submit}
+          onError={setError}
+        />
+      );
+    case "speaking_task":
+      return (
+        <Speaking
+          activity={activity}
+          result={result?.activityType === "speaking_task" ? result : null}
           onSubmit={submit}
           onError={setError}
         />
@@ -900,6 +916,291 @@ function Listening({
             <p className="muted">
               Your listening profile is unchanged, because this one was read
               rather than heard. Nothing is lost — try the next clip by ear.
+            </p>
+          ) : null}
+
+          <BackToPlan />
+        </div>
+      ) : null}
+    </main>
+  );
+}
+
+// --- Speaking --------------------------------------------------------------
+
+/** Whether this browser can transcribe speech. Static, like `speechSynthesis`. */
+const recognitionConstructor = (): (new () => SpeechRecognition) | null => {
+  if (typeof window === "undefined") return null;
+  // Both prefixed and unprefixed: Safari and older Chromium only expose the
+  // `webkit` one. Typed in `types/speech-recognition.d.ts`, which declares
+  // them optional because absence is the normal case, not an error.
+  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+};
+const recognitionIsAvailable = () => recognitionConstructor() !== null;
+const recognitionUnavailableOnTheServer = () => false;
+
+function Speaking({
+  activity,
+  result,
+  onSubmit,
+  onError,
+}: KindProps<SpeakingActivity, SpeakingResult>) {
+  const [transcript, setTranscript] = useState("");
+  const [recording, setRecording] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [confidence, setConfidence] = useState<number | null>(null);
+  const [typed, setTyped] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const canRecord = useSyncExternalStore(
+    subscribeToNothing,
+    recognitionIsAvailable,
+    recognitionUnavailableOnTheServer,
+  );
+
+  const recogniser = useRef<SpeechRecognition | null>(null);
+  const startedAt = useRef<number | null>(null);
+
+  // A ticking counter while recording, so the learner can see whether they
+  // have reached the length the task asks for.
+  useEffect(() => {
+    if (!recording) return;
+    const timer = window.setInterval(() => {
+      if (startedAt.current !== null) {
+        setSeconds(Math.round((Date.now() - startedAt.current) / 1000));
+      }
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [recording]);
+
+  // Stop listening if the learner navigates away mid-answer.
+  useEffect(() => {
+    return () => recogniser.current?.abort();
+  }, []);
+
+  function start() {
+    const Recogniser = recognitionConstructor();
+    if (!Recogniser) return;
+
+    const instance = new Recogniser();
+    instance.lang = "en-GB";
+    instance.continuous = true;
+    instance.interimResults = true;
+
+    let settled = "";
+    let best: number | null = null;
+
+    instance.onresult = (event: SpeechRecognitionEvent) => {
+      let pending = "";
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        const result = event.results[i];
+        const alternative = result[0];
+        if (result.isFinal) {
+          settled += alternative.transcript;
+          // Kept for display and audit only. Scoring it would penalise an
+          // accent the recogniser was not trained on.
+          if (typeof alternative.confidence === "number") {
+            best =
+              best === null
+                ? alternative.confidence
+                : Math.max(best, alternative.confidence);
+          }
+        } else {
+          pending += alternative.transcript;
+        }
+      }
+      setTranscript((settled + pending).trim());
+      setConfidence(best);
+    };
+    instance.onerror = () => stop();
+    instance.onend = () => setRecording(false);
+
+    recogniser.current = instance;
+    startedAt.current = Date.now();
+    setSeconds(0);
+    setTyped(false);
+    setRecording(true);
+    instance.start();
+  }
+
+  function stop() {
+    recogniser.current?.stop();
+    recogniser.current = null;
+    setRecording(false);
+    if (startedAt.current !== null) {
+      setSeconds(Math.round((Date.now() - startedAt.current) / 1000));
+    }
+  }
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      await onSubmit({
+        text: transcript,
+        spokenSeconds: typed ? 0 : seconds,
+        recognitionConfidence: typed ? null : confidence,
+        typedInstead: typed,
+      });
+    } catch (cause) {
+      onError(cause);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const shortOfTime = !typed && seconds < activity.minSeconds;
+
+  return (
+    <main id="main" className="narrow">
+      <p className="eyebrow">
+        SPEAKING · {activity.cefrLevel} · {activity.format.toUpperCase()}
+      </p>
+      <h1 className="page-title">{activity.title}</h1>
+      <p className="hint">About {activity.estimatedMinutes} minutes</p>
+
+      <article className="panel">
+        {activity.prompt.split("\n\n").map((paragraph) => (
+          <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+        ))}
+        <h2 className="subheading">Before you start</h2>
+        <ul>
+          {activity.guidance.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+        <p className="muted">
+          Take about {activity.preparationSeconds} seconds to think first. Then
+          speak for at least {activity.minSeconds} seconds.
+        </p>
+      </article>
+
+      {!result ? (
+        <form onSubmit={submit}>
+          {canRecord ? (
+            <>
+              <button type="button" onClick={recording ? stop : start}>
+                {recording
+                  ? "Stop"
+                  : seconds > 0
+                    ? "Record again"
+                    : "Start speaking"}
+              </button>
+              <p className="hint" aria-live="polite">
+                {recording
+                  ? `Listening… ${seconds}s`
+                  : seconds > 0
+                    ? `You spoke for ${seconds}s.`
+                    : "Nothing recorded yet."}
+                {shortOfTime && seconds > 0
+                  ? ` The task asks for at least ${activity.minSeconds}s.`
+                  : ""}
+              </p>
+            </>
+          ) : (
+            <div className="notice notice-warn">
+              <p>
+                <strong>This browser cannot transcribe speech.</strong>
+              </p>
+              <p>
+                Type your answer below instead. It will be recorded as writing
+                rather than speaking, and we will say so.
+              </p>
+            </div>
+          )}
+
+          {/* Always available. A learner with no microphone, or one the
+              recogniser mishears badly, must still be able to finish -- and
+              editing what was heard is not cheating, it is correcting a
+              machine. Typing from scratch is reported honestly. */}
+          <div className="field">
+            <label htmlFor="transcript">
+              {canRecord ? "What we heard (you can correct it)" : "Your answer"}
+            </label>
+            <textarea
+              id="transcript"
+              name="transcript"
+              rows={8}
+              value={transcript}
+              onChange={(event) => {
+                setTranscript(event.target.value);
+                if (!canRecord) setTyped(true);
+              }}
+            />
+            <p className="hint">
+              {(transcript.match(/[A-Za-z][A-Za-z'’-]*/g) ?? []).length} words ·
+              the task asks for about {activity.minWords}
+            </p>
+          </div>
+
+          {canRecord && seconds === 0 ? (
+            <p className="muted">
+              <button
+                type="button"
+                className="link-button"
+                onClick={() => setTyped(true)}
+              >
+                I can&rsquo;t speak right now — let me type
+              </button>{" "}
+              This is always available. It counts as writing rather than
+              speaking, and we will say so.
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={busy || recording || !transcript.trim()}
+          >
+            {busy ? "Checking…" : "Submit"}
+          </button>
+        </form>
+      ) : null}
+
+      {result ? (
+        <div className="notice" role="status" aria-live="polite">
+          <p>
+            <strong>{result.explanation}</strong>
+          </p>
+          <ul className="checks">
+            {result.checks.map((check) => (
+              <li
+                key={check.code}
+                className={check.passed ? "check-ok" : "check-todo"}
+              >
+                <span aria-hidden="true">{check.passed ? "✓" : "•"}</span>
+                <span className="visually-hidden">
+                  {check.passed ? "Met:" : "Not yet:"}
+                </span>{" "}
+                {check.message}
+              </li>
+            ))}
+          </ul>
+
+          {!result.typedInstead ? (
+            <p className="muted">
+              You spoke for {result.spokenSeconds} seconds.
+              {result.recognitionConfidence !== null
+                ? ` The recogniser was ${confidenceLabel(result.recognitionConfidence).toLowerCase()} about what it heard — that is a fact about the software, not about you, and it does not affect your profile.`
+                : ""}
+            </p>
+          ) : null}
+
+          {/* Non-negotiable, and the reason the whole lab is shaped this way. */}
+          <div className="notice notice-warn">
+            <p>
+              <strong>Nothing here has judged your pronunciation.</strong>
+            </p>
+            <p>
+              These checks read a transcript, which cannot tell a clearly spoken
+              word from one the software guessed correctly. Feedback on how you
+              sound needs acoustic analysis, which this does not do.
+            </p>
+          </div>
+
+          {!result.evidenceRecorded ? (
+            <p className="muted">
+              Your speaking profile is unchanged. Nothing is lost — the attempt
+              is saved, and the next one can count.
             </p>
           ) : null}
 

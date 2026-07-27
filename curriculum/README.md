@@ -24,6 +24,7 @@ IDs must never be reused for a different meaning.
 | `content/study.yml` | Focused study units: one point explained, then practice | `curriculum/study.py` |
 | `content/writing.yml` | Written output tasks and their countable requirements | `curriculum/tasks.py` |
 | `content/listening.yml` | Listening clips, transcripts, and playback pace | `curriculum/listening.py` |
+| `content/speaking.yml` | Spoken output tasks, preparation and speaking times | `curriculum/speaking.py` |
 
 Everything is validated together by `make test-curriculum`, which also reports
 which linguistic features no study unit covers yet.

@@ -215,12 +215,13 @@ describe("daily plan contract", () => {
     // speaking and reflection have no activity behind them yet and stay
     // deliberately unlinked rather than pointing somewhere wrong.
     const openable = (key: string) =>
-      ["read:", "study:", "write:", "listen:"].some((prefix) =>
+      ["read:", "study:", "write:", "listen:", "speak:"].some((prefix) =>
         key.startsWith(prefix),
       );
 
     for (const item of plan.items) {
-      if (!["input", "study", "output"].includes(item.kind)) continue;
+      if (!["input", "study", "output", "speaking"].includes(item.kind))
+        continue;
       expect(
         openable(item.activityKey),
         `${item.kind} slot goes nowhere: ${item.activityKey}`,

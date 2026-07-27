@@ -19,6 +19,7 @@ from apps.api.app.curriculum.items import parse_item_bank
 from apps.api.app.curriculum.lexis import parse_lexis
 from apps.api.app.curriculum.listening import parse_listening
 from apps.api.app.curriculum.parser import CurriculumError, parse_curriculum
+from apps.api.app.curriculum.speaking import parse_speaking_tasks
 from apps.api.app.curriculum.study import parse_study_units
 from apps.api.app.curriculum.tasks import parse_writing_tasks
 from apps.api.app.learning import taxonomy
@@ -37,6 +38,7 @@ def main(argv: list[str]) -> int:
         units = parse_study_units(curriculum_dir, known_skill_keys=known)
         tasks = parse_writing_tasks(curriculum_dir, known_skill_keys=known)
         clips = parse_listening(curriculum_dir, known_skill_keys=known)
+        spoken = parse_speaking_tasks(curriculum_dir, known_skill_keys=known)
     except CurriculumError as exc:
         print("Curriculum validation failed:")
         for error in exc.errors:
@@ -90,6 +92,14 @@ def main(argv: list[str]) -> int:
         # Not a failure. Synthetic speech under-represents connected speech,
         # so the count is reported rather than left for someone to discover.
         print(f"  {synthesised} of {len(clips)} rely on browser speech synthesis.")
+
+    formats = Counter(task.speaking_format for task in spoken)
+    print(f"Speaking tasks: {len(spoken)} across {len(formats)} formats.")
+    for fmt, count in sorted(formats.items()):
+        print(f"  {fmt}: {count}")
+    # Stated every run, because it is the constraint the lab is built around
+    # and a future author should meet it before they write a task.
+    print("  none targets a pronunciation skill: a transcript cannot evidence one.")
 
     genres = Counter(task.genre for task in tasks)
     print(f"Writing tasks: {len(tasks)} across {len(genres)} genres.")

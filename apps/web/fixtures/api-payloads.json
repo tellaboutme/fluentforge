@@ -1098,6 +1098,64 @@
     "started_at": "2026-01-01T00:00:00Z",
     "status": "in_progress"
   },
+  "speaking_activity": {
+    "activity_key": "speak:speak.a1.introduce_yourself",
+    "activity_type": "speaking_task",
+    "cefr_level": "A1",
+    "estimated_minutes": 6,
+    "format": "monologue",
+    "guidance": [
+      "Speak in full sentences, even short ones.",
+      "It is fine to pause and think. Silence is not a mistake.",
+      "Say where you live and where you are from -- both, not just one."
+    ],
+    "max_seconds": 90,
+    "min_seconds": 25,
+    "min_words": 35,
+    "preparation_seconds": 45,
+    "prompt": "You are meeting a new class for the first time. Everyone says a little\nabout themselves.\n\nSay who you are, where you are from, where you live now, and one thing\nyou like doing.",
+    "required_elements": [
+      "live",
+      "from"
+    ],
+    "skill_key": "speaking.basic_identity",
+    "title": "Introduce yourself out loud"
+  },
+  "speaking_result": {
+    "activity_key": "speak:speak.a1.introduce_yourself",
+    "activity_type": "speaking_task",
+    "checks": [
+      {
+        "code": "length",
+        "message": "45 words \u2014 a good length.",
+        "passed": true
+      },
+      {
+        "code": "sentences",
+        "message": "2 sentences.",
+        "passed": true
+      },
+      {
+        "code": "connectives",
+        "message": "You linked ideas using: and, because, before, then.",
+        "passed": true
+      },
+      {
+        "code": "content",
+        "message": "You covered everything the task asked for.",
+        "passed": true
+      }
+    ],
+    "evidence_recorded": true,
+    "explanation": "These are automatic checks on length and content, made from what the browser heard. Nothing here has judged your pronunciation.",
+    "provisional": true,
+    "recognition_confidence": 0.82,
+    "score": 1.0,
+    "spoken_seconds": 40,
+    "transcript": "Hello, my name is Ana and I am from Porto in the north of Portugal. I live in Lisbon now, near the river, and I like to run in the morning before work because the streets are quiet then and the light is very good.",
+    "typed_instead": false,
+    "word_count": 45
+  },
   "study_activity": {
     "activity_key": "study:study.a1.be_and_word_order",
     "activity_type": "study_task",

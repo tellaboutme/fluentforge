@@ -1,6 +1,6 @@
 """Activity endpoints: open a plan item and complete it.
 
-Four activity kinds share these two endpoints. They are modelled as a
+Five activity kinds share these two endpoints. They are modelled as a
 discriminated union on `activity_type` rather than as one shape with many
 optional fields: a reading task has no word limit and a writing task has no
 options, and a response that admits both invites a client to render nonsense.
@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ..curriculum.content import LibraryText
 from ..curriculum.listening import ListeningClip
+from ..curriculum.speaking import SpeakingTask
 from ..curriculum.study import StudyUnit
 from ..curriculum.tasks import WritingTask
 from ..deps import CurrentUser, SessionDep
@@ -110,8 +111,27 @@ class ListeningActivity(BaseModel):
     questions: list[QuestionPrompt]
 
 
+class SpeakingActivity(BaseModel):
+    activity_type: Literal["speaking_task"] = "speaking_task"
+    activity_key: str
+    title: str
+    cefr_level: CefrLevel
+    skill_key: str
+    estimated_minutes: int
+    format: str
+    prompt: str
+    guidance: list[str]
+    #: Planning time changes what a speaking task measures, so it is part of
+    #: the task rather than a UI choice.
+    preparation_seconds: int
+    min_seconds: int
+    max_seconds: int
+    min_words: int
+    required_elements: list[str]
+
+
 ActivityResponse = Annotated[
-    ReadingActivity | StudyActivity | WritingActivity | ListeningActivity,
+    ReadingActivity | StudyActivity | WritingActivity | ListeningActivity | SpeakingActivity,
     Field(discriminator="activity_type"),
 ]
 
@@ -141,6 +161,14 @@ class CompleteActivityRequest(BaseModel):
     #: Listening: whether the transcript was read before answering. When
     #: true no listening evidence is recorded at all.
     used_transcript: bool = False
+    #: Speaking: how long the learner actually spoke for.
+    spoken_seconds: int = Field(default=0, ge=0)
+    #: Speaking: the recogniser's own confidence. Stored for audit, never
+    #: scored — see `curriculum/speaking.py`.
+    recognition_confidence: float | None = Field(default=None, ge=0, le=1)
+    #: Speaking: whether the learner typed instead of speaking. When true no
+    #: speaking evidence is recorded at all.
+    typed_instead: bool = False
     duration_ms: int | None = Field(default=None, ge=0)
 
 
@@ -253,8 +281,27 @@ class ListeningOutcome(BaseModel):
     used_transcript: bool
 
 
+class SpeakingOutcome(BaseModel):
+    activity_type: Literal["speaking_task"] = "speaking_task"
+    activity_key: str
+    score: float
+    explanation: str
+    checks: list[WritingCheckOutcome]
+    word_count: int
+    spoken_seconds: int
+    #: What the browser heard. Shown so the learner can judge for themselves
+    #: whether the recogniser got them right.
+    transcript: str
+    #: Displayed, never scored.
+    recognition_confidence: float | None
+    evidence_recorded: bool
+    typed_instead: bool
+    #: Always true: nothing here judged delivery. Clients must surface it.
+    provisional: bool
+
+
 CompleteActivityResponse = Annotated[
-    ReadingOutcome | StudyOutcome | WritingOutcome | ListeningOutcome,
+    ReadingOutcome | StudyOutcome | WritingOutcome | ListeningOutcome | SpeakingOutcome,
     Field(discriminator="activity_type"),
 ]
 
@@ -319,6 +366,23 @@ def read_activity(activity_key: str, user: CurrentUser, session: SessionDep) -> 
             questions=[QuestionPrompt(**question) for question in prompt["questions"]],
         )
 
+    if isinstance(activity, SpeakingTask):
+        return SpeakingActivity(
+            activity_key=activity_key,
+            title=activity.title,
+            cefr_level=activity.cefr_level,
+            skill_key=activity.skill_key,
+            estimated_minutes=activity.minutes,
+            format=activity.speaking_format,
+            prompt=activity.prompt,
+            guidance=list(activity.guidance),
+            preparation_seconds=activity.preparation_seconds,
+            min_seconds=activity.min_seconds,
+            max_seconds=activity.max_seconds,
+            min_words=activity.requirements.min_words,
+            required_elements=list(activity.requirements.required_elements),
+        )
+
     task: WritingTask = activity
     return WritingActivity(
         activity_key=activity_key,
@@ -351,6 +415,9 @@ def complete_activity(
         text=payload.text,
         hints_used=payload.hints_used,
         plays=payload.plays,
+        spoken_seconds=payload.spoken_seconds,
+        recognition_confidence=payload.recognition_confidence,
+        typed_instead=payload.typed_instead,
         used_transcript=payload.used_transcript,
         duration_ms=payload.duration_ms,
     )
@@ -396,6 +463,24 @@ def complete_activity(
             evidence_recorded=result.evidence_recorded,
             independence=result.independence,
             logged_features=list(result.logged_features),
+        )
+
+    if isinstance(result, service.SpeakingResult):
+        return SpeakingOutcome(
+            activity_key=result.activity_key,
+            score=result.score,
+            explanation=result.explanation,
+            checks=[
+                WritingCheckOutcome(code=c.code, passed=c.passed, message=c.message)
+                for c in result.analysis.checks
+            ],
+            word_count=result.analysis.word_count,
+            spoken_seconds=result.spoken_seconds,
+            transcript=result.transcript,
+            recognition_confidence=result.recognition_confidence,
+            evidence_recorded=result.evidence_recorded,
+            typed_instead=result.typed_instead,
+            provisional=result.provisional,
         )
 
     if isinstance(result, service.ListeningResult):

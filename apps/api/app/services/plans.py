@@ -402,8 +402,20 @@ def _pick_activity(skill_key: str, kind: str) -> _Openable | None:
             )
         return None
 
-    # Speaking and reflection have no activity behind them yet. Returning
-    # None keeps the plan item honest rather than linking it somewhere wrong.
+    if kind == ActivityKind.SPEAKING:
+        spoken = activities.speaking_for_skill(skill_key)
+        if spoken:
+            prompt = min(spoken, key=lambda item: (item.minutes, item.key))
+            return _Openable(
+                activity_key=activities.speaking_key_for(prompt),
+                activity_type=activities.SPEAKING_TYPE,
+                title=prompt.title,
+                minutes=prompt.minutes,
+            )
+        return None
+
+    # Reflection has no activity behind it yet. Returning None keeps the plan
+    # item honest rather than linking it somewhere wrong.
     return None
 
 

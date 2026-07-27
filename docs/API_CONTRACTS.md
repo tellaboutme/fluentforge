@@ -78,7 +78,7 @@ must not look like a complete one.
   records evidence.
 - `GET /attempts/{id}/feedback`
 
-Both endpoints serve four activity kinds, discriminated on `activity_type`.
+Both endpoints serve five activity kinds, discriminated on `activity_type`.
 Clients must switch on that field; the shapes do not overlap.
 
 | `activity_key` prefix | `activity_type` | Opened payload | Completed with |
@@ -87,6 +87,7 @@ Clients must switch on that field; the shapes do not overlap.
 | `study:` | `study_task` | `explanation`, `examples[]`, `items[]` | `answers`, `hints_used` |
 | `write:` | `writing_task` | `prompt`, `guidance[]`, word and sentence requirements | `text` |
 | `listen:` | `listening_task` | `setting`, `transcript`, `speech_rate`, `audio`, `questions[]` | `answers`, `plays`, `used_transcript` |
+| `speak:` | `speaking_task` | `prompt`, `guidance[]`, `preparation_seconds`, `min_seconds`, `max_seconds`, `min_words` | `text`, `spoken_seconds`, `recognition_confidence`, `typed_instead` |
 
 Submitting the wrong payload for a kind returns `activity_payload_mismatch`
 with the field it expected, rather than a generic validation failure.
@@ -152,10 +153,43 @@ What each kind evidences differs, and the difference is on the wire:
   An abstention, a confidence below 0.6, or a provider that fails all leave
   the learner with exactly the deterministic feedback they would have had.
 
-Plan items whose `activity_key` begins with `read:`, `study:`, `write:`, or
-`listen:` can be opened at these endpoints. `review:` items belong to the
-review queue. `speak:` and `reflect:` kinds have no activity yet and must not
-be linked.
+- **Speaking** records `contextual_production` against a *speaking* skill, at
+  the lowest evaluator confidence in the system (0.35). What the API receives
+  is a transcript the browser produced, and a transcript is lossy in a way a
+  typed answer is not: the recogniser may have misheard, dropped, or silently
+  corrected what was said.
+
+  Three rules follow, and clients must respect all three.
+
+  **Nothing here evidences pronunciation.** A transcript is normalised text
+  and cannot distinguish a clearly spoken word from a badly spoken one the
+  recogniser guessed correctly. No task targets a `pronunciation.*` skill —
+  the curriculum parser refuses one that tries — and evidence never lands on
+  one. Every evidence event carries `pronunciation_unassessed: true` so a
+  later reader cannot assume otherwise. `provisional` is always `true`, and
+  clients must say plainly that delivery was not judged.
+
+  **`recognition_confidence` is recorded and never scored.** Browser speech
+  recognition is measurably worse on accented and non-native speech — this
+  product's whole audience — so a low-confidence transcript may mean unclear
+  speech, a poor microphone, or a recogniser trained mostly on native
+  speakers. It is stored for audit and echoed back for display, and the same
+  answer scores identically however well it was heard. Clients must present
+  it as a fact about the software, not as a mark against the learner.
+
+  **`typed_instead: true` records no speaking evidence at all**, the same
+  shape as reading a listening transcript. The fallback exists so a learner
+  with no microphone can still finish, the attempt is still kept, and the
+  response says `evidence_recorded: false` with an explanation that does not
+  imply cheating.
+
+  `spoken_seconds` below the task's `min_seconds`, or a transcript below its
+  word minimum, also records nothing rather than a bad score.
+
+Plan items whose `activity_key` begins with `read:`, `study:`, `write:`,
+`listen:`, or `speak:` can be opened at these endpoints. `review:` items
+belong to the review queue. `reflect:` has no activity yet and must not be
+linked.
 
 Error codes and features referenced by an activity are drawn from a closed
 taxonomy (`apps/api/app/learning/taxonomy.py`). Codes are stable and never
@@ -182,7 +216,10 @@ never recorded as production.
 - `GET /content/imports/{id}`
 - `GET /content/library`
 
-### Speaking
+### Speech uploads (not implemented)
+
+Audio upload and acoustic analysis. This is the only route that could ever
+evidence pronunciation, and until it exists no endpoint claims to.
 
 - `POST /speech/uploads`
 - `GET /speech/uploads/{id}/status`

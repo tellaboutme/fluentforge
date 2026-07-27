@@ -120,7 +120,7 @@ export function TodayPlan({ token }: { token: string }) {
 
 /** Prefixes the activity player can open. Kept beside the router that reads
  * them so adding a kind is one change, not two. */
-const OPENABLE_PREFIXES = ["read:", "study:", "write:", "listen:"];
+const OPENABLE_PREFIXES = ["read:", "study:", "write:", "listen:", "speak:"];
 
 function openableHref(item: PlanItem): string | null {
   if (OPENABLE_PREFIXES.some((prefix) => item.activityKey.startsWith(prefix))) {

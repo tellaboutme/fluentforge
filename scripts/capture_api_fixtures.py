@@ -133,7 +133,7 @@ def main() -> int:
         profile_payload = client.get("/api/v1/profile", headers=headers).json()
         plan_payload = client.get("/api/v1/plans/today", headers=headers).json()
 
-        # All four activity kinds, opened and completed. These are the
+        # All five activity kinds, opened and completed. These are the
         # shapes the activity player switches on, so a rename in any of them
         # has to fail the web contract test rather than the browser.
         from apps.api.app.services import activities as activity_service
@@ -142,11 +142,13 @@ def main() -> int:
         study = activity_service.study_units()[0]
         writing = activity_service.writing_tasks()[0]
         listening = activity_service.listening_clips()[0]
+        speaking = activity_service.speaking_tasks()[0]
 
         reading_key = activity_service.activity_key_for(reading)
         study_key = activity_service.study_key_for(study)
         writing_key = activity_service.writing_key_for(writing)
         listening_key = activity_service.listening_key_for(listening)
+        speaking_key = activity_service.speaking_key_for(speaking)
 
         reading_activity_payload = client.get(
             f"/api/v1/activities/{reading_key}", headers=headers
@@ -194,6 +196,27 @@ def main() -> int:
             },
         ).json()
 
+        speaking_activity_payload = client.get(
+            f"/api/v1/activities/{speaking_key}", headers=headers
+        ).json()
+        # Actually spoken, long enough, so the fixture carries recorded
+        # speaking evidence rather than the typed-instead case.
+        speaking_result_payload = client.post(
+            f"/api/v1/activities/{speaking_key}/complete",
+            headers=headers,
+            json={
+                "text": (
+                    "Hello, my name is Ana and I am from Porto in the north "
+                    "of Portugal. I live in Lisbon now, near the river, and "
+                    "I like to run in the morning before work because the "
+                    "streets are quiet then and the light is very good."
+                ),
+                "spoken_seconds": 40,
+                "recognition_confidence": 0.82,
+                "typed_instead": False,
+            },
+        ).json()
+
         # Release every database handle before the scratch directory goes.
         # SQLAlchemy pools connections, so without this the SQLite file stays
         # open and Windows cannot delete it.
@@ -218,6 +241,8 @@ def main() -> int:
         "writing_result": writing_result_payload,
         "listening_activity": listening_activity_payload,
         "listening_result": listening_result_payload,
+        "speaking_activity": speaking_activity_payload,
+        "speaking_result": speaking_result_payload,
     }
 
     stable = _stabilise(fixtures, {})

@@ -1,0 +1,165 @@
+version: 0.1.0
+description: >
+  Spoken output tasks. The learner speaks; the browser transcribes; the
+  transcript is checked against the same countable properties writing uses.
+
+  What this can evidence: that connected spoken language was produced, at
+  length, covering what the task asked for. What it cannot evidence is
+  pronunciation. A transcript is normalised text and cannot tell a clearly
+  spoken word from a badly spoken one the recogniser guessed correctly, so no
+  task here targets a pronunciation skill and the parser refuses one that
+  tries (apps/api/app/curriculum/speaking.py).
+
+  Recognition confidence is stored and never scored. Browser speech
+  recognition is less accurate on accented and non-native speech — this
+  product's whole audience — so a low-confidence transcript may mean unclear
+  speech, a poor microphone, or a recogniser trained mostly on native
+  speakers. Marking a learner down for the third would be discrimination
+  dressed as assessment.
+
+  Every task states a preparation time. Planning time changes what a speaking
+  task measures, so it belongs in the content rather than in the UI.
+
+  All prompts are original to this repository.
+
+tasks:
+  # --- A1 -----------------------------------------------------------------
+  - key: speak.a1.introduce_yourself
+    level: A1
+    skill: speaking.basic_identity
+    title: "Introduce yourself out loud"
+    format: monologue
+    minutes: 6
+    preparation_seconds: 45
+    min_seconds: 25
+    max_seconds: 90
+    min_words: 35
+    prompt: |
+      You are meeting a new class for the first time. Everyone says a little
+      about themselves.
+
+      Say who you are, where you are from, where you live now, and one thing
+      you like doing.
+    guidance:
+      - "Speak in full sentences, even short ones."
+      - "It is fine to pause and think. Silence is not a mistake."
+      - "Say where you live and where you are from -- both, not just one."
+    required_elements: ["live", "from"]
+    target_features:
+      - grammar.tense.present_simple_form
+      - grammar.agreement.subject_verb
+
+  # --- A2 -----------------------------------------------------------------
+  - key: speak.a2.weekend
+    level: A2
+    skill: speaking.simple_description
+    title: "Tell someone about your weekend"
+    format: narrative
+    minutes: 7
+    preparation_seconds: 45
+    min_seconds: 35
+    max_seconds: 120
+    min_words: 55
+    prompt: |
+      A colleague asks what you did at the weekend.
+
+      Tell them. Say where you went or what you did, who you were with, and
+      whether you enjoyed it.
+    guidance:
+      - "Use past forms: went, saw, had, was."
+      - "Join your ideas with 'and', 'but', 'so' or 'because'."
+      - "Say whether you enjoyed it, and why."
+    required_elements: ["because"]
+    target_features:
+      - grammar.tense.past_simple_form
+      - discourse.cohesion.connective
+
+  # --- B1 -----------------------------------------------------------------
+  - key: speak.b1.explain_a_problem
+    level: B1
+    skill: speaking.connected_narrative
+    title: "Explain a problem and what you did about it"
+    format: narrative
+    minutes: 9
+    preparation_seconds: 60
+    min_seconds: 60
+    max_seconds: 180
+    min_words: 90
+    prompt: |
+      Think of something that went wrong recently -- a delivery, an
+      appointment, a piece of equipment, anything.
+
+      Explain what happened, in order: what should have happened, what
+      actually happened, what you did about it, and how it ended.
+    guidance:
+      - "Keep the order clear so the listener can follow without asking."
+      - "Signal the sequence: first, then, after that, in the end."
+      - "Say how it ended, even if it is still unresolved."
+    required_elements: ["then"]
+    target_features:
+      - grammar.tense.perfect_vs_past
+      - discourse.cohesion.connective
+      - discourse.reference.given_new
+
+  # --- B2 -----------------------------------------------------------------
+  - key: speak.b2.defend_a_view
+    level: B2
+    skill: speaking.develop_viewpoint
+    title: "Argue a position, and answer the obvious objection"
+    format: opinion
+    minutes: 12
+    preparation_seconds: 90
+    min_seconds: 75
+    max_seconds: 210
+    min_words: 130
+    prompt: |
+      Should employers be allowed to require staff back in the office full
+      time?
+
+      Take a position and argue it. Give two reasons with some development,
+      then state the strongest objection to your own view and answer it.
+    guidance:
+      - "State your position early, not as a conclusion at the end."
+      - "Develop each reason -- a claim with no support is not an argument."
+      - "Give the objection its real force before you answer it. However you
+        frame it, do not caricature it."
+      - "Signposting helps a listener more than a reader: 'my first reason
+        is', 'the obvious objection is'."
+    required_elements: ["however"]
+    target_features:
+      - grammar.clause.subordination
+      - grammar.modality.obligation
+      - discourse.organisation.paragraphing
+      - lexis.precision.approximation
+
+  # --- C1 -----------------------------------------------------------------
+  - key: speak.c1.summarise_and_react
+    level: C1
+    skill: mediation.complex_synthesis
+    title: "Pass on an argument, then say where you stand"
+    format: summary
+    minutes: 14
+    preparation_seconds: 120
+    min_seconds: 90
+    max_seconds: 240
+    min_words: 160
+    prompt: |
+      A colleague missed a discussion you both needed. The argument made was
+      that remote work has made informal learning harder, because people no
+      longer overhear how colleagues handle problems.
+
+      Report that argument fairly and in your own words, mark clearly where
+      the report ends and your own view begins, and say what you would do
+      about it.
+    guidance:
+      - "Report, do not recite. Your own sentences, their argument."
+      - "Mark the source explicitly: 'the argument was that...'."
+      - "Signal the handover clearly -- 'for my part' or similar -- so the
+        listener always knows whose view they are hearing."
+      - "Hedge what you are unsure of; commit plainly to what you are not."
+    required_elements: ["argument"]
+    target_features:
+      - grammar.tense.sequence_backshift
+      - discourse.reference.given_new
+      - pragmatics.register.formality
+      - lexis.precision.approximation
