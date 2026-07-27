@@ -1,0 +1,65 @@
+# Running the whole product in containers.
+#
+# Kept apart from `docker-compose.yml`, which starts only the backing
+# services a developer needs while running the app from source. Merging them
+# would mean a developer who wanted PostgreSQL also got a stale image of
+# their own application:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.app.yml up
+#
+# Migrations run as their own service and exit. A container that migrates as
+# it starts races every other replica of itself, and a failed migration would
+# take the deployment down rather than one job.
+services:
+  migrate:
+    build:
+      context: .
+      dockerfile: infra/api.Dockerfile
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://fluentforge:fluentforge@postgres:5432/fluentforge
+      APP_ENV: production
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET; the API refuses to start in production without one}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/api.Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://fluentforge:fluentforge@postgres:5432/fluentforge
+      APP_ENV: production
+      # No default. `app/settings.py` refuses to start in production with the
+      # development secret, and a compose file supplying one would defeat the
+      # check in the environment it exists for.
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET}
+      ALLOWED_ORIGINS: '["http://localhost:3000"]'
+      # The core loop works with no AI configured, and that is the default
+      # here as everywhere else.
+      AI_PROVIDER: ${AI_PROVIDER:-disabled}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+      args:
+        # Baked into the client bundle at build time -- that is what
+        # NEXT_PUBLIC_ means. An image built for one deployment cannot be
+        # repointed at another by an environment variable.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports: ["3000:3000"]
+    depends_on: [api]
+    restart: unless-stopped

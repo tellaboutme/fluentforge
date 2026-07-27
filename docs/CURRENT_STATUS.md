@@ -434,7 +434,11 @@ unlinked the whole time.
 - **Diagnostic errors still use legacy codes.** `services/diagnostics.py` logs
   `item.<skill_key>`; the taxonomy exists but the diagnostic does not use it
   yet. Study activities do.
-- **Worker and deployment.** `services/worker` is a stub; no container images.
+- **A deployed instance.** Both container images now build and a compose
+  stack describes the whole product, but nothing has been run end to end in
+  containers, and `services/worker` is still a stub — nothing in the product
+  needs asynchronous work yet, which is why it has stayed a stub honestly
+  rather than accidentally.
 
 ## Current risks
 
@@ -496,7 +500,7 @@ unlinked the whole time.
    confidence 0.35, the 21-day benchmark cadence, 119 graph weights — all
    defensible defaults and none of them findings. `docs/LEARNING_SCIENCE.md`
    asks for them to be checked against usage, and nothing has been.
-3. **The worker and deployment.** `services/worker` is still a stub and
-   there are no container images. Nothing in the product needs asynchronous
-   work yet, which is why it has stayed a stub honestly rather than
-   accidentally — but audio upload, generation and imports all land there.
+3. **Run the compose stack end to end.** Both images build; nothing has yet
+   started them together and walked a learner through the product in
+   containers. That is where a wrong `NEXT_PUBLIC_API_URL`, a missing
+   migration step or a CORS mismatch would show.

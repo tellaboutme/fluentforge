@@ -1,0 +1,40 @@
+# What never belongs in a build context.
+#
+# The immediate reason: `apps/web/node_modules` is a farm of pnpm symlinks
+# pointing at a store outside the workspace. Copied into an image they become
+# dangling links that shadow the modules `pnpm install` just created, and the
+# web build failed with "Cannot find module next/dist/bin/next" -- from a
+# directory where next had been installed seconds earlier.
+#
+# The standing reason: everything here is either generated, secret, or
+# irrelevant to a build, and all of it is uploaded to the daemon on every
+# `docker build` without this file.
+
+**/node_modules
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+apps/web/.next
+apps/web/playwright-report
+apps/web/test-results
+
+# Local state and anything that could carry a secret.
+local-data
+.env
+.env.*
+!.env.example
+
+.git
+.github
+.runner
+
+# Documentation and scratch files change constantly and would bust the cache
+# for a build that does not read them.
+docs
+*.md
+!curriculum/**/*.md
+!prompts/**/*.md

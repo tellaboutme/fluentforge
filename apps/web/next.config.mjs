@@ -8,6 +8,12 @@ const nextConfig = {
   // do not read this setting.
   allowedDevOrigins: ["127.0.0.1"],
 
+  // Standalone output: the container image carries the server and the files
+  // Next traced, rather than the whole workspace `node_modules`. Set here
+  // rather than passed at build time so a local `next build` produces the
+  // same artefact the image does.
+  output: "standalone",
+
   reactStrictMode: true,
   // The contracts package ships TypeScript source, not a build artifact, so the
   // API shape stays a single source of truth with no build step to forget.
