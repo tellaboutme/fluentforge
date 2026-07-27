@@ -125,12 +125,19 @@ jobs:
         run: uv sync --extra dev
 
       # A stale fixture means the web contract tests are asserting against a
-      # shape the API no longer sends.
+      # shape the API no longer sends. On mismatch the first hunks of the
+      # diff are emitted as annotations, because annotations are readable
+      # without credentials on a public repository and raw job logs are not —
+      # which matters when the person debugging is not signed in to GitHub.
       - name: Re-capture and diff
         run: |
           uv run python scripts/capture_api_fixtures.py
-          git diff --exit-code apps/web/fixtures/api-payloads.json \
-            || (echo "::error::API payloads changed. Run 'make capture-fixtures' and commit." && exit 1)
+          if ! git diff --exit-code --quiet apps/web/fixtures/api-payloads.json; then
+            echo "::error::API payloads changed. Run 'make capture-fixtures' and commit."
+            git diff --unified=1 apps/web/fixtures/api-payloads.json | head -n 40 \
+              | while IFS= read -r line; do echo "::error::diff: ${line}"; done
+            exit 1
+          fi
 
   postgres:
     name: Migrations on PostgreSQL

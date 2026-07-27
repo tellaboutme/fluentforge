@@ -58,7 +58,7 @@ defaults. Tests run in parallel.
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
 C1; **12 study units with 52 practice items spanning A1–C2**; 9 written output
-tasks across 8 genres reaching C2; and 5 listening clips. All content-hashed
+tasks across 8 genres reaching C2; and **7 listening clips reaching C2**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
 The C1/C2 material teaches what actually distinguishes those levels —
@@ -173,9 +173,10 @@ A due card never ships its own answer.
    clip accepts real recordings with no schema change.
 2. **The speaking slot still has nothing behind it**, and renders unlinked.
 3. **Writing accuracy is never judged.**
-4. **Listening still stops at B2**, and 16 of 36 features have no study
-   unit, which `make test-curriculum` reports explicitly. Study, writing and
-   reading now reach C1/C2; clips do not yet.
+4. **16 of 36 features have no study unit**, which `make test-curriculum`
+   reports explicitly. Every bank now reaches C1 or C2, but coverage within
+   the taxonomy is still partial: an error logged against an uncovered
+   feature schedules practice and offers no remedy.
 5. **Hints, replays, and transcript use are self-reported by the client.** A
    dishonest or buggy client can overstate independence. The blast radius is
    one mis-weighted observation, except for `used_transcript`, where the
@@ -191,6 +192,7 @@ A due card never ships its own answer.
 1. **Implement a concrete rubric provider** (`local` or `cloud`) behind the
    now-wired evaluator contract, so writing accuracy is actually judged. The
    wiring, capping, and UI all exist and are tested against a fake.
-2. **Add C1/C2 listening clips**, the one bank still stopping at B2.
-3. **Cover more features with study units** — 16 of 36 still have no unit, so
+2. **Cover more features with study units** — 16 of 36 still have no unit, so
    errors logged against them schedule practice but offer no remedy.
+3. **Speaking**, the last plan-item kind with nothing behind it. Milestone 5,
+   and the only modality still resting entirely on self-report.

@@ -237,3 +237,121 @@ clips:
           - "A refusal to discuss it further."
           - "An accusation that Ana is wrong."
         answer: "A partial concession that still holds his ground."
+
+  # --- C1 -----------------------------------------------------------------
+  - key: listen.c1.lecture_aside
+    level: C1
+    skill: listening.implicit_extended
+    title: "A lecturer going off-script"
+    setting: "A university lecture on urban planning, part-way through."
+    minutes: 10
+    speech_rate: 1.1
+    transcript: |
+      ...so the standard account is that the ring road relieved congestion
+      in the centre. And on the numbers, for about six years, it did.
+      What the standard account leaves out -- and I say this having sat on
+      the review panel, so take it for what it is worth -- is that the
+      traffic did not disappear. It relocated. The eastern suburbs absorbed
+      it, and nobody was measuring the eastern suburbs, because the eastern
+      suburbs were not in the terms of reference.
+      Now, I am not suggesting anyone falsified anything. I am suggesting
+      that if you only count where you are looking, you will always find
+      that you have solved the problem.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the lecturer's main point?"
+        options:
+          - "The measured success came from not measuring the whole system."
+          - "The ring road failed to reduce congestion at all."
+          - "The review panel deliberately falsified its figures."
+          - "Urban planning is impossible to evaluate."
+        answer: "The measured success came from not measuring the whole system."
+      - key: detail
+        type: detail
+        prompt: "Why were the eastern suburbs not counted?"
+        options:
+          - "They were outside the review's terms of reference."
+          - "No traffic reached them."
+          - "The data was lost."
+          - "Residents refused to take part."
+        answer: "They were outside the review's terms of reference."
+      - key: inference
+        type: inference
+        prompt: "Why does the lecturer mention sitting on the review panel?"
+        options:
+          - "To flag their own possible bias while claiming inside knowledge."
+          - "To establish that the panel was incompetent."
+          - "To distance themselves from the findings entirely."
+          - "To claim credit for the ring road's success."
+        answer: "To flag their own possible bias while claiming inside knowledge."
+      - key: inference2
+        type: inference
+        prompt: "'I am not suggesting anyone falsified anything' functions as"
+        options:
+          - "A disclaimer that sharpens the criticism that follows."
+          - "A full retraction of the previous point."
+          - "A defence of the review panel's methods."
+          - "An admission that the lecturer was wrong."
+        answer: "A disclaimer that sharpens the criticism that follows."
+
+  # --- C2 -----------------------------------------------------------------
+  - key: listen.c2.negotiation
+    level: C2
+    skill: listening.near_unrestricted
+    title: "Two people not quite saying no"
+    setting: "A phone call between a supplier, Ines, and a client, Rob."
+    minutes: 11
+    speech_rate: 1.15
+    transcript: |
+      ROB: So we were hoping to have the whole thing wrapped by the end of
+      the quarter. Is that -- I mean, is that the sort of timeline you would
+      recognise?
+      INES: It is a timeline. Whether I would recognise it as ours is a
+      different question. What is driving the quarter, specifically?
+      ROB: Board reporting, mostly. It would be helpful.
+      INES: Helpful to whom, though? Because if it is helpful to the board
+      and expensive for your team, I have seen how that ends, and it ends
+      with us being blamed for the quality.
+      ROB: That is -- yes. All right. What would you need for it not to
+      end that way?
+      INES: Either the scope moves or the date does. I do not mind which.
+      I mind very much being asked to hold both.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is Ines doing in this call?"
+        options:
+          - "Refusing the deadline without ever saying no."
+          - "Agreeing to the end-of-quarter timeline."
+          - "Blaming Rob's team for previous quality problems."
+          - "Withdrawing from the project entirely."
+        answer: "Refusing the deadline without ever saying no."
+      - key: detail
+        type: detail
+        prompt: "What does Ines say she needs?"
+        options:
+          - "Either the scope or the date to move."
+          - "Both the scope and the date fixed."
+          - "A different point of contact."
+          - "Payment in advance."
+        answer: "Either the scope or the date to move."
+      - key: inference
+        type: inference
+        prompt: "'It is a timeline' implies"
+        options:
+          - "That it is not a timeline she has agreed to."
+          - "That she considers it reasonable."
+          - "That she has not understood the question."
+          - "That the project has no timeline yet."
+        answer: "That it is not a timeline she has agreed to."
+      - key: inference2
+        type: inference
+        prompt: "Rob's 'That is -- yes. All right.' signals that he"
+        options:
+          - "Concedes the point mid-sentence and changes tack."
+          - "Has stopped listening."
+          - "Disagrees but is being polite."
+          - "Is confirming the original deadline."
+        answer: "Concedes the point mid-sentence and changes tack."
+
