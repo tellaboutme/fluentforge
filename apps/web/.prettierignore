@@ -1,0 +1,14 @@
+# Prettier does not read .gitignore, so build output has to be excluded here
+# too. Without this the format step walks .next/ -- thousands of generated
+# chunks -- which is slow and, worse, means a formatter could rewrite files
+# nobody wrote.
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+node_modules/
+
+# Captured from the running API and diffed byte-for-byte by CI. Reformatting
+# it would break that comparison on the next push.
+fixtures/api-payloads.json

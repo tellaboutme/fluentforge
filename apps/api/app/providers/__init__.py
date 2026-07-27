@@ -18,6 +18,7 @@ from .base import (
     WritingEvaluationRequest,
     WritingEvaluator,
 )
+from .cloud import CloudWritingEvaluator
 from .disabled import DisabledWritingEvaluator
 
 KNOWN_MODES = {"disabled", "local", "cloud"}
@@ -34,6 +35,12 @@ def get_writing_evaluator() -> WritingEvaluator:
     if mode == "disabled":
         return DisabledWritingEvaluator()
 
+    if mode == "cloud":
+        # Deliberately constructed even with no key. The evaluator abstains
+        # on its own, so a misconfigured deployment degrades to deterministic
+        # feedback instead of failing at startup and taking the API with it.
+        return CloudWritingEvaluator()
+
     if mode in KNOWN_MODES:
         raise ProviderNotAvailableError(
             f"AI_PROVIDER={mode!r} is planned but not implemented. "
@@ -47,6 +54,7 @@ def get_writing_evaluator() -> WritingEvaluator:
 
 __all__ = [
     "MIN_USABLE_CONFIDENCE",
+    "CloudWritingEvaluator",
     "DisabledWritingEvaluator",
     "PriorityFeedback",
     "ProviderNotAvailableError",

@@ -38,6 +38,12 @@ class Settings(BaseSettings):
 
     # Provider abstraction; "disabled" keeps the product fully usable offline.
     ai_provider: str = "disabled"
+    #: Required only when ai_provider is "cloud". Absent, the cloud evaluator
+    #: abstains rather than raising: a missing key must not turn a learner's
+    #: submission into a stack trace.
+    ai_api_key: str = ""
+    ai_model: str = "claude-sonnet-4-5"
+    ai_base_url: str = "https://api.anthropic.com"
     speech_provider: str = "disabled"
     retention_raw_audio_days: int = Field(default=7, ge=0)
 

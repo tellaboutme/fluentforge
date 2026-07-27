@@ -133,6 +133,22 @@ A due card never ships its own answer.
 - **A parser invariant makes an unfair task impossible**: a writing task may
   not require wording its own prompt and guidance never use.
 
+### Rubric evaluation (Milestone 4)
+
+- **`ai_provider=cloud` judges writing** against the versioned prompt in
+  `prompts/evaluators/writing.md`, adding a second evidence event beside the
+  deterministic one rather than replacing it.
+- **Fabricated evidence is rejected.** Every cited quotation is checked
+  against the learner's actual text. A schema-valid judgement that invents
+  what it quotes is discarded — it is not a judgement about this writing.
+- **Every failure abstains**: no key, timeout, quota, HTTP error, malformed
+  body, unparseable JSON, schema violation, more than three corrections. The
+  learner keeps exactly the deterministic feedback they would have had. 27
+  tests, one per way the outside world can misbehave.
+- **Confidence is capped at 0.85** before reaching the mastery model.
+- The default is still `disabled`, so the whole suite proves the product
+  works with no AI configured.
+
 ### Error taxonomy (new)
 
 - **Errors name a linguistic feature**, from a closed set of 36 codes in
@@ -150,13 +166,9 @@ A due card never ships its own answer.
 - **Speaking.** No recorder, transcription, or acoustic analysis. The
   `speaking` slot is the last plan-item kind with nothing behind it, and
   speaking skills are still evidenced only by self-rating.
-- **A rubric provider.** The evaluator is now *wired in* — writing calls it,
-  a usable judgement adds evidence, and the UI renders dimensions, citations
-  and corrections. What does not exist yet is a provider that actually calls a
-  model: `local` and `cloud` still raise at startup, so the shipped default
-  abstains and writing stays provisional. The wiring is the part that was
-  missing and is fully tested; the provider is a afternoon's work behind a
-  contract that now has a caller.
+- **A self-hosted (`local`) provider.** `cloud` now exists and works; `local`
+  still raises at startup. The default remains `disabled`, so writing stays
+  provisional out of the box and every test runs against the no-AI path.
 - **Diagnostic errors still use legacy codes.** `services/diagnostics.py` logs
   `item.<skill_key>`; the taxonomy exists but the diagnostic does not use it
   yet. Study activities do.
