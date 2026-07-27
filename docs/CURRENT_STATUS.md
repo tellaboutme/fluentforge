@@ -26,11 +26,11 @@ learner has to notice that the sources disagree.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **618 Python tests**; eslint, tsc, and **243 web
+curriculum validation, **636 Python tests**; eslint, tsc, and **243 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
-**All six CI jobs pass on `d78ef37`** — Python 3.10 and 3.12, the web app,
+**All six CI jobs pass on `a2e66b0`** — Python 3.10 and 3.12, the web app,
 PostgreSQL migrations, fixture drift, and the Playwright browser suite.
 
 Version control starts at commit `d503861`, which captures this passing state
@@ -85,6 +85,14 @@ tasks across 8 genres reaching C2; 7 listening clips reaching C2; **7
 spoken output tasks reaching C2**; and **4 multi-source mediation tasks
 reaching C2, across 6 kinds of source**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
+
+Four files that had been in the repository since the beginning are now
+**actually read**: the communication-function map, the grammar map, the
+pronunciation map, and the three learner tracks. They were hashed into every
+curriculum version — so editing one minted a new version and froze the old —
+while validation reported the curriculum sound without having looked at a
+line of them. Among other things, the parser now refuses a pronunciation
+policy that scores accent identity, which the whole speaking lab rests on.
 
 The C1/C2 material teaches what actually distinguishes those levels —
 information flow, hedging and stance, register shifting, irony and

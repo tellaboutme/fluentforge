@@ -19,6 +19,7 @@ from apps.api.app.curriculum.graph import parse_graph, prerequisite_edges
 from apps.api.app.curriculum.items import parse_item_bank
 from apps.api.app.curriculum.lexis import parse_lexis
 from apps.api.app.curriculum.listening import parse_listening
+from apps.api.app.curriculum.maps import parse_maps
 from apps.api.app.curriculum.mediation import parse_mediation_tasks
 from apps.api.app.curriculum.parser import CurriculumError, parse_curriculum
 from apps.api.app.curriculum.speaking import parse_speaking_tasks
@@ -44,6 +45,7 @@ def main(argv: list[str]) -> int:
         spoken = parse_speaking_tasks(curriculum_dir, known_skill_keys=known)
         accounts = parse_mediation_tasks(curriculum_dir, known_skill_keys=known)
         graph = parse_graph(curriculum_dir, curriculum.objectives)
+        maps = parse_maps(curriculum_dir)
     except CurriculumError as exc:
         print("Curriculum validation failed:")
         for error in exc.errors:
@@ -60,6 +62,26 @@ def main(argv: list[str]) -> int:
     )
     for level, count in sorted(by_level.items()):
         print(f"  {level}: {count} objectives")
+
+    print(
+        f"Progression maps: {maps.functions.item_count} communication functions, "
+        f"{maps.grammar.item_count} grammar points across "
+        f"{len(maps.grammar.strands)} strands, "
+        f"{sum(len(items) for items in maps.pronunciation_strands.values())} "
+        f"pronunciation points across {len(maps.pronunciation_strands)} strands."
+    )
+    # Stated every run, because it is a promise to learners rather than a
+    # setting, and the speaking lab is built on it.
+    print("  pronunciation policy: accent identity is never scored.")
+    print(f"Tracks: {len(maps.tracks)}.")
+    for track in maps.tracks:
+        span = f"{track.levels[0].value}-{track.levels[-1].value}"
+        detail = (
+            f"{len(track.scenarios)} scenarios"
+            if track.scenarios
+            else f"{len(track.priority_domains)} priority domains"
+        )
+        print(f"  {track.key}: {span}, {detail}")
 
     by_relation = Counter(edge.relation.value for edge in graph.edges)
     by_origin = Counter(edge.origin for edge in graph.edges)
