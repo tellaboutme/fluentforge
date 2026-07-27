@@ -396,6 +396,21 @@ def _pick_activity(skill_key: str, kind: str) -> _Openable | None:
         return None
 
     if kind == ActivityKind.OUTPUT:
+        # A mediation skill is filled from the mediation bank, never from the
+        # writing bank. They are both "produce a text", and they are not the
+        # same task: substituting a writing prompt for a mediation one would
+        # record evidence against `mediation.*` for work that involved no
+        # sources at all.
+        accounts = activities.mediation_for_skill(skill_key)
+        if accounts:
+            account = min(accounts, key=lambda item: (item.minutes, item.key))
+            return _Openable(
+                activity_key=activities.mediation_key_for(account),
+                activity_type=activities.MEDIATION_TYPE,
+                title=account.title,
+                minutes=account.minutes,
+            )
+
         tasks = activities.tasks_for_skill(skill_key)
         if tasks:
             task = min(tasks, key=lambda item: (item.minutes, item.key))

@@ -375,12 +375,39 @@ export interface SpeakingActivity extends ActivityBase {
   requiredElements: string[];
 }
 
+export interface MediationSource {
+  key: string;
+  title: string;
+  /** `article`, `email`, `chart_summary`… Mediating across different kinds
+   * of source is harder than across three articles, so the kind is shown. */
+  kind: string;
+  /** The source itself. Sent in full: it is the material, not an answer key. */
+  text: string;
+  wordCount: number;
+}
+
+export interface MediationActivity extends ActivityBase {
+  activityType: "mediation_task";
+  /** Who the account is for and why. It decides which details matter. */
+  brief: string;
+  sources: MediationSource[];
+  guidance: string[];
+  minWords: number;
+  maxWords: number;
+  minSentences: number;
+  requiredElements: string[];
+  /** Longest run of words an account may share with a source. Shown in
+   * advance, so the learner is told the rule before breaking it. */
+  maxVerbatimWords: number;
+}
+
 export type Activity =
   | ReadingActivity
   | StudyActivity
   | WritingActivity
   | ListeningActivity
-  | SpeakingActivity;
+  | SpeakingActivity
+  | MediationActivity;
 
 export interface QuestionOutcome {
   key: string;
@@ -501,12 +528,36 @@ export interface SpeakingResult {
   provisional: boolean;
 }
 
+export interface MediationResult {
+  activityType: "mediation_task";
+  activityKey: string;
+  score: number;
+  explanation: string;
+  checks: WritingCheckOutcome[];
+  wordCount: number;
+  /** Which sources left a trace. An approximation, shown as one. */
+  usedSources: string[];
+  unusedSources: string[];
+  /** Longest run shared with any source, after marked quotations are removed.
+   * Reported either way, so a learner can see they were nowhere near it. */
+  longestCopiedRun: number;
+  copiedFrom: string | null;
+  evidenceRecorded: boolean;
+  /** True while nothing has judged whether the sources were conveyed
+   * faithfully — which is the whole point. The UI must not hide this. */
+  provisional: boolean;
+  rubric: RubricDimensionOutcome[];
+  priorityFeedback: PriorityFeedbackOutcome[];
+  evaluatedBy: string | null;
+}
+
 export type ActivityResult =
   | ReadingResult
   | StudyResult
   | WritingResult
   | ListeningResult
-  | SpeakingResult;
+  | SpeakingResult
+  | MediationResult;
 
 /** What the client sends back, by kind. */
 export type ActivitySubmission =

@@ -317,6 +317,55 @@ _ALL: tuple[Feature, ...] = (
         SkillDomain.PRAGMATICS,
         False,
     ),
+    # --- Advanced (B2-C2) ---------------------------------------------------
+    #
+    # Added with the mediation lab. `docs/ROADMAP.md` Milestone 7 names
+    # pragmatics, rhetoric, idiom and metaphor as what actually separates the
+    # top three levels, and the original 36 features could not name any of
+    # them: an error log with nothing between "wrong tense" and "wrong
+    # register" cannot describe a C1 problem at all.
+    _f(
+        "pragmatics.stance.hedging",
+        "Saying how sure you are",
+        "A claim stated flatly when the evidence supports only a tentative one, "
+        "or hedged so heavily it says nothing.",
+        SkillDomain.PRAGMATICS,
+        # It does block meaning, in the sense that matters: the reader takes
+        # away a different degree of certainty than the writer holds.
+        True,
+    ),
+    _f(
+        "pragmatics.attribution.source",
+        "Saying whose claim it is",
+        "Reporting what a source said without making clear that it is their claim "
+        "rather than yours, or the reverse.",
+        SkillDomain.PRAGMATICS,
+        True,
+    ),
+    _f(
+        "pragmatics.rhetoric.irony",
+        "Irony and understatement",
+        "Irony, understatement or overstatement read or produced literally, so the "
+        "intended meaning is the opposite of the one taken.",
+        SkillDomain.PRAGMATICS,
+        True,
+    ),
+    _f(
+        "lexis.idiom.figurative",
+        "Idiom and figurative language",
+        "A fixed expression or metaphor used in a way a competent user would not, "
+        "or taken literally when it was not meant so.",
+        SkillDomain.VOCABULARY,
+        False,
+    ),
+    _f(
+        "discourse.organisation.information_flow",
+        "Ordering information for a reader",
+        "Points ordered by where they were found rather than by what the reader "
+        "needs first; a synthesis that reads as one summary after another.",
+        SkillDomain.DISCOURSE,
+        False,
+    ),
     # --- Mechanics ----------------------------------------------------------
     _f(
         "mechanics.punctuation.sentence_boundary",

@@ -1,0 +1,269 @@
+version: 0.1.0
+description: >
+  Multi-source mediation tasks. Several sources go in; one account comes out,
+  written for a named reader who has not seen them.
+
+  This is the advanced work `docs/ROADMAP.md` Milestone 7 asks for. What
+  separates B2 from C2 is not harder vocabulary but what a learner can do with
+  conflicting material: notice that two sources disagree, decide which detail
+  the reader needs, and say so in their own words. None of that is testable
+  with a gap-fill.
+
+  Every task states who the account is for, and the parser refuses one that
+  does not. Mediation without an audience is paraphrase.
+
+  Sources deliberately disagree with each other. A learner who reconciles two
+  agreeing sources has summarised twice; the interesting act is noticing the
+  gap and reporting it honestly, which is why the briefs ask for it.
+
+  `anchors` are names, figures and dates that survive paraphrase. They are the
+  approximation used to tell whether a source was drawn on at all. The parser
+  proves each one appears in its own source and in no other, so coverage means
+  something. Anchors are never sent to the client: publishing them would turn
+  the task into a word hunt.
+
+  All sources are original to this repository. Organisations, figures and
+  people are invented.
+
+tasks:
+  # --- B1 -----------------------------------------------------------------
+  - key: mediate.b1.moving_the_meeting
+    level: B1
+    skill: mediation.basic_summary
+    title: "Two messages, one answer"
+    minutes: 18
+    brief: |
+      You handle the schedule for a small team. Two people have written to you
+      about Thursday's meeting, and they do not want the same thing.
+
+      Write one message for your colleague Dan, who has read neither of them
+      and has to decide. Tell him what each person asked for, where they
+      disagree, and what he needs to decide.
+    guidance:
+      - "Say what each person wants, and say who wants what."
+      - "Name the disagreement openly rather than choosing a side for Dan."
+      - "End with the decision Dan actually has to make."
+      - "Use your own words. Do not paste their sentences into your message."
+    min_words: 90
+    max_words: 300
+    min_sentences: 5
+    min_connectives: 2
+    max_verbatim_words: 7
+    required_elements: ["decide"]
+    target_features:
+      - discourse.cohesion.connective
+      - discourse.organisation.paragraphing
+    sources:
+      - key: rosa
+        title: "Message from Rosa"
+        kind: email
+        anchors: ["nine in the morning", "Tuesday", "collect my son"]
+        text: |
+          Hi, about Thursday. Could we move the meeting to nine in the
+          morning? I have to collect my son at four and the current time
+          leaves me nothing afterwards. If nine is impossible then I would
+          rather we moved the whole thing to Tuesday and did it properly.
+          Either works for me. Thanks.
+      - key: idris
+        title: "Message from Idris"
+        kind: email
+        anchors: ["warehouse", "afternoon slot", "lunchtime"]
+        text: |
+          Quick note before you fix Thursday. I am at the warehouse until
+          lunchtime every Thursday this month, so anything in the morning is
+          out for me. The afternoon slot we have now is the only one I can
+          reach. I would rather keep it as it is than lose the week.
+
+  # --- B2 -----------------------------------------------------------------
+  - key: mediate.b2.two_reports
+    level: B2
+    skill: mediation.combine_sources
+    title: "A figure that does not agree with itself"
+    minutes: 22
+    brief: |
+      You work at a community centre. A local newspaper piece and your own
+      centre's usage report both describe the same six months, and the numbers
+      do not match.
+
+      Write a short briefing for your manager, who has read neither. Give her
+      one account of what happened, make clear where the two sources disagree,
+      and be explicit about what is not known.
+    guidance:
+      - "Give one account, not two summaries side by side."
+      - "State plainly where the figures disagree, and do not resolve it for her."
+      - "Separate what the sources report from what they only suggest."
+      - "Restate the sources in your own words rather than copying them."
+    min_words: 140
+    max_words: 400
+    min_sentences: 6
+    min_connectives: 3
+    max_verbatim_words: 8
+    required_elements: ["disagree"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.stance.hedging
+      - grammar.passive.form
+    sources:
+      - key: newspaper
+        title: "Local newspaper, 4 March"
+        kind: article
+        anchors: ["Kestrel Road", "forty per cent", "Bramley Gazette"]
+        text: |
+          Use of the community centre on Kestrel Road has fallen by forty per
+          cent since the autumn, according to residents who spoke to the
+          Bramley Gazette this week. Several described arriving to find rooms
+          locked and no staff on duty. A spokesperson for the council said the
+          building remains open on its published hours and that no sessions
+          have been cancelled. Residents disputed this.
+      - key: usage_report
+        title: "Centre usage report, October to March"
+        kind: report_extract
+        anchors: ["9,412", "bookings", "heating"]
+        text: |
+          Total bookings for the period were 9,412, against 9,980 for the same
+          six months last year, a decrease of under six per cent. Attendance
+          was not recorded for drop-in sessions and is therefore excluded.
+          Room 2 was unavailable for eleven days in January while the heating
+          was repaired, and bookings for that room were not transferred
+          elsewhere.
+
+  # --- C1 -----------------------------------------------------------------
+  - key: mediate.c1.three_views
+    level: C1
+    skill: mediation.complex_synthesis
+    title: "Three positions, one recommendation"
+    minutes: 28
+    brief: |
+      A small publisher is deciding whether to keep its office. Three people
+      have put their views in writing, and each is arguing from something the
+      others do not mention.
+
+      Write a synthesis for the board, who will read only your account and not
+      the originals. Set out what is actually at issue between the three,
+      distinguish the claims that rest on evidence from those that rest on
+      preference, and say what the board would need to know to decide.
+    guidance:
+      - "Organise by issue, not by person. Three summaries in a row is not synthesis."
+      - "Mark which claims rest on evidence and which rest on preference."
+      - "Say what would settle the question, rather than settling it yourself."
+      - "This must read as your account. Quote only if you mark the quotation."
+    min_words: 200
+    max_words: 550
+    min_sentences: 8
+    min_connectives: 4
+    max_verbatim_words: 8
+    required_elements: ["evidence"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.stance.hedging
+      - pragmatics.register.formality
+      - lexis.collocation.verb_noun
+    sources:
+      - key: finance
+        title: "Note from the finance lead"
+        kind: report_extract
+        anchors: ["£61,000", "lease", "break clause"]
+        text: |
+          The lease costs £61,000 a year including service charge, which is
+          the second largest line after salaries. The break clause falls due
+          in eleven months and cannot be exercised after that for a further
+          three years. Home-working saved an estimated £4,000 in utilities
+          last year, though that figure is not separated out in the accounts
+          and should be treated as indicative.
+      - key: editorial
+        title: "Email from the editorial team"
+        kind: email
+        anchors: ["manuscripts", "junior editors", "corridor"]
+        text: |
+          We do not think the office is about desks. Manuscripts get better
+          because someone overhears a problem and says something in the
+          corridor, and that has not once happened on a video call. Our two
+          junior editors have learned more in a month sitting near senior
+          staff than in six months of scheduled supervision. Losing the room
+          would cost us something we cannot easily replace, even if we cannot
+          put a number on it.
+      - key: survey
+        title: "Staff survey summary"
+        kind: chart_summary
+        anchors: ["71 per cent", "commute", "twice a week"]
+        text: |
+          Of 34 staff, 71 per cent said they would prefer to attend an office
+          no more than twice a week. The most common reason given was commute
+          length, cited by 22 respondents. Nine staff said they had no
+          suitable place to work at home. The survey did not ask whether
+          respondents would accept a smaller office, and no follow-up was
+          conducted.
+
+  # --- C2 -----------------------------------------------------------------
+  - key: mediate.c2.reconstructing_a_claim
+    level: C2
+    skill: mediation.reconstruct_multisource
+    title: "Reconstructing what was actually claimed"
+    minutes: 35
+    brief: |
+      A claim has been repeated widely, and the sources it came from say
+      something narrower than the version now in circulation.
+
+      Write an account for a general reader who has encountered the popular
+      version and nothing else. Reconstruct what was originally claimed, show
+      where the widened version departs from it, and be precise about what the
+      original evidence does and does not support.
+    guidance:
+      - "Reconstruct the original claim before you evaluate anything."
+      - "Show where the popular version parts company with it, and how."
+      - "Be exact about scope: who was studied, over what period, and where."
+      - "Write for someone with no background. Precision, not technical vocabulary."
+      - "Your own words throughout. Mark any quotation as a quotation."
+    min_words: 250
+    max_words: 650
+    min_sentences: 10
+    min_connectives: 5
+    max_verbatim_words: 8
+    required_elements: ["scope"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.stance.hedging
+      - pragmatics.rhetoric.irony
+      - lexis.collocation.verb_noun
+    sources:
+      - key: original
+        title: "The original study's own summary"
+        kind: report_extract
+        anchors: ["Halvorsen", "148 participants", "eleven weeks"]
+        text: |
+          Halvorsen and colleagues followed 148 participants over eleven
+          weeks. Participants who kept a short written log reported fewer
+          interrupted nights than those who did not. The authors note that
+          participants were recruited from a single workplace, that all were
+          aged between 24 and 41, and that sleep was self-reported throughout.
+          They describe the result as suggestive and call for replication.
+      - key: press_release
+        title: "The institution's press release"
+        kind: notice
+        anchors: ["Writing things down", "better sleep", "press office"]
+        text: |
+          Writing things down at the end of the day is linked to better sleep,
+          new research from the university suggests. The study found that
+          people who kept a daily log slept more soundly than those who did
+          not. The press office notes that the effect was observed over a
+          period of several weeks and that further work is planned.
+      - key: coverage
+        title: "How it was reported"
+        kind: article
+        anchors: ["cure for insomnia", "five minutes a day", "scientists have found"]
+        text: |
+          Scientists have found a cure for insomnia, and it takes five minutes
+          a day. Keeping a journal before bed is now known to end broken
+          sleep, according to research published this week. Experts say the
+          technique works for everyone and could replace medication for
+          millions of sufferers.
+      - key: correction
+        title: "Later correction from the authors"
+        kind: forum_post
+        anchors: ["did not measure", "we never claimed", "sleep disorder"]
+        text: |
+          We did not measure insomnia, and we never claimed to have treated
+          it. Our participants were not diagnosed with any sleep disorder. We
+          did not compare our intervention to medication and would not be able
+          to on this design. The reported association is real in our sample
+          and small, and we said so.

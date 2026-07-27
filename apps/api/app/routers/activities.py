@@ -1,6 +1,6 @@
 """Activity endpoints: open a plan item and complete it.
 
-Five activity kinds share these two endpoints. They are modelled as a
+Six activity kinds share these two endpoints. They are modelled as a
 discriminated union on `activity_type` rather than as one shape with many
 optional fields: a reading task has no word limit and a writing task has no
 options, and a response that admits both invites a client to render nonsense.
@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ..curriculum.content import LibraryText
 from ..curriculum.listening import ListeningClip
+from ..curriculum.mediation import MediationTask
 from ..curriculum.speaking import SpeakingTask
 from ..curriculum.study import StudyUnit
 from ..curriculum.tasks import WritingTask
@@ -130,8 +131,48 @@ class SpeakingActivity(BaseModel):
     required_elements: list[str]
 
 
+class MediationSourcePrompt(BaseModel):
+    key: str
+    title: str
+    #: `article`, `email`, `chart_summary`, and so on. Mediating across
+    #: different kinds of source is harder than across three articles, and
+    #: the client shows the kind so the learner knows what they are reading.
+    kind: str
+    #: The source itself. Sent in full: it is the material, not an answer
+    #: key, and a learner who cannot read it cannot do the task.
+    text: str
+    word_count: int
+
+
+class MediationActivity(BaseModel):
+    activity_type: Literal["mediation_task"] = "mediation_task"
+    activity_key: str
+    title: str
+    cefr_level: CefrLevel
+    skill_key: str
+    estimated_minutes: int
+    #: Who the account is for and why they need it. Not decoration: it is
+    #: what decides which details from the sources matter.
+    brief: str
+    sources: list[MediationSourcePrompt]
+    guidance: list[str]
+    min_words: int
+    max_words: int
+    min_sentences: int
+    required_elements: list[str]
+    #: The longest run of words an account may share with a source before it
+    #: is reported as copied. Sent so the learner is told the rule in
+    #: advance rather than after breaking it.
+    max_verbatim_words: int
+
+
 ActivityResponse = Annotated[
-    ReadingActivity | StudyActivity | WritingActivity | ListeningActivity | SpeakingActivity,
+    ReadingActivity
+    | StudyActivity
+    | WritingActivity
+    | ListeningActivity
+    | SpeakingActivity
+    | MediationActivity,
     Field(discriminator="activity_type"),
 ]
 
@@ -300,8 +341,40 @@ class SpeakingOutcome(BaseModel):
     provisional: bool
 
 
+class MediationOutcome(BaseModel):
+    activity_type: Literal["mediation_task"] = "mediation_task"
+    activity_key: str
+    score: float
+    explanation: str
+    checks: list[WritingCheckOutcome]
+    word_count: int
+    #: Which sources left a trace in the account. An approximation, and
+    #: described as one to the learner.
+    used_sources: list[str]
+    unused_sources: list[str]
+    #: Longest run of words shared with any source, after marked quotations
+    #: are removed. Reported whether or not it crossed the limit, so a
+    #: learner can see they were nowhere near it.
+    longest_copied_run: int
+    #: The source that run came from, or None when nothing was copied.
+    copied_from: str | None
+    evidence_recorded: bool
+    #: True while nothing has judged whether the sources were conveyed
+    #: faithfully, which is the whole point of the task. Clients must show
+    #: it: an anchor proves a figure was mentioned, not that it was right.
+    provisional: bool
+    rubric: list[RubricDimensionOutcome] = []
+    priority_feedback: list[PriorityFeedbackOutcome] = []
+    evaluated_by: str | None = None
+
+
 CompleteActivityResponse = Annotated[
-    ReadingOutcome | StudyOutcome | WritingOutcome | ListeningOutcome | SpeakingOutcome,
+    ReadingOutcome
+    | StudyOutcome
+    | WritingOutcome
+    | ListeningOutcome
+    | SpeakingOutcome
+    | MediationOutcome,
     Field(discriminator="activity_type"),
 ]
 
@@ -381,6 +454,24 @@ def read_activity(activity_key: str, user: CurrentUser, session: SessionDep) -> 
             max_seconds=activity.max_seconds,
             min_words=activity.requirements.min_words,
             required_elements=list(activity.requirements.required_elements),
+        )
+
+    if isinstance(activity, MediationTask):
+        prompt = activity.as_prompt()
+        return MediationActivity(
+            activity_key=activity_key,
+            title=activity.title,
+            cefr_level=activity.cefr_level,
+            skill_key=activity.skill_key,
+            estimated_minutes=activity.minutes,
+            brief=activity.brief,
+            sources=[MediationSourcePrompt(**source) for source in prompt["sources"]],
+            guidance=list(activity.guidance),
+            min_words=activity.requirements.min_words,
+            max_words=activity.requirements.max_words,
+            min_sentences=activity.requirements.min_sentences,
+            required_elements=list(activity.requirements.required_elements),
+            max_verbatim_words=activity.max_verbatim_words,
         )
 
     task: WritingTask = activity
@@ -503,6 +594,46 @@ def complete_activity(
             plays=result.plays,
             independence=result.independence,
             used_transcript=result.used_transcript,
+        )
+
+    if isinstance(result, service.MediationResult):
+        mediation = result.analysis
+        judgement = result.evaluation
+        assessed = result.judged
+        return MediationOutcome(
+            activity_key=result.activity_key,
+            score=result.score,
+            explanation=result.explanation,
+            checks=[
+                WritingCheckOutcome(code=c.code, passed=c.passed, message=c.message)
+                for c in mediation.checks
+            ],
+            word_count=mediation.word_count,
+            used_sources=list(mediation.used_sources),
+            unused_sources=list(mediation.unused_sources),
+            longest_copied_run=mediation.longest_copied_run,
+            copied_from=mediation.copied_from,
+            evidence_recorded=result.evidence_recorded,
+            provisional=result.provisional,
+            rubric=[
+                RubricDimensionOutcome(
+                    name=dimension.name,
+                    score=dimension.score,
+                    confidence=dimension.confidence,
+                    evidence=list(dimension.evidence),
+                )
+                for dimension in (judgement.dimensions if assessed and judgement else [])
+            ],
+            priority_feedback=[
+                PriorityFeedbackOutcome(
+                    category=item.category,
+                    original=item.original,
+                    improved=item.improved,
+                    explanation=item.explanation,
+                )
+                for item in (judgement.priority_feedback if assessed and judgement else [])
+            ],
+            evaluated_by=(judgement.provider if assessed and judgement else None),
         )
 
     analysis = result.analysis

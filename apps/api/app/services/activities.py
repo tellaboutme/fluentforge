@@ -4,7 +4,7 @@ This is what closes the loop. A plan that says "read something at your level"
 but cannot be opened is a promise the product does not keep, so every activity
 kind a plan can contain must resolve to something a learner can start.
 
-Five kinds exist, covering every non-review slot in the session templates:
+Six kinds exist, covering every non-review slot in the session templates:
 
 - ``read:``  a library text with comprehension questions. Receptive.
 - ``study:`` one point explained, then practice on that point. Scaffolded:
@@ -16,12 +16,16 @@ Five kinds exist, covering every non-review slot in the session templates:
              the transcript stays hidden unless the learner asks for it.
 - ``speak:`` a spoken output task. The browser transcribes; the transcript
              evidences speaking and never pronunciation.
+- ``mediate:`` several sources in, one account out, for a reader who has not
+             seen them. The advanced kind: it adds two checks nothing else
+             makes -- was every source drawn on, and was it restated rather
+             than transcribed.
 
 Activities are derived from versioned source rather than stored as rows. That
 keeps them immutable and reviewable in the same way the curriculum is; a
 persisted `activities` table arrives when generation and imports do.
 
-All five grade deterministically. `docs/PRODUCT_SPEC.md` requires the core
+All six grade deterministically. `docs/PRODUCT_SPEC.md` requires the core
 learning loop to work with AI disabled, and it does.
 """
 
@@ -38,12 +42,23 @@ from sqlalchemy.orm import Session
 from ..curriculum.content import LibraryText, parse_library
 from ..curriculum.listening import ListeningClip, parse_listening
 from ..curriculum.loader import active_curriculum_version
+from ..curriculum.mediation import MediationTask, parse_mediation_tasks
 from ..curriculum.speaking import SpeakingTask, parse_speaking_tasks
 from ..curriculum.study import StudyUnit, parse_study_units
 from ..curriculum.tasks import WritingTask, parse_writing_tasks
 from ..db.types import utcnow
 from ..errors import ActivityNotFoundError, ActivityPayloadError, CurriculumNotLoadedError
 from ..learning import taxonomy
+from ..learning.mediation import (
+    DETERMINISTIC_CONFIDENCE as MEDIATION_CONFIDENCE,
+)
+from ..learning.mediation import (
+    MediationAnalysis,
+    analyse_mediation,
+)
+from ..learning.mediation import (
+    summarise as summarise_mediation,
+)
 from ..learning.writing import (
     DETERMINISTIC_CONFIDENCE,
     WritingAnalysis,
@@ -70,6 +85,7 @@ STUDY_TYPE = "study_task"
 WRITING_TYPE = "writing_task"
 LISTENING_TYPE = "listening_task"
 SPEAKING_TYPE = "speaking_task"
+MEDIATION_TYPE = "mediation_task"
 
 #: Kept for callers written against the single-kind version of this module.
 ACTIVITY_TYPE = READING_TYPE
@@ -79,12 +95,14 @@ STUDY_PREFIX = "study:"
 WRITE_PREFIX = "write:"
 LISTEN_PREFIX = "listen:"
 SPEAK_PREFIX = "speak:"
+MEDIATE_PREFIX = "mediate:"
 
 READING_CONTEXT = "reading_lab"
 STUDY_CONTEXT = "study_lab"
 WRITING_CONTEXT = "writing_lab"
 LISTENING_CONTEXT = "listening_lab"
 SPEAKING_CONTEXT = "speaking_lab"
+MEDIATION_CONTEXT = "mediation_lab"
 
 EVALUATOR_ID = "deterministic/0.1.0"
 
@@ -117,6 +135,11 @@ MIN_LISTENING_INDEPENDENCE = 0.4
 #: Speech evidences production, like writing. The learner composed and
 #: delivered it; what is uncertain is the record, not the act.
 SPEAKING_EVIDENCE = EvidenceType.CONTEXTUAL_PRODUCTION
+
+#: Mediation is production too, and specifically production *from* material
+#: the learner had to take in first. `EvidenceType.TRANSFER` is reserved for
+#: applying a skill in an unfamiliar setting, which is a different claim.
+MEDIATION_EVIDENCE = EvidenceType.CONTEXTUAL_PRODUCTION
 
 #: Lower than writing's 0.45 because a transcript is a *lossy* record: the
 #: recogniser may have misheard, dropped, or silently corrected what was
@@ -173,6 +196,11 @@ def _load_speaking(curriculum_dir: str) -> tuple[SpeakingTask, ...]:
     return parse_speaking_tasks(Path(curriculum_dir))
 
 
+@lru_cache(maxsize=4)
+def _load_mediation(curriculum_dir: str) -> tuple[MediationTask, ...]:
+    return parse_mediation_tasks(Path(curriculum_dir))
+
+
 def library() -> tuple[LibraryText, ...]:
     return _load_library(str(settings.curriculum_dir))
 
@@ -193,6 +221,10 @@ def speaking_tasks() -> tuple[SpeakingTask, ...]:
     return _load_speaking(str(settings.curriculum_dir))
 
 
+def mediation_tasks() -> tuple[MediationTask, ...]:
+    return _load_mediation(str(settings.curriculum_dir))
+
+
 def library_by_key() -> dict[str, LibraryText]:
     return {text.key: text for text in library()}
 
@@ -211,6 +243,10 @@ def listening_by_key() -> dict[str, ListeningClip]:
 
 def speaking_by_key() -> dict[str, SpeakingTask]:
     return {task.key: task for task in speaking_tasks()}
+
+
+def mediation_by_key() -> dict[str, MediationTask]:
+    return {task.key: task for task in mediation_tasks()}
 
 
 # --- Selection --------------------------------------------------------------
@@ -234,6 +270,10 @@ def clips_for_skill(skill_key: str) -> tuple[ListeningClip, ...]:
 
 def speaking_for_skill(skill_key: str) -> tuple[SpeakingTask, ...]:
     return tuple(task for task in speaking_tasks() if task.skill_key == skill_key)
+
+
+def mediation_for_skill(skill_key: str) -> tuple[MediationTask, ...]:
+    return tuple(task for task in mediation_tasks() if task.skill_key == skill_key)
 
 
 def study_for_feature(feature_code: str) -> tuple[StudyUnit, ...]:
@@ -268,6 +308,10 @@ def speaking_key_for(task: SpeakingTask) -> str:
     return f"{SPEAK_PREFIX}{task.key}"
 
 
+def mediation_key_for(task: MediationTask) -> str:
+    return f"{MEDIATE_PREFIX}{task.key}"
+
+
 def activity_type_for(activity_key: str) -> str | None:
     """The wire type for a key, or None if nothing can open it."""
     if activity_key.startswith(READ_PREFIX):
@@ -280,6 +324,8 @@ def activity_type_for(activity_key: str) -> str | None:
         return LISTENING_TYPE
     if activity_key.startswith(SPEAK_PREFIX):
         return SPEAKING_TYPE
+    if activity_key.startswith(MEDIATE_PREFIX):
+        return MEDIATION_TYPE
     return None
 
 
@@ -331,9 +377,18 @@ def get_speaking(activity_key: str) -> SpeakingTask:
     return task
 
 
+def get_mediation(activity_key: str) -> MediationTask:
+    if not activity_key.startswith(MEDIATE_PREFIX):
+        raise ActivityNotFoundError(activity_key)
+    task = mediation_by_key().get(activity_key.removeprefix(MEDIATE_PREFIX))
+    if task is None:
+        raise ActivityNotFoundError(activity_key)
+    return task
+
+
 def get_activity(
     activity_key: str,
-) -> LibraryText | StudyUnit | WritingTask | ListeningClip | SpeakingTask:
+) -> LibraryText | StudyUnit | WritingTask | ListeningClip | SpeakingTask | MediationTask:
     """Resolve a plan item's activity key to something openable."""
     kind = activity_type_for(activity_key)
     if kind == READING_TYPE:
@@ -346,6 +401,8 @@ def get_activity(
         return get_listening(activity_key)
     if kind == SPEAKING_TYPE:
         return get_speaking(activity_key)
+    if kind == MEDIATION_TYPE:
+        return get_mediation(activity_key)
     raise ActivityNotFoundError(activity_key)
 
 
@@ -546,6 +603,37 @@ class WritingResult:
                 "accuracy and range against a rubric."
             )
         return summarise(self.analysis)
+
+
+@dataclass(frozen=True)
+class MediationResult:
+    activity_key: str
+    score: float
+    analysis: MediationAnalysis
+    evidence_recorded: bool
+    #: A schema-valid rubric evaluation, or None when no evaluator was
+    #: configured, it abstained, or it failed.
+    evaluation: WritingEvaluation | None = None
+
+    @property
+    def judged(self) -> bool:
+        return self.evaluation is not None and self.evaluation.is_usable
+
+    @property
+    def provisional(self) -> bool:
+        """True while nothing has judged whether the sources were conveyed
+        faithfully -- which is the whole point of the task, and the one thing
+        a countable check cannot reach."""
+        return not self.judged
+
+    @property
+    def explanation(self) -> str:
+        if self.judged:
+            return (
+                "Checked for length, structure, source coverage and restating, "
+                "and assessed against a rubric."
+            )
+        return summarise_mediation(self.analysis)
 
 
 # --- Completion: reading ----------------------------------------------------
@@ -1163,6 +1251,171 @@ def _evaluate_writing(
         return None
 
 
+# --- Completion: mediation --------------------------------------------------
+
+
+def complete_mediation(
+    session: Session,
+    user_id: uuid.UUID,
+    *,
+    activity_key: str,
+    text: str,
+    duration_ms: int | None = None,
+    evaluator: WritingEvaluator | None = None,
+) -> MediationResult:
+    """Check a multi-source account against countable requirements.
+
+    Everything `complete_writing` does, plus the two checks that are specific
+    to mediation: whether every source was drawn on, and whether the account
+    was restated rather than transcribed.
+
+    Evidence lands on a `mediation.*` skill -- the curriculum parser refuses a
+    task that targets anything else -- at `MEDIATION_CONFIDENCE`, which is
+    below writing's. The extra checks make this a *stricter* test of writing
+    and a *weaker* test of mediation: an anchor proves a figure was mentioned,
+    not that it was reported correctly, and a learner can name the number
+    while misrepresenting it entirely.
+
+    A copied response still records evidence, at the lower score its failed
+    check produces. Copying is a real thing the learner did with language and
+    the deterministic pass caught it; refusing to record would discard a
+    measurement that worked.
+    """
+    task = get_mediation(activity_key)
+    analysis = analyse_mediation(
+        text,
+        task.requirements,
+        task.sources,
+        max_verbatim_words=task.max_verbatim_words,
+    )
+
+    learning_session = _open_session(session, user_id, MEDIATION_CONTEXT)
+    attempt = Attempt(
+        user_id=user_id,
+        session_id=learning_session.id,
+        activity_key=activity_key,
+        activity_type=MEDIATION_TYPE,
+        attempt_number=_next_attempt_number(session, user_id, activity_key),
+        response={
+            "text": text,
+            "score": analysis.score,
+            "correct": analysis.met_minimum,
+            "word_count": analysis.word_count,
+            "used_sources": list(analysis.used_sources),
+            "unused_sources": list(analysis.unused_sources),
+            "longest_copied_run": analysis.longest_copied_run,
+            "copied_from": analysis.copied_from,
+            "checks": [
+                {"code": c.code, "passed": c.passed, "message": c.message} for c in analysis.checks
+            ],
+            "provisional": True,
+        },
+        submitted_at=utcnow(),
+        duration_ms=duration_ms,
+        hints_used=0,
+        scaffolding_level=0.0,
+        evaluator_id=EVALUATOR_ID,
+    )
+    session.add(attempt)
+    session.flush()
+
+    node = _skill_node(session, task.skill_key)
+    recorded = False
+    if node is not None and analysis.met_minimum:
+        record_evidence(
+            session,
+            user_id=user_id,
+            skill_node_id=node.id,
+            attempt_id=attempt.id,
+            evidence_type=MEDIATION_EVIDENCE,
+            score=analysis.score,
+            difficulty=_difficulty_for(task.cefr_level.rank),
+            confidence=MEDIATION_CONFIDENCE,
+            independence=1.0,
+            novelty=1.0,
+            context_key=f"mediate:{task.key}",
+            metadata={
+                "source": MEDIATION_CONTEXT,
+                "provisional": True,
+                "word_count": analysis.word_count,
+                "source_count": len(task.sources),
+                "source_kinds": list(task.source_kinds),
+                "sources_used": len(analysis.used_sources),
+                "longest_copied_run": analysis.longest_copied_run,
+                # Named explicitly, because the obvious misreading of this
+                # evidence is that it says the sources were conveyed
+                # correctly. It does not.
+                "fidelity_unassessed": True,
+                "unjudged_features": list(task.target_features),
+            },
+        )
+        recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
+        recorded = True
+
+    evaluation = _evaluate_mediation(task, text, evaluator) if analysis.met_minimum else None
+    if evaluation is not None and evaluation.is_usable and node is not None:
+        record_evidence(
+            session,
+            user_id=user_id,
+            skill_node_id=node.id,
+            attempt_id=attempt.id,
+            evidence_type=MEDIATION_EVIDENCE,
+            score=evaluation.overall_score,
+            difficulty=_difficulty_for(task.cefr_level.rank),
+            confidence=min(evaluation.confidence, MAX_RUBRIC_CONFIDENCE),
+            independence=1.0,
+            novelty=1.0,
+            # One account judged twice, not two contexts.
+            context_key=f"mediate:{task.key}",
+            metadata={
+                "source": MEDIATION_CONTEXT,
+                "rubric": True,
+                "provider": evaluation.provider,
+                "model": evaluation.model,
+                "prompt_version": evaluation.prompt_version,
+                "dimensions": {d.name: d.score for d in evaluation.dimensions},
+            },
+        )
+        recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
+        recorded = True
+
+    session.flush()
+    return MediationResult(
+        activity_key=activity_key,
+        score=analysis.score,
+        analysis=analysis,
+        evidence_recorded=recorded,
+        evaluation=evaluation,
+    )
+
+
+def _evaluate_mediation(
+    task: MediationTask,
+    text: str,
+    evaluator: WritingEvaluator | None,
+) -> WritingEvaluation | None:
+    """Ask the configured evaluator to judge a mediation account.
+
+    The brief and every source travel in the prompt. An evaluator shown only
+    the response could not tell a faithful account from an invented one,
+    which is the single thing worth judging here.
+    """
+    chosen = evaluator or get_writing_evaluator()
+    material = "\n\n".join(
+        f"SOURCE ({source.kind}) {source.title}:\n{source.text}" for source in task.sources
+    )
+    request = WritingEvaluationRequest(
+        task_prompt=f"{task.brief}\n\n{material}",
+        response_text=text,
+        target_level=task.cefr_level.value,
+        skill_key=task.skill_key,
+    )
+    try:
+        return chosen.evaluate(request)
+    except Exception:  # noqa: BLE001 - deliberately total; see complete_writing
+        return None
+
+
 # --- Dispatch ---------------------------------------------------------------
 
 
@@ -1180,7 +1433,14 @@ def complete(
     recognition_confidence: float | None = None,
     typed_instead: bool = False,
     duration_ms: int | None = None,
-) -> ActivityResult | StudyResult | WritingResult | ListeningResult | SpeakingResult:
+) -> (
+    ActivityResult
+    | StudyResult
+    | WritingResult
+    | ListeningResult
+    | SpeakingResult
+    | MediationResult
+):
     """Complete any activity, validating that the payload suits its kind."""
     kind = activity_type_for(activity_key)
 
@@ -1217,6 +1477,17 @@ def complete(
             answers=answers,
             plays=plays,
             used_transcript=used_transcript,
+            duration_ms=duration_ms,
+        )
+
+    if kind == MEDIATION_TYPE:
+        if text is None:
+            raise ActivityPayloadError(activity_key, "text")
+        return complete_mediation(
+            session,
+            user_id,
+            activity_key=activity_key,
+            text=text,
             duration_ms=duration_ms,
         )
 
@@ -1302,12 +1573,14 @@ def _next_attempt_number(session: Session, user_id: uuid.UUID, activity_key: str
 __all__ = [
     "ACTIVITY_TYPE",
     "LISTENING_TYPE",
+    "MEDIATION_TYPE",
     "READING_TYPE",
     "SPEAKING_TYPE",
     "STUDY_TYPE",
     "WRITING_TYPE",
     "ActivityResult",
     "ListeningResult",
+    "MediationResult",
     "QuestionResult",
     "SpeakingResult",
     "StudyItemResult",
@@ -1318,12 +1591,14 @@ __all__ = [
     "clips_for_skill",
     "complete",
     "complete_listening",
+    "complete_mediation",
     "complete_reading",
     "complete_speaking",
     "complete_study",
     "complete_writing",
     "get_activity",
     "get_listening",
+    "get_mediation",
     "get_reading",
     "get_speaking",
     "get_study",
@@ -1334,6 +1609,10 @@ __all__ = [
     "listening_clips",
     "listening_independence",
     "listening_key_for",
+    "mediation_by_key",
+    "mediation_for_skill",
+    "mediation_key_for",
+    "mediation_tasks",
     "speaking_by_key",
     "speaking_for_skill",
     "speaking_key_for",

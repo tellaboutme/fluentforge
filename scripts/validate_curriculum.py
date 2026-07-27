@@ -19,6 +19,7 @@ from apps.api.app.curriculum.graph import parse_graph, prerequisite_edges
 from apps.api.app.curriculum.items import parse_item_bank
 from apps.api.app.curriculum.lexis import parse_lexis
 from apps.api.app.curriculum.listening import parse_listening
+from apps.api.app.curriculum.mediation import parse_mediation_tasks
 from apps.api.app.curriculum.parser import CurriculumError, parse_curriculum
 from apps.api.app.curriculum.speaking import parse_speaking_tasks
 from apps.api.app.curriculum.study import parse_study_units
@@ -41,6 +42,7 @@ def main(argv: list[str]) -> int:
         tasks = parse_writing_tasks(curriculum_dir, known_skill_keys=known)
         clips = parse_listening(curriculum_dir, known_skill_keys=known)
         spoken = parse_speaking_tasks(curriculum_dir, known_skill_keys=known)
+        accounts = parse_mediation_tasks(curriculum_dir, known_skill_keys=known)
         graph = parse_graph(curriculum_dir, curriculum.objectives)
     except CurriculumError as exc:
         print("Curriculum validation failed:")
@@ -122,6 +124,18 @@ def main(argv: list[str]) -> int:
     # Stated every run, because it is the constraint the lab is built around
     # and a future author should meet it before they write a task.
     print("  none targets a pronunciation skill: a transcript cannot evidence one.")
+
+    source_kinds = Counter(kind for task in accounts for kind in task.source_kinds)
+    total_sources = sum(len(task.sources) for task in accounts)
+    print(
+        f"Mediation tasks: {len(accounts)} across {len(source_kinds)} kinds of source, "
+        f"{total_sources} sources, {sum(task.source_words for task in accounts)} source words."
+    )
+    for kind, count in sorted(source_kinds.items()):
+        print(f"  {kind}: {count}")
+    # Stated every run: it is the property that makes these mediation tasks
+    # rather than summaries, and it is easy to lose while editing content.
+    print(f"  every task has at least {min(len(task.sources) for task in accounts)} sources.")
 
     genres = Counter(task.genre for task in tasks)
     print(f"Writing tasks: {len(tasks)} across {len(genres)} genres.")

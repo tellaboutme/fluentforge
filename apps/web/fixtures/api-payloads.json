@@ -79,6 +79,95 @@
     "total": 3,
     "used_transcript": false
   },
+  "mediation_activity": {
+    "activity_key": "mediate:mediate.b1.moving_the_meeting",
+    "activity_type": "mediation_task",
+    "brief": "You handle the schedule for a small team. Two people have written to you\nabout Thursday's meeting, and they do not want the same thing.\n\nWrite one message for your colleague Dan, who has read neither of them\nand has to decide. Tell him what each person asked for, where they\ndisagree, and what he needs to decide.",
+    "cefr_level": "B1",
+    "estimated_minutes": 18,
+    "guidance": [
+      "Say what each person wants, and say who wants what.",
+      "Name the disagreement openly rather than choosing a side for Dan.",
+      "End with the decision Dan actually has to make.",
+      "Use your own words. Do not paste their sentences into your message."
+    ],
+    "max_verbatim_words": 7,
+    "max_words": 300,
+    "min_sentences": 5,
+    "min_words": 90,
+    "required_elements": [
+      "decide"
+    ],
+    "skill_key": "mediation.basic_summary",
+    "sources": [
+      {
+        "key": "rosa",
+        "kind": "email",
+        "text": "Hi, about Thursday. Could we move the meeting to nine in the\nmorning? I have to collect my son at four and the current time\nleaves me nothing afterwards. If nine is impossible then I would\nrather we moved the whole thing to Tuesday and did it properly.\nEither works for me. Thanks.",
+        "title": "Message from Rosa",
+        "word_count": 53
+      },
+      {
+        "key": "idris",
+        "kind": "email",
+        "text": "Quick note before you fix Thursday. I am at the warehouse until\nlunchtime every Thursday this month, so anything in the morning is\nout for me. The afternoon slot we have now is the only one I can\nreach. I would rather keep it as it is than lose the week.",
+        "title": "Message from Idris",
+        "word_count": 51
+      }
+    ],
+    "title": "Two messages, one answer"
+  },
+  "mediation_result": {
+    "activity_key": "mediate:mediate.b1.moving_the_meeting",
+    "activity_type": "mediation_task",
+    "checks": [
+      {
+        "code": "length",
+        "message": "124 words \u2014 a good length.",
+        "passed": true
+      },
+      {
+        "code": "sentences",
+        "message": "5 sentences.",
+        "passed": true
+      },
+      {
+        "code": "connectives",
+        "message": "You linked ideas using: and, because, first, if, or, since, so.",
+        "passed": true
+      },
+      {
+        "code": "content",
+        "message": "You covered everything the task asked for.",
+        "passed": true
+      },
+      {
+        "code": "sources",
+        "message": "You drew on every source.",
+        "passed": true
+      },
+      {
+        "code": "restated",
+        "message": "The longest run you share with a source is 7 words \u2014 this is your account, not a copy of theirs.",
+        "passed": true
+      }
+    ],
+    "copied_from": null,
+    "evaluated_by": null,
+    "evidence_recorded": true,
+    "explanation": "These are automatic checks on length, structure, source coverage and whether you restated rather than copied. Nothing here has judged how accurately you conveyed what the sources said.",
+    "longest_copied_run": 7,
+    "priority_feedback": [],
+    "provisional": true,
+    "rubric": [],
+    "score": 1.0,
+    "unused_sources": [],
+    "used_sources": [
+      "rosa",
+      "idris"
+    ],
+    "word_count": 124
+  },
   "next": {
     "ability_estimate": 0.25,
     "answered": 0,

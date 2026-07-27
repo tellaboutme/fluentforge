@@ -48,6 +48,22 @@ SAMPLE_WRITING = (
 )
 
 
+#: Draws on both sources of the first mediation task and copies neither, so
+#: the captured payload shows the shape of a response that passed.
+SAMPLE_MEDIATION = (
+    "Two people have written about Thursday and they want opposite things. "
+    "The first would prefer nine in the morning, since she must collect my "
+    "son at four and the present arrangement leaves her nothing afterwards; "
+    "if that cannot be done she would rather the whole thing moved to "
+    "Tuesday. The second says no morning works for him at all, because he "
+    "is at the warehouse until lunchtime each week this month, and he wants "
+    "to keep the afternoon slot, which is the only one within his reach. So "
+    "both requests cannot be met as things stand. What you need to decide "
+    "is whether we keep the current time and accept that one of them leaves "
+    "early, or move the meeting to another day entirely."
+)
+
+
 def main() -> int:
     # A throwaway database keeps the fixture reproducible and leaves no state.
     #
@@ -133,7 +149,7 @@ def main() -> int:
         profile_payload = client.get("/api/v1/profile", headers=headers).json()
         plan_payload = client.get("/api/v1/plans/today", headers=headers).json()
 
-        # All five activity kinds, opened and completed. These are the
+        # All six activity kinds, opened and completed. These are the
         # shapes the activity player switches on, so a rename in any of them
         # has to fail the web contract test rather than the browser.
         from apps.api.app.services import activities as activity_service
@@ -143,12 +159,14 @@ def main() -> int:
         writing = activity_service.writing_tasks()[0]
         listening = activity_service.listening_clips()[0]
         speaking = activity_service.speaking_tasks()[0]
+        mediation = activity_service.mediation_tasks()[0]
 
         reading_key = activity_service.activity_key_for(reading)
         study_key = activity_service.study_key_for(study)
         writing_key = activity_service.writing_key_for(writing)
         listening_key = activity_service.listening_key_for(listening)
         speaking_key = activity_service.speaking_key_for(speaking)
+        mediation_key = activity_service.mediation_key_for(mediation)
 
         reading_activity_payload = client.get(
             f"/api/v1/activities/{reading_key}", headers=headers
@@ -217,6 +235,18 @@ def main() -> int:
             },
         ).json()
 
+        mediation_activity_payload = client.get(
+            f"/api/v1/activities/{mediation_key}", headers=headers
+        ).json()
+        # An account that draws on every source and copies none of it, so the
+        # fixture carries the passing shape of both mediation-specific checks
+        # rather than the failure case.
+        mediation_result_payload = client.post(
+            f"/api/v1/activities/{mediation_key}/complete",
+            headers=headers,
+            json={"text": SAMPLE_MEDIATION},
+        ).json()
+
         # Release every database handle before the scratch directory goes.
         # SQLAlchemy pools connections, so without this the SQLite file stays
         # open and Windows cannot delete it.
@@ -243,6 +273,8 @@ def main() -> int:
         "listening_result": listening_result_payload,
         "speaking_activity": speaking_activity_payload,
         "speaking_result": speaking_result_payload,
+        "mediation_activity": mediation_activity_payload,
+        "mediation_result": mediation_result_payload,
     }
 
     stable = _stabilise(fixtures, {})

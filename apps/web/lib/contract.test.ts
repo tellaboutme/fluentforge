@@ -21,6 +21,8 @@ import type {
   NextItem,
   ListeningActivity,
   ListeningResult,
+  MediationActivity,
+  MediationResult,
   ReadingActivity,
   ReadingResult,
   StudyActivity,
@@ -215,8 +217,8 @@ describe("daily plan contract", () => {
     // speaking and reflection have no activity behind them yet and stay
     // deliberately unlinked rather than pointing somewhere wrong.
     const openable = (key: string) =>
-      ["read:", "study:", "write:", "listen:", "speak:"].some((prefix) =>
-        key.startsWith(prefix),
+      ["read:", "study:", "write:", "listen:", "speak:", "mediate:"].some(
+        (prefix) => key.startsWith(prefix),
       );
 
     for (const item of plan.items) {
@@ -241,7 +243,7 @@ describe("daily plan contract", () => {
 });
 
 describe("activity contract", () => {
-  // One endpoint pair serves three kinds, discriminated on `activityType`.
+  // One endpoint pair serves six kinds, discriminated on `activityType`.
   // The client models them as a union, so a rename in any one of them must
   // fail here rather than in the browser.
   function fixture(name: string): unknown {
@@ -374,6 +376,43 @@ describe("activity contract", () => {
     // Answered by ear in the fixture, so the evidence stands.
     expect(result.usedTranscript).toBe(false);
     expect(result.evidenceRecorded).toBe(true);
+  });
+
+  it("gives a mediation task every source in full", () => {
+    // The sources are the material, not an answer key. A learner who cannot
+    // read them cannot do the task at all.
+    const activity = camelise<MediationActivity>(fixture("mediation_activity"));
+    expect(activity.activityType).toBe("mediation_task");
+    expect(activity.sources.length).toBeGreaterThanOrEqual(2);
+    for (const source of activity.sources) {
+      expect(source.text.length).toBeGreaterThan(0);
+      expect(source.kind.length).toBeGreaterThan(0);
+    }
+    // The brief names the reader. Mediation without an audience is paraphrase.
+    expect(activity.brief.length).toBeGreaterThan(0);
+    // The verbatim rule is stated before the learner writes, not after they
+    // break it.
+    expect(activity.maxVerbatimWords).toBeGreaterThan(0);
+  });
+
+  it("never ships the anchors coverage is checked against", () => {
+    // Publishing them would turn a mediation task into a word hunt.
+    const raw = JSON.stringify(fixture("mediation_activity"));
+    expect(raw).not.toContain('"anchors"');
+  });
+
+  it("reports source coverage and copying, and claims nothing about fidelity", () => {
+    const result = camelise<MediationResult>(fixture("mediation_result"));
+    expect(result.activityType).toBe("mediation_task");
+    expect(result.usedSources.length).toBeGreaterThan(0);
+    expect(result.unusedSources).toEqual([]);
+    // Reported either way, so a learner can see they were nowhere near the
+    // limit rather than only hearing about it when they cross it.
+    expect(typeof result.longestCopiedRun).toBe("number");
+    expect(result.copiedFrom).toBeNull();
+    // Nothing judged whether the sources were conveyed correctly, which is
+    // the whole point of the task.
+    expect(result.provisional).toBe(true);
   });
 
   it("scores a reading task as comprehension, not a percentage", () => {

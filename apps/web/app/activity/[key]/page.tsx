@@ -19,6 +19,8 @@ import {
   type ActivitySubmission,
   type ListeningActivity,
   type ListeningResult,
+  type MediationActivity,
+  type MediationResult,
   type ReadingActivity,
   type SpeakingActivity,
   type SpeakingResult,
@@ -35,7 +37,7 @@ import { ErrorNotice, Loading } from "@/components/Status";
 /**
  * Activity player.
  *
- * One route, three kinds, each with a different contract with the learner:
+ * One route, six kinds, each with a different contract with the learner:
  *
  * - **Reading** keeps the text on screen while the questions are answered.
  *   `docs/LEARNING_SCIENCE.md` asks for meaning-focused input, and hiding the
@@ -55,6 +57,10 @@ import { ErrorNotice, Loading } from "@/components/Status";
  *   away, because a learner who cannot use audio must still be able to take
  *   part -- and taking that click is reported, so the profile never claims
  *   they understood by ear when they read it.
+ * - **Mediation** shows several sources and asks for one account of them for
+ *   a named reader. It adds the two checks nothing else makes -- was every
+ *   source drawn on, and was it restated rather than transcribed -- and says
+ *   plainly that nothing judged whether the sources were reported accurately.
  */
 export default function ActivityPage() {
   const router = useRouter();
@@ -124,8 +130,8 @@ export default function ActivityPage() {
     setResult(await completeActivity(token, activityKey, submission));
   }
 
-  // Exhaustive by construction: adding a fourth kind becomes a compile error
-  // at `assertNever`, not a blank screen in production.
+  // Exhaustive by construction: adding a kind becomes a compile error at
+  // `assertNever`, not a blank screen in production.
   switch (activity.activityType) {
     case "reading_task":
       return (
@@ -168,6 +174,15 @@ export default function ActivityPage() {
         <Speaking
           activity={activity}
           result={result?.activityType === "speaking_task" ? result : null}
+          onSubmit={submit}
+          onError={setError}
+        />
+      );
+    case "mediation_task":
+      return (
+        <Mediation
+          activity={activity}
+          result={result?.activityType === "mediation_task" ? result : null}
           onSubmit={submit}
           onError={setError}
         />
@@ -1201,6 +1216,266 @@ function Speaking({
             <p className="muted">
               Your speaking profile is unchanged. Nothing is lost — the attempt
               is saved, and the next one can count.
+            </p>
+          ) : null}
+
+          <BackToPlan />
+        </div>
+      ) : null}
+    </main>
+  );
+}
+
+// --- Mediation -------------------------------------------------------------
+
+/**
+ * Several sources in, one account out, for a reader who has not seen them.
+ *
+ * Three things this screen does that no other kind does.
+ *
+ * The sources stay visible while the account is written. Mediation is not a
+ * memory test; hiding them would make it one, which is the same mistake the
+ * reading lab deliberately avoids.
+ *
+ * The verbatim limit is stated before the learner writes, not after they
+ * break it. Being told afterwards that eleven consecutive words matched a
+ * source reads as an accusation; being told in advance is a rule.
+ *
+ * And the result never claims the sources were reported accurately. Source
+ * coverage is inferred from names and figures, so it shows a source was
+ * mentioned, not that it was conveyed correctly -- and the screen says so.
+ */
+function Mediation({
+  activity,
+  result,
+  onSubmit,
+  onError,
+}: KindProps<MediationActivity, MediationResult>) {
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState<string | null>(
+    activity.sources[0]?.key ?? null,
+  );
+
+  const wordCount = useMemo(
+    () => (text.match(/[A-Za-z][A-Za-z'\u2019-]*/g) ?? []).length,
+    [text],
+  );
+  const short = wordCount < activity.minWords;
+  const long = wordCount > activity.maxWords;
+
+  const titles = useMemo(
+    () => Object.fromEntries(activity.sources.map((s) => [s.key, s.title])),
+    [activity.sources],
+  );
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      await onSubmit({ text });
+    } catch (cause) {
+      onError(cause);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main id="main" className="narrow">
+      <p className="eyebrow">
+        MEDIATION · {activity.cefrLevel} · {activity.sources.length} SOURCES
+      </p>
+      <h1 className="page-title">{activity.title}</h1>
+      <p className="hint">About {activity.estimatedMinutes} minutes</p>
+
+      <article className="panel">
+        {activity.brief.split("\n\n").map((paragraph) => (
+          <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+        ))}
+        <h2 className="subheading">Before you write</h2>
+        <ul>
+          {activity.guidance.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+        <p className="muted">
+          {activity.minWords}&ndash;{activity.maxWords} words, at least{" "}
+          {activity.minSentences} sentences.
+          {activity.requiredElements.length > 0
+            ? ` The task asks you to mention: ${activity.requiredElements.join(", ")}.`
+            : ""}
+        </p>
+        {/* Stated up front. A rule the learner learns by breaking it is a
+            trap, and this one is easy to break by accident. */}
+        <p className="muted">
+          Write in your own words. Anything longer than{" "}
+          {activity.maxVerbatimWords} words copied straight from a source is
+          reported as copying &mdash; unless you mark it as a quotation.
+        </p>
+      </article>
+
+      {/* The sources stay available while writing. Mediation is not recall. */}
+      <section className="panel" aria-labelledby="sources-title">
+        <h2 id="sources-title" className="subheading">
+          The sources
+        </h2>
+        {activity.sources.map((source) => (
+          <div key={source.key}>
+            <button
+              type="button"
+              className="link-button"
+              aria-expanded={open === source.key}
+              onClick={() => setOpen(open === source.key ? null : source.key)}
+            >
+              {source.title}
+            </button>{" "}
+            <span className="question-type">
+              {source.kind.replace(/_/g, " ")}
+            </span>{" "}
+            <span className="muted">{source.wordCount} words</span>
+            {open === source.key ? (
+              <blockquote>
+                {source.text.split("\n\n").map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                ))}
+              </blockquote>
+            ) : null}
+          </div>
+        ))}
+      </section>
+
+      {!result ? (
+        <form onSubmit={submit}>
+          <div className="field">
+            <label htmlFor="account">Your account</label>
+            <textarea
+              id="account"
+              name="account"
+              rows={16}
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              aria-describedby="account-count"
+            />
+            <p id="account-count" className="hint" aria-live="polite">
+              {wordCount} words
+              {short ? ` — ${activity.minWords - wordCount} more to go` : ""}
+              {long ? " — a little over the limit" : ""}
+            </p>
+          </div>
+
+          <button type="submit" disabled={busy || wordCount === 0}>
+            {busy ? "Checking…" : "Check my account"}
+          </button>
+        </form>
+      ) : null}
+
+      {result ? (
+        <div className="notice" role="status" aria-live="polite">
+          <p>
+            <strong>{result.explanation}</strong>
+          </p>
+          <ul className="checks">
+            {result.checks.map((check) => (
+              <li
+                key={check.code}
+                className={check.passed ? "check-ok" : "check-todo"}
+              >
+                <span aria-hidden="true">{check.passed ? "✓" : "•"}</span>
+                <span className="visually-hidden">
+                  {check.passed ? "Met:" : "Not yet:"}
+                </span>{" "}
+                {check.message}
+              </li>
+            ))}
+          </ul>
+
+          {result.unusedSources.length > 0 ? (
+            <p className="muted">
+              We could not find a trace of{" "}
+              {result.unusedSources
+                .map((key) => titles[key] ?? key)
+                .join(" or ")}{" "}
+              in your account. This is worked out from names and figures, so it
+              can be wrong &mdash; if you covered it without naming anything in
+              it, take this as a suggestion rather than a mark.
+            </p>
+          ) : null}
+
+          {result.rubric.length > 0 ? (
+            <>
+              <h2 className="subheading">Assessed against a rubric</h2>
+              <ul className="checks">
+                {result.rubric.map((dimension) => (
+                  <li key={dimension.name}>
+                    <strong>{dimension.name}</strong>{" "}
+                    <span className="muted">
+                      {confidenceLabel(dimension.confidence).toLowerCase()}
+                    </span>
+                    {dimension.evidence.length > 0 ? (
+                      <ul>
+                        {dimension.evidence.map((quote) => (
+                          <li key={quote}>
+                            <em>&ldquo;{quote}&rdquo;</em>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              {result.evaluatedBy ? (
+                <p className="hint">
+                  Judged by an automatic evaluator ({result.evaluatedBy}), not
+                  by a teacher. It can be wrong, and it is weighted lower than a
+                  task with a known answer.
+                </p>
+              ) : null}
+            </>
+          ) : null}
+
+          {result.priorityFeedback.length > 0 ? (
+            <>
+              <h2 className="subheading">Worth fixing first</h2>
+              <ul className="checks">
+                {result.priorityFeedback.map((item) => (
+                  <li key={`${item.category}-${item.original}`}>
+                    <span className="question-type">{item.category}</span>
+                    <br />
+                    <s>{item.original}</s> &rarr;{" "}
+                    <strong>{item.improved}</strong>
+                    <br />
+                    <span className="muted">{item.explanation}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
+          {/* The refusal this lab is built around. Coverage is inferred from
+              names and figures: it shows a source was mentioned, never that
+              it was reported correctly. */}
+          {result.provisional ? (
+            <div className="notice notice-warn">
+              <p>
+                <strong>
+                  Nothing here has judged whether you reported the sources
+                  accurately.
+                </strong>
+              </p>
+              <p>
+                These checks can see that you mentioned each source and wrote in
+                your own words. They cannot see whether you got the sources
+                right &mdash; you can name a figure and still describe it
+                wrongly, and this would not notice.
+              </p>
+            </div>
+          ) : null}
+
+          {!result.evidenceRecorded ? (
+            <p className="muted">
+              This was too short to tell us anything, so it has not changed your
+              profile. It is saved, and you can write more whenever you like.
             </p>
           ) : null}
 

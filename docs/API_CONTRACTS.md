@@ -78,7 +78,7 @@ must not look like a complete one.
   records evidence.
 - `GET /attempts/{id}/feedback`
 
-Both endpoints serve five activity kinds, discriminated on `activity_type`.
+Both endpoints serve six activity kinds, discriminated on `activity_type`.
 Clients must switch on that field; the shapes do not overlap.
 
 | `activity_key` prefix | `activity_type` | Opened payload | Completed with |
@@ -88,6 +88,7 @@ Clients must switch on that field; the shapes do not overlap.
 | `write:` | `writing_task` | `prompt`, `guidance[]`, word and sentence requirements | `text` |
 | `listen:` | `listening_task` | `setting`, `transcript`, `speech_rate`, `audio`, `questions[]` | `answers`, `plays`, `used_transcript` |
 | `speak:` | `speaking_task` | `prompt`, `guidance[]`, `preparation_seconds`, `min_seconds`, `max_seconds`, `min_words` | `text`, `spoken_seconds`, `recognition_confidence`, `typed_instead` |
+| `mediate:` | `mediation_task` | `brief`, `sources[]` (each with its full `text`), `guidance[]`, word requirements, `max_verbatim_words` | `text` |
 
 Submitting the wrong payload for a kind returns `activity_payload_mismatch`
 with the field it expected, rather than a generic validation failure.
@@ -186,10 +187,45 @@ What each kind evidences differs, and the difference is on the wire:
   `spoken_seconds` below the task's `min_seconds`, or a transcript below its
   word minimum, also records nothing rather than a bad score.
 
+- **Mediation** records `contextual_production` against a *mediation* skill
+  at the lowest deterministic confidence in the system (0.40, below writing's
+  0.45). Everything the writing checks do still applies, and two checks are
+  added that exist nowhere else.
+
+  **Source coverage.** `used_sources` and `unused_sources` report which
+  sources left a trace in the account. This is inferred from anchors — names,
+  figures and dates that survive paraphrase — which the curriculum parser
+  proves are present in their own source and absent from every other. It is
+  an approximation, and clients must present it as one: a learner who
+  covered a source without naming anything in it did nothing wrong.
+
+  **Restating rather than transcribing.** `longest_copied_run` is the longest
+  run of words the account shares with any source, after *marked quotations
+  are removed* — quoting and attributing is legitimate mediation. It is
+  returned whether or not it crossed the task's `max_verbatim_words`, so a
+  learner can see how much headroom they had. `copied_from` names the source
+  when the limit was crossed, and is `null` otherwise. The limit is sent with
+  the opened activity so a client can state the rule before the learner
+  writes rather than after they break it.
+
+  The full text of every source **is** sent. It is the material, not an
+  answer key. What is withheld is `anchors`: publishing the phrases coverage
+  is checked against would turn a mediation task into a word hunt.
+
+  `provisional` is always `true` until a rubric runs, and means something
+  specific here. Nothing deterministic can tell whether the sources were
+  conveyed *faithfully* — an anchor proves a figure was mentioned, not that
+  it was reported correctly — and that is the whole point of the task.
+  Clients must say so.
+
+  A copied account still records evidence, at the lower score its failed
+  check produces. Copying is a real thing the learner did with language and
+  the deterministic pass caught it.
+
 Plan items whose `activity_key` begins with `read:`, `study:`, `write:`,
-`listen:`, or `speak:` can be opened at these endpoints. `review:` items
-belong to the review queue. `reflect:` has no activity yet and must not be
-linked.
+`listen:`, `speak:`, or `mediate:` can be opened at these endpoints.
+`review:` items belong to the review queue. `reflect:` has no activity yet
+and must not be linked.
 
 Error codes and features referenced by an activity are drawn from a closed
 taxonomy (`apps/api/app/learning/taxonomy.py`). Codes are stable and never

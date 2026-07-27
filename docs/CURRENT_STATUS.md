@@ -1,6 +1,6 @@
 # Current Status
 
-Last updated: 2026-07-27. **Milestones 0–6 are complete.** The core learning loop now
+Last updated: 2026-07-27. **Milestones 0–6 are complete, and Milestone 7 has started.** The core learning loop now
 closes, and **no modality is evidenced by self-report any more**: a learner
 registers, takes an adaptive diagnostic including a written task, receives a
 daily plan that explains itself, opens and completes reading, listening,
@@ -18,10 +18,15 @@ The dependency graph behind the plan is now hand-authored rather than derived
 from CEFR levels, so the planner reasons about what actually blocks what
 instead of about which band a skill sits in.
 
+The newest lab is multi-source mediation, which is the advanced work
+`docs/ROADMAP.md` Milestone 7 asks for rather than the harder vocabulary quiz
+it warns against: several sources go in, one account comes out, and the
+learner has to notice that the sources disagree.
+
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **536 Python tests**; eslint, tsc, and **212 web
+curriculum validation, **590 Python tests**; eslint, tsc, and **232 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -76,8 +81,9 @@ defaults. Tests run in parallel.
 bank (23 items tagged with the linguistic feature they exercise); a 14-entry
 phrase-first lexical bank (34 review cards); a 5-text reading library reaching
 C1; **17 study units with 75 practice items spanning A1–C2**; 9 written output
-tasks across 8 genres reaching C2; 7 listening clips reaching C2; and **5
-spoken output tasks reaching C1**. All content-hashed
+tasks across 8 genres reaching C2; 7 listening clips reaching C2; 5
+spoken output tasks reaching C1; and **4 multi-source mediation tasks
+reaching C2, across 6 kinds of source**. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
 The C1/C2 material teaches what actually distinguishes those levels —
@@ -122,6 +128,39 @@ a cap on consecutive heavy work. Every item explains itself.
   and duplicate triples. Each of those failures is otherwise silent.
 - `make test-curriculum` prints the five most load-bearing skills every run,
   so a change in what the planner pushes learners towards shows up in a diff.
+
+### Mediation lab (Milestone 7 — new)
+
+The mediation objectives had prerequisites pointing at them and nothing
+behind them. They now have the hardest task in the product.
+
+- **Several sources in, one account out**, written for a reader who has seen
+  none of them. Four tasks B1–C2, across articles, emails, report extracts,
+  chart summaries, notices and forum posts. The sources deliberately
+  disagree: reconciling two agreeing sources is summarising twice.
+- **The parser refuses a single-source task.** One source is a summary, and
+  the writing bank already has those.
+- **A brief must name its reader.** Mediation without an audience is
+  paraphrase — who the account is for decides which details survive.
+- **Source coverage is inferred from anchors** — names, figures and dates
+  that survive paraphrase, proven present in their own source and absent
+  from every other. An approximation, and the result screen says so: a
+  missing source is offered as a suggestion, not a mark.
+- **Copying is measured exactly**, as the longest run shared with a source,
+  with *marked quotations removed first*. Quoting and attributing is
+  legitimate mediation; counting it would teach a learner to stop
+  attributing. The limit is stated before they write, not after they break
+  it.
+- **Anchors are never sent to the client.** Publishing them would turn the
+  task into a word hunt. The source texts are sent in full: they are the
+  material, not an answer key.
+- **The weakest deterministic evidence in the system (0.40)**, despite having
+  more checks than writing. The extra checks make it a stricter test of
+  writing and a weaker test of mediation: whether the sources were conveyed
+  *faithfully* is exactly what no countable check can reach.
+- **Five C-level features added to the taxonomy**: hedging, source
+  attribution, irony, figurative language, and information flow. The
+  original 36 had nothing between "wrong tense" and "wrong register".
 
 ### Spaced review (Milestone 2)
 
@@ -189,10 +228,10 @@ is enforced in more than one place.
 
 ### Study and output activities
 
-- **All five working slots open.** `read:`, `study:`, `write:`, `listen:` and
-  `speak:` keys resolve at `GET /activities/{key}`; the response is a
-  discriminated union on `activity_type`, so the web player handles all five
-  exhaustively.
+- **All six working slots open.** `read:`, `study:`, `write:`, `listen:`,
+  `speak:` and `mediate:` keys resolve at `GET /activities/{key}`; the
+  response is a discriminated union on `activity_type`, so the web player
+  handles all six exhaustively.
 - **Study units** explain one point, then practise it. The explanation stays
   on screen, so evidence is recorded as `controlled_recall` at independence
   0.65, reduced further by self-reported hints. The result page says why a
@@ -295,12 +334,12 @@ is enforced in more than one place.
 
 ## Next three tasks
 
-1. **B2–C2 depth** (Milestone 7): long-form synthesis and multi-source
-   mediation, the tasks that actually separate the top three levels. The
-   content bank reaches C2 in reading and writing but stops at C1 in
-   speaking, and the mediation objectives now have prerequisites pointing at
-   them with no activities behind them.
+1. **Finish Milestone 7.** Mediation has landed; long-form argument,
+   meetings and debates, and the academic and professional tracks have not.
+   The speaking bank still stops at C1.
 2. **A self-hosted (`local`) rubric provider**, so writing accuracy can be
    judged without sending a learner's text to a third party. `cloud` exists
-   and works; `local` still raises at startup.
+   and works; `local` still raises at startup. This matters more now: a
+   mediation account is the piece of work most in need of a rubric and least
+   served by countable checks.
 3. **Offline/PWA** (Milestone 8), the last unstarted milestone.
