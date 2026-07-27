@@ -30,7 +30,7 @@ curriculum validation, **618 Python tests**; eslint, tsc, and **232 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
-**All six CI jobs pass on `01e48c6`** — Python 3.10 and 3.12, the web app,
+**All six CI jobs pass on `d78ef37`** — Python 3.10 and 3.12, the web app,
 PostgreSQL migrations, fixture drift, and the Playwright browser suite.
 
 Version control starts at commit `d503861`, which captures this passing state
@@ -46,8 +46,8 @@ development machine, driven through the shared project folder. The protocol is
 documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
-The Playwright suite has now **actually run and passed**: 14 tests across
-desktop and mobile viewports, on the development machine via the runner. Its
+The Playwright suite has now **actually run and passed**: 26 tests across
+desktop and mobile viewports, including an automated accessibility gate, on the development machine via the runner. Its
 first-ever execution found four real defects — a bash-only launcher that
 failed on Windows, hydration blocked by Next 16's cross-origin default (which
 made the register form fall back to a native GET submit, password in the URL),
@@ -283,6 +283,22 @@ is enforced in more than one place.
 - The default is still `disabled`, so the whole suite proves the product
   works with no AI configured.
 
+### Accessibility gate (new)
+
+- **axe runs in the browser suite** against sign-in, register and the
+  diagnostic, and **fails the build on serious or critical findings**. The
+  two lower grades are reported rather than failed: they are largely
+  advisory, and failing on them trains people to add exceptions, which is
+  how a gate stops meaning anything.
+- **Failures name the rule, the grade and the element**, so whoever reads
+  one goes to the fix rather than back to the tool.
+- Beyond axe: every learner-facing page is checked for a `lang` attribute
+  (an English learning app read aloud in the wrong voice is unusable in a
+  way nobody thinks to report), for exactly one `main` landmark, and for
+  keyboard-only completion of the register form in a real browser.
+- `CLAUDE.md` has always required this. Until now it was a standard the
+  project asserted about itself and never measured.
+
 ### Error taxonomy (new)
 
 - **Errors name a linguistic feature**, from a closed set of 36 codes in
@@ -354,7 +370,14 @@ is enforced in more than one place.
 7. **Scheduler, mastery, and plan constants are defensible defaults, not
    findings.** Study independence 0.65, hint penalty 0.15, two free replays,
    replay penalty 0.1, transcript confidence 0.35 — all documented guesses.
-8. **No automated colour-contrast or screen-reader check.**
+8. **Accessibility is checked by a machine, which finds about a third of
+   what matters.** axe runs against the sign-in, register and diagnostic
+   pages in the browser suite and fails the build on serious or critical
+   findings. It reliably catches a missing label, insufficient contrast, a
+   skipped heading level or a broken landmark. It cannot tell whether a
+   label is *helpful*, whether the reading order makes sense, or whether a
+   screen-reader user could actually finish the diagnostic. Nobody has
+   tried.
 9. **Token in `sessionStorage`** is readable by any script on the page.
 
 ## Next three tasks
