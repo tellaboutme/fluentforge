@@ -96,13 +96,13 @@
       "prompt": "I can take part in an unprepared conversation on a familiar topic.",
       "skill_key": "interaction.unprepared_familiar"
     },
-    "session_id": "0b542e80-85dd-45d3-9fd5-5134937f3d28"
+    "session_id": "00000000-0000-4000-8000-000000000001"
   },
   "plan": {
     "engine_version": "0.1.0",
     "has_productive": true,
     "has_receptive": true,
-    "id": "ad9b1074-2aac-4a6c-8ccf-5e2ed29f64e1",
+    "id": "00000000-0000-4000-8000-000000000002",
     "items": [
       {
         "activity_key": "review:week:meaning_recognition",
@@ -246,7 +246,7 @@
         "title": "Review your feedback"
       }
     ],
-    "plan_date": "2026-07-27",
+    "plan_date": "2026-01-01",
     "requested_minutes": 40,
     "status": "active",
     "total_minutes": 36,
@@ -724,7 +724,7 @@
         "distinct_contexts": 1,
         "domain": "spoken_interaction",
         "evidence_count": 1,
-        "last_observed_at": "2026-07-27T00:39:16.146506Z",
+        "last_observed_at": "2026-01-01T00:00:00Z",
         "mastery_probability": 0.5,
         "skill_key": "interaction.unprepared_familiar",
         "status": "emerging",
@@ -916,7 +916,7 @@
         "distinct_contexts": 1,
         "domain": "written_production",
         "evidence_count": 1,
-        "last_observed_at": "2026-07-27T00:39:16.174247Z",
+        "last_observed_at": "2026-01-01T00:00:00Z",
         "mastery_probability": 0.554169,
         "skill_key": "writing.basic_sentences",
         "status": "emerging",
@@ -985,7 +985,7 @@
     ],
     "target_level": "C2",
     "timezone": "UTC",
-    "user_id": "9e82d637-c55f-4bcd-9179-24e6843190d7"
+    "user_id": "00000000-0000-4000-8000-000000000003"
   },
   "reading_activity": {
     "activity_key": "read:text.a1.noticeboard",
@@ -1047,7 +1047,7 @@
   "register": {
     "account": {
       "email": "fixture@example.com",
-      "id": "9e82d637-c55f-4bcd-9179-24e6843190d7"
+      "id": "00000000-0000-4000-8000-000000000003"
     },
     "token": {
       "access_token": "redacted.for.fixtures",
@@ -1087,15 +1087,15 @@
         "title": "Basic sentences"
       }
     ],
-    "session_id": "0b542e80-85dd-45d3-9fd5-5134937f3d28",
+    "session_id": "00000000-0000-4000-8000-000000000001",
     "skills_observed": 2,
     "starting_band": null,
     "status": "completed"
   },
   "session": {
     "answered": 0,
-    "id": "0b542e80-85dd-45d3-9fd5-5134937f3d28",
-    "started_at": "2026-07-27T00:39:16.056369Z",
+    "id": "00000000-0000-4000-8000-000000000001",
+    "started_at": "2026-01-01T00:00:00Z",
     "status": "in_progress"
   },
   "study_activity": {
@@ -1291,6 +1291,7 @@
       "before",
       "then"
     ],
+    "evaluated_by": null,
     "evidence_recorded": true,
     "explanation": "These are automatic checks on length, structure and content. They do not judge grammar or word choice.",
     "lexical_variety": 0.8085,
@@ -1298,7 +1299,9 @@
       "live",
       "from"
     ],
+    "priority_feedback": [],
     "provisional": true,
+    "rubric": [],
     "score": 0.75,
     "sentence_count": 4,
     "word_count": 47

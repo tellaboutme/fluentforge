@@ -622,8 +622,8 @@ function Writing({
               {result.evaluatedBy ? (
                 <p className="hint">
                   Judged by an automatic evaluator ({result.evaluatedBy}), not
-                  by a teacher. It can be wrong, and it is weighted lower than
-                  a task with a known answer.
+                  by a teacher. It can be wrong, and it is weighted lower than a
+                  task with a known answer.
                 </p>
               ) : null}
             </>
@@ -638,7 +638,8 @@ function Writing({
                   <li key={`${item.category}-${item.original}`}>
                     <span className="question-type">{item.category}</span>
                     <br />
-                    <s>{item.original}</s> &rarr; <strong>{item.improved}</strong>
+                    <s>{item.original}</s> &rarr;{" "}
+                    <strong>{item.improved}</strong>
                     <br />
                     <span className="muted">{item.explanation}</span>
                   </li>

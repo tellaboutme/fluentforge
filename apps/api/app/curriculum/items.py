@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from ..learning import taxonomy
 from ..learning.items import DiagnosticItem, ItemType
 from ..learning.writing import WritingRequirements
 from ..models.enums import CefrLevel
@@ -147,6 +148,13 @@ def _parse_item(
         errors.append(f"{where} is {item_type.value} and must not declare options")
         return None
 
+    # Optional, but validated when present: a typo would silently create an
+    # error category nothing can practise.
+    feature = raw.get("feature")
+    if feature is not None and (not isinstance(feature, str) or not taxonomy.is_known(feature)):
+        errors.append(f"{where} names unknown feature {feature!r}")
+        return None
+
     difficulty = raw.get("difficulty", 0.5)
     if not isinstance(difficulty, int | float) or not 0.0 <= float(difficulty) <= 1.0:
         errors.append(f"{where} has difficulty outside 0..1 ({difficulty!r})")
@@ -167,6 +175,7 @@ def _parse_item(
         options=options,
         difficulty=float(difficulty),
         instructions=str(raw.get("instructions", "")).strip(),
+        feature=feature,
         distractor_rationale={str(k): str(v) for k, v in distractors.items()},
         requirements=requirements,
     )

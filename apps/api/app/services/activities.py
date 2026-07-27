@@ -48,14 +48,14 @@ from ..learning.writing import (
     summarise,
 )
 from ..models.curriculum import SkillNode
+from ..models.enums import EvidenceType, SessionStatus
+from ..models.learning import Attempt, LearningSession
 from ..providers import (
     WritingEvaluation,
     WritingEvaluationRequest,
     WritingEvaluator,
     get_writing_evaluator,
 )
-from ..models.enums import EvidenceType, SessionStatus
-from ..models.learning import Attempt, LearningSession
 from ..settings import settings
 from .errors_log import record_error, sync_error_cards
 from .evidence import recompute_skill_state, record_evidence
@@ -894,9 +894,7 @@ def complete_writing(
         recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
         recorded = True
 
-    evaluation = (
-        _evaluate_writing(task, text, evaluator) if analysis.met_minimum else None
-    )
+    evaluation = _evaluate_writing(task, text, evaluator) if analysis.met_minimum else None
     if evaluation is not None and evaluation.is_usable and node is not None:
         record_evidence(
             session,

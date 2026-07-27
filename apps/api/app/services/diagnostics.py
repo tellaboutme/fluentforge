@@ -27,6 +27,7 @@ from ..errors import (
     ItemNotFoundError,
     SessionNotFoundError,
 )
+from ..learning import taxonomy
 from ..learning.items import DiagnosticItem, ItemType, ScoredResponse, score_response
 from ..learning.selection import SelectionState, provisional_band, replay, select_next
 from ..models.curriculum import CurriculumVersion, SkillNode
@@ -240,12 +241,22 @@ def submit_response(
     # not only that something did. Logging it lets the error feed the review
     # queue once it recurs.
     if not scored.correct and _counts_toward_band(item):
+        # Prefer the linguistic feature the item names: `grammar.tense.
+        # perfect_vs_past` can be practised, and a study unit can answer it.
+        # Items that name none — reading comprehension, mostly — keep the
+        # legacy skill-shaped code, which stays readable and still schedules
+        # practice but earns no automatic remedy. Inventing a feature for them
+        # would be worse than admitting there isn't one.
+        feature = item.feature
         record_error(
             session,
             user_id,
-            taxonomy_code=f"item.{item.skill_key}",
-            description=f"Difficulty with: {item.prompt[:80]}",
+            taxonomy_code=feature or f"item.{item.skill_key}",
+            description=(
+                taxonomy.describe(feature) if feature else f"Difficulty with: {item.prompt[:80]}"
+            ),
             example=scored.normalised_response or None,
+            blocks_meaning=taxonomy.blocks_meaning_default(feature) if feature else False,
         )
         sync_error_cards(session, user_id)
 

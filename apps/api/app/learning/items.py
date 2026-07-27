@@ -84,6 +84,11 @@ class DiagnosticItem:
     difficulty: float = 0.5
     instructions: str = ""
     distractor_rationale: dict[str, str] = field(default_factory=dict)
+    #: The linguistic feature a wrong answer evidences, from the closed set in
+    #: `learning/taxonomy.py`. Optional because not every item names one: a
+    #: reading-comprehension item tests understanding, not a feature a learner
+    #: can drill, and inventing a code for it would be worse than none.
+    feature: str | None = None
     #: Only meaningful for `written_response` items.
     requirements: WritingRequirements | None = None
 

@@ -271,7 +271,9 @@ describe("feedback", () => {
     await submit();
 
     const status = await screen.findByRole("status");
-    expect(status).not.toHaveTextContent(/nothing here has judged your grammar/i);
+    expect(status).not.toHaveTextContent(
+      /nothing here has judged your grammar/i,
+    );
   });
 
   it("limits corrections to what is worth fixing first", async () => {

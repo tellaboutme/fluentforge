@@ -33,9 +33,7 @@ if str(REPO_ROOT) not in sys.path:
 OUTPUT = REPO_ROOT / "apps" / "web" / "fixtures" / "api-payloads.json"
 
 #: Anything matching these is regenerated per run and must be neutralised.
-_UUID = re.compile(
-    r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
-)
+_UUID = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 _TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T[\d:.]+(?:Z|[+-]\d{2}:?\d{2})?$")
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 

@@ -11,6 +11,7 @@ description: >
 items:
   # --- A1 grammar -----------------------------------------------------------
   - key: grammar.a1.be_present
+    feature: grammar.agreement.subject_verb
     type: multiple_choice
     skill: grammar.basic_clause
     level: A1
@@ -24,6 +25,7 @@ items:
       be: "'be' is the base form; it needs to change for the subject."
 
   - key: grammar.a1.present_simple_s
+    feature: grammar.tense.present_simple_form
     type: multiple_choice
     skill: grammar.basic_clause
     level: A1
@@ -36,6 +38,7 @@ items:
       going: "'going' needs a form of 'be' before it."
 
   - key: grammar.a1.article
+    feature: grammar.article.definite_indefinite
     type: gap_fill
     skill: grammar.basic_clause
     level: A1
@@ -47,6 +50,7 @@ items:
       a: "Use 'an' before a vowel sound: an apple."
 
   - key: grammar.a1.question_order
+    feature: grammar.word_order.question
     type: word_order
     skill: grammar.basic_clause
     level: A1
@@ -57,6 +61,7 @@ items:
 
   # --- A2 grammar -----------------------------------------------------------
   - key: grammar.a2.past_simple
+    feature: grammar.tense.past_simple_form
     type: gap_fill
     skill: grammar.past_future_basic
     level: A2
@@ -69,6 +74,7 @@ items:
       goes: "This sentence is about last night, so it needs a past form."
 
   - key: grammar.a2.comparative
+    feature: grammar.comparison.form
     type: gap_fill
     skill: grammar.past_future_basic
     level: A2
@@ -80,6 +86,7 @@ items:
       interestinger: "Long adjectives use 'more', not '-er'."
 
   - key: grammar.a2.present_perfect_intro
+    feature: grammar.tense.perfect_vs_past
     type: multiple_choice
     skill: grammar.past_future_basic
     level: A2
@@ -93,6 +100,7 @@ items:
 
   # --- B1 grammar -----------------------------------------------------------
   - key: grammar.b1.present_perfect_contrast
+    feature: grammar.tense.perfect_vs_past
     type: multiple_choice
     skill: grammar.connected_time_modality
     level: B1
@@ -105,6 +113,7 @@ items:
       had lost: "The past perfect needs a second, later past event to relate to."
 
   - key: grammar.b1.second_conditional
+    feature: grammar.conditional.form
     type: gap_fill
     skill: grammar.connected_time_modality
     level: B1
@@ -116,6 +125,7 @@ items:
       will learn: "'If I had' is hypothetical, so the result clause uses 'would'."
 
   - key: grammar.b1.reported_speech
+    feature: grammar.tense.sequence_backshift
     type: gap_fill
     skill: grammar.connected_time_modality
     level: B1
@@ -126,6 +136,7 @@ items:
 
   # --- B2 grammar -----------------------------------------------------------
   - key: grammar.b2.passive
+    feature: grammar.passive.form
     type: gap_fill
     skill: grammar.broad_control
     level: B2
@@ -135,6 +146,7 @@ items:
     answer: ["was finished", "has been"]
 
   - key: grammar.b2.past_modal
+    feature: grammar.modality.obligation
     type: multiple_choice
     skill: grammar.broad_control
     level: B2
@@ -147,6 +159,7 @@ items:
 
   # --- C1 grammar -----------------------------------------------------------
   - key: grammar.c1.inversion
+    feature: grammar.word_order.statement
     type: word_order
     skill: grammar.flexible_complexity
     level: C1
@@ -156,6 +169,7 @@ items:
     answer: ["no sooner had she arrived"]
 
   - key: grammar.c1.nominalisation
+    feature: lexis.word_form.derivation
     type: multiple_choice
     skill: grammar.flexible_complexity
     level: C1
@@ -167,6 +181,7 @@ items:
 
   # --- A1 vocabulary --------------------------------------------------------
   - key: vocabulary.a1.family
+    feature: lexis.precision.approximation
     type: multiple_choice
     skill: vocabulary.high_frequency_survival
     level: A1
@@ -176,6 +191,7 @@ items:
     answer: ["grandmother"]
 
   - key: vocabulary.a1.time
+    feature: lexis.precision.approximation
     type: gap_fill
     skill: vocabulary.high_frequency_survival
     level: A1
@@ -186,6 +202,7 @@ items:
 
   # --- A2 vocabulary --------------------------------------------------------
   - key: vocabulary.a2.travel
+    feature: lexis.collocation.verb_noun
     type: multiple_choice
     skill: vocabulary.everyday_topics
     level: A2
@@ -197,6 +214,7 @@ items:
       order: "You order food; you book a room or a ticket."
 
   - key: vocabulary.a2.health
+    feature: lexis.precision.approximation
     type: gap_fill
     skill: vocabulary.everyday_topics
     level: A2
@@ -207,6 +225,7 @@ items:
 
   # --- B1 vocabulary --------------------------------------------------------
   - key: vocabulary.b1.collocation_decision
+    feature: lexis.collocation.verb_noun
     type: multiple_choice
     skill: vocabulary.independent_range
     level: B1
@@ -219,6 +238,7 @@ items:
       take: "'take a decision' exists in some varieties but 'make' is far more frequent."
 
   - key: vocabulary.b1.phrasal_verb
+    feature: lexis.phrasal_verb.meaning
     type: gap_fill
     skill: vocabulary.independent_range
     level: B1
@@ -229,6 +249,7 @@ items:
 
   # --- B2 vocabulary --------------------------------------------------------
   - key: vocabulary.b2.precision
+    feature: lexis.precision.approximation
     type: multiple_choice
     skill: vocabulary.precision_collocation
     level: B2
@@ -240,6 +261,7 @@ items:
       forceful: "'forceful' describes a person or manner, not evidence."
 
   - key: vocabulary.b2.register
+    feature: pragmatics.register.formality
     type: multiple_choice
     skill: vocabulary.precision_collocation
     level: B2
@@ -254,6 +276,7 @@ items:
 
   # --- C1 vocabulary --------------------------------------------------------
   - key: vocabulary.c1.idiomatic
+    feature: lexis.confusable.pair
     type: multiple_choice
     skill: vocabulary.broad_idiomatic
     level: C1

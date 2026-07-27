@@ -134,9 +134,7 @@ def test_a_usable_judgement_adds_a_second_evidence_event(
     assert confidences[1] > DETERMINISTIC_CONFIDENCE
 
 
-def test_both_events_share_one_context(
-    loaded_curriculum: Session, db_session: Session
-) -> None:
+def test_both_events_share_one_context(loaded_curriculum: Session, db_session: Session) -> None:
     """One piece of writing judged twice is one context.
 
     Counting it as two would let a single submission satisfy the mastery
@@ -171,9 +169,7 @@ def test_a_judged_response_is_no_longer_provisional(
     assert "accuracy" in result.explanation.lower()
 
 
-def test_evaluator_confidence_is_capped(
-    loaded_curriculum: Session, db_session: Session
-) -> None:
+def test_evaluator_confidence_is_capped(loaded_curriculum: Session, db_session: Session) -> None:
     """A model claiming near-certainty has not earned the trust of a closed
     item scored against a known answer."""
     user = _user(db_session)
@@ -202,9 +198,7 @@ def test_the_evaluator_is_given_the_task_and_the_level(
 # --- Refusals --------------------------------------------------------------------
 
 
-def test_an_abstention_changes_nothing(
-    loaded_curriculum: Session, db_session: Session
-) -> None:
+def test_an_abstention_changes_nothing(loaded_curriculum: Session, db_session: Session) -> None:
     user = _user(db_session)
     result = _complete(db_session, user.id, FakeEvaluator(None))
 
