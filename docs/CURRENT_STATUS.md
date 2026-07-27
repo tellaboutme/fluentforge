@@ -39,8 +39,10 @@ curriculum validation, **672 Python tests**; eslint, tsc, and **260 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
-**All six CI jobs pass on `f630cb5`** — Python 3.10 and 3.12, the web app,
-PostgreSQL migrations, fixture drift, and the Playwright browser suite.
+**All six CI jobs pass on `c34e3ae`** — Python 3.10 and 3.12, the web app,
+PostgreSQL migrations, fixture drift, and the Playwright browser suite. The
+commit named here is the last one verified before this file was written; CI
+runs on every push regardless.
 
 Version control starts at commit `d503861`, which captures this passing state
 as the baseline. 221 files tracked; `.venv`, `node_modules`, and `local-data`
