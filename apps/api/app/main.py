@@ -18,6 +18,7 @@ from .routers.benchmarks import router as benchmarks_router
 from .routers.curriculum import router as curriculum_router
 from .routers.diagnostics import router as diagnostics_router
 from .routers.health import router as health_router
+from .routers.history import router as history_router
 from .routers.plans import router as plans_router
 from .routers.profile import router as profile_router
 from .routers.reflection import router as reflection_router
@@ -96,6 +97,7 @@ def create_app() -> FastAPI:
     app.include_router(activities_router, prefix=API_V1_PREFIX)
     app.include_router(benchmarks_router, prefix=API_V1_PREFIX)
     app.include_router(reflection_router, prefix=API_V1_PREFIX)
+    app.include_router(history_router, prefix=API_V1_PREFIX)
 
     return app
 

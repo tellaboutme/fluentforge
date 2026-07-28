@@ -84,6 +84,14 @@ export const KIND_LABELS: Record<string, string> = {
   output: "Write",
   speaking: "Speak",
   reflection: "Reflect",
+  reading_task: "Reading",
+  study_task: "Focused practice",
+  writing_task: "Writing",
+  listening_task: "Listening",
+  speaking_task: "Speaking",
+  mediation_task: "Mediation",
+  diagnostic_item: "Diagnostic",
+  benchmark_item: "Benchmark",
 };
 
 export function kindLabel(kind: string): string {

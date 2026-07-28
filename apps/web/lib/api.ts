@@ -871,3 +871,53 @@ export async function saveReflection(
     body: { note },
   });
 }
+
+// --- History ---------------------------------------------------------------
+
+export interface HistoryItem {
+  attemptId: string;
+  activityKey: string;
+  activityType: string;
+  submittedAt: string;
+  /** The learner's own words where there are any. */
+  summary: string;
+  score: number | null;
+  /** False for reflection, and anything else nothing assessed. */
+  wasJudged: boolean;
+}
+
+export interface HistoryPage {
+  items: HistoryItem[];
+  nextBefore: string | null;
+}
+
+export interface AttemptFeedback {
+  attemptId: string;
+  activityKey: string;
+  activityType: string;
+  submittedAt: string;
+  evaluatorId: string | null;
+  /** The stored response, verbatim. Never recomputed. */
+  response: Record<string, unknown>;
+  wasJudged: boolean;
+  /** True when this might be judged differently today. Date it, do not
+   * present it as current. */
+  isStale: boolean;
+}
+
+export async function fetchHistory(
+  token: string,
+  before?: string | null,
+): Promise<HistoryPage> {
+  const query = before ? `?before=${encodeURIComponent(before)}` : "";
+  return request<HistoryPage>(`/api/v1/attempts${query}`, { token });
+}
+
+export async function fetchAttemptFeedback(
+  token: string,
+  attemptId: string,
+): Promise<AttemptFeedback> {
+  return request<AttemptFeedback>(`/api/v1/attempts/${attemptId}/feedback`, {
+    token,
+  });
+}

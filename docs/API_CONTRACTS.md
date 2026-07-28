@@ -76,7 +76,26 @@ must not look like a complete one.
 - `GET /activities/{activity_key}` — **implemented**. Opens an activity.
 - `POST /activities/{activity_key}/complete` — **implemented**. Scores it and
   records evidence.
-- `GET /attempts/{id}/feedback`
+- `GET /attempts` — **implemented**. The learner's own past work, newest
+  first, paginated by `before` rather than an offset.
+- `GET /attempts/{id}/feedback` — **implemented**. One attempt in full.
+
+Feedback is returned **as it was recorded**, never recomputed. The checks,
+the curriculum version and the evaluator may all have moved since, and
+re-deriving would show the learner a verdict nobody ever gave them. The
+response carries `submitted_at`, the `evaluator_id` that produced it, and
+`is_stale` — true whenever it might be judged differently today. Clients must
+date the feedback rather than present it as current.
+
+Reading history records nothing: no evidence, no new attempt, no re-scoring.
+A system that recorded it would be counting rereading as practice.
+
+Reflections appear in the list with `was_judged: false` and no score. Hiding
+them would leave a gap in the learner's own record with no explanation;
+showing a score would invent one.
+
+Another learner's attempt returns exactly what a missing one returns. A
+different status code would leak which attempts exist.
 
 Both endpoints serve six activity kinds, discriminated on `activity_type`.
 Clients must switch on that field; the shapes do not overlap.
