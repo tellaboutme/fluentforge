@@ -676,3 +676,25 @@ def _user(session: Session) -> User:
     session.add(user)
     session.commit()
     return user
+
+
+def test_every_level_has_more_than_one_mediation_task(curriculum_dir: Path) -> None:
+    """Once a learner knows where two sources disagree, finding it a second
+    time is recall rather than mediation — so a repeated task measures less
+    here than a repeated reading would."""
+    from collections import Counter
+
+    counts = Counter(task.cefr_level for task in parse_mediation_tasks(curriculum_dir))
+    thin = [level.value for level, count in counts.items() if count < 2]
+    assert not thin, f"only one mediation task at: {', '.join(sorted(thin))}"
+
+
+def test_the_sources_in_a_task_disagree_about_something(curriculum_dir: Path) -> None:
+    """Not checkable by machine, so this asserts the weaker thing that is:
+    every task carries more than one source and every source contributes an
+    anchor of its own. A learner reconciling two agreeing sources has
+    summarised twice, and the interesting act is noticing the gap."""
+    for task in parse_mediation_tasks(curriculum_dir):
+        assert len(task.sources) >= 2, task.key
+        for source in task.sources:
+            assert source.anchors, f"{task.key}/{source.key}"

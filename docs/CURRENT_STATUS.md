@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **725 Python tests**; eslint, tsc, and **273 web
+curriculum validation, **727 Python tests**; eslint, tsc, and **273 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -92,8 +92,7 @@ defaults. Tests run in parallel.
 55 objectives across A1–C2 with a **hand-authored skill graph of 119 edges**
 (105 prerequisite, 14 supporting), each carrying a written reason; a **64-item diagnostic
 bank, 55 of them closed and reaching C2**; a **56-entry
-phrase-first lexical bank (129 review cards, 52 of them multiword)**; a **12-text reading library reaching C2**, two at every band; **22 study units with 95 practice items spanning A1–C2**; **12 written output tasks across 8 genres**, two at every band; **12 listening clips reaching C2**, two at every band; **12 spoken output tasks**, two at every band; and **4 multi-source mediation tasks
-reaching C2, across 6 kinds of source**. All content-hashed
+phrase-first lexical bank (129 review cards, 52 of them multiword)**; a **12-text reading library reaching C2**, two at every band; **22 study units with 95 practice items spanning A1–C2**; **12 written output tasks across 8 genres**, two at every band; **12 listening clips reaching C2**, two at every band; **12 spoken output tasks**, two at every band; and **8 multi-source mediation tasks**, two at every band, across 7 kinds of source. All content-hashed
 and immutable once published, all validated by `make test-curriculum`.
 
 Four files that had been in the repository since the beginning are now

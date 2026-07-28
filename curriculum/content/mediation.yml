@@ -267,3 +267,233 @@ tasks:
           did not compare our intervention to medication and would not be able
           to on this design. The reported association is real in our sample
           and small, and we said so.
+
+  # =========================================================================
+  # Expansion, 2026-07-28. One task per band meant a learner's second
+  # mediation at their level was the same set of sources again — and once you
+  # know where two sources disagree, finding it a second time is recall, not
+  # mediation.
+  # =========================================================================
+
+  - key: mediate.b1.which_course
+    level: B1
+    skill: mediation.basic_summary
+    title: "Two people describe the same course"
+    minutes: 18
+    brief: |
+      A friend is deciding whether to take an evening cookery course. Two
+      people who did it last year have written about it, and they came away
+      with different impressions.
+
+      Write one message for your friend, who has read neither. Say what each
+      person thought, where they disagree, and what your friend would need
+      to decide.
+    guidance:
+      - "Say who thought what. Do not merge them into one opinion."
+      - "Name the disagreement rather than choosing a side."
+      - "End with what your friend has to decide for themselves."
+      - "Use your own words rather than copying their sentences."
+    min_words: 90
+    max_words: 300
+    min_sentences: 5
+    min_connectives: 2
+    max_verbatim_words: 7
+    required_elements: ["decide"]
+    target_features:
+      - discourse.cohesion.connective
+      - discourse.organisation.paragraphing
+    sources:
+      - key: priya
+        title: "Review from Priya"
+        kind: review
+        anchors: ["twelve of us", "knife skills", "rushed at the end"]
+        text: |
+          There were twelve of us, which was too many for one teacher. I
+          learned a lot about knife skills in the first three weeks, and
+          after that it felt rushed at the end - we covered four dishes in
+          the last session and I could not follow any of them properly.
+          Good value, but bring a friend so someone can take notes.
+      - key: tomas
+        title: "Forum post from Tomas"
+        kind: forum_post
+        anchors: ["turned up late", "handouts", "worth every penny"]
+        text: |
+          Honestly it was worth every penny. Yes, it is a big group, but I
+          turned up late twice and still caught up fine because the
+          handouts are good. The last session is fast, but that is because
+          it is a summary of everything, not new material. Do not judge it
+          on that.
+
+  - key: mediate.b2.the_survey_and_the_inbox
+    level: B2
+    skill: mediation.combine_sources
+    title: "A survey and an inbox tell different stories"
+    minutes: 22
+    brief: |
+      Your team changed its meeting schedule three months ago. A staff
+      survey and the complaints inbox describe the result differently.
+
+      Write a briefing for your manager, who has seen neither. Give one
+      account, make clear where the two disagree, and say what is not known.
+    guidance:
+      - "One account, not two summaries placed side by side."
+      - "Say where they disagree without resolving it for her."
+      - "Separate what is measured from what is reported."
+      - "Restate the sources rather than copying them."
+    min_words: 140
+    max_words: 400
+    min_sentences: 6
+    min_connectives: 3
+    max_verbatim_words: 8
+    required_elements: ["disagree"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.stance.hedging
+      - pragmatics.attribution.source
+    sources:
+      - key: survey
+        title: "Staff survey, October"
+        kind: chart_summary
+        anchors: ["68 per cent", "31 responses", "no follow-up question"]
+        text: |
+          Of 31 responses, 68 per cent said the new schedule worked better
+          for them than the old one. The survey asked a single question with
+          a five-point scale and included no follow-up question, so no
+          respondent gave a reason. Fourteen people did not respond at all.
+      - key: inbox
+        title: "Complaints inbox, October"
+        kind: email
+        anchors: ["nine messages", "childcare", "the same four people"]
+        text: |
+          Nine messages arrived about the schedule during the month. Seven
+          concerned the earlier start and its effect on childcare. Reading
+          them together, the same four people account for six of the nine,
+          and two of those wrote twice about the same incident.
+
+  - key: mediate.c1.the_pilot
+    level: C1
+    skill: mediation.complex_synthesis
+    title: "Three readings of one pilot"
+    minutes: 28
+    brief: |
+      A department ran a six-week pilot and three people have written about
+      what it showed. Each is arguing from something the others do not
+      mention.
+
+      Write a synthesis for the committee, who will read your account and
+      not the originals. Set out what is actually at issue, distinguish
+      claims resting on evidence from those resting on preference, and say
+      what would settle it.
+    guidance:
+      - "Organise by issue, not by author."
+      - "Mark which claims rest on evidence and which on preference."
+      - "Say what would settle the question rather than settling it."
+      - "Your account throughout. Quote only if you mark the quotation."
+    min_words: 200
+    max_words: 550
+    min_sentences: 8
+    min_connectives: 4
+    max_verbatim_words: 8
+    required_elements: ["evidence"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.stance.hedging
+      - pragmatics.attribution.source
+      - lexis.collocation.verb_noun
+    sources:
+      - key: lead
+        title: "Note from the pilot lead"
+        kind: report_extract
+        anchors: ["completion rose", "from 54 to 71", "six weeks is short"]
+        text: |
+          Completion rose over the pilot, from 54 to 71 per cent, and the
+          effect appeared in week two and held. I would not want to claim
+          more than that: six weeks is short, we changed two things at once,
+          and the cohort was self-selected. What I can say is that nothing
+          got worse.
+      - key: tutors
+        title: "Email from two tutors"
+        kind: email
+        anchors: ["marking load", "doubled", "we cannot sustain"]
+        text: |
+          Whatever the numbers say, the marking load roughly doubled and we
+          cannot sustain it beyond a pilot. We are not arguing the approach
+          is wrong. We are saying that if it is adopted as it stands,
+          something else stops happening, and nobody has said what.
+      - key: student
+        title: "Student representative's submission"
+        kind: forum_post
+        anchors: ["asked eleven people", "felt watched", "would do it again"]
+        text: |
+          I asked eleven people on the pilot. Most would do it again. Three
+          said they felt watched by the weekly check-ins and one dropped out
+          because of it, though she had also changed jobs that month. I am
+          not claiming this is representative. It is eleven people.
+
+  - key: mediate.c2.a_claim_and_its_afterlife
+    level: C2
+    skill: mediation.reconstruct_multisource
+    title: "Reconstructing a policy from what was said about it"
+    minutes: 35
+    brief: |
+      A policy has been described repeatedly, and the descriptions have
+      drifted from the document.
+
+      Write an account for a reader who has met the descriptions and not the
+      policy. Reconstruct what the document actually provides for, show where
+      the descriptions depart from it, and be exact about scope.
+    guidance:
+      - "Reconstruct the provision before evaluating anything."
+      - "Show where each description departs from it, and how."
+      - "Be exact about scope: who is covered, for how long, and with what exceptions."
+      - "Write for someone with no background. Precision, not jargon."
+      - "Your own words. Mark any quotation as a quotation."
+    min_words: 250
+    max_words: 650
+    min_sentences: 10
+    min_connectives: 5
+    max_verbatim_words: 8
+    required_elements: ["scope"]
+    target_features:
+      - discourse.organisation.information_flow
+      - pragmatics.attribution.source
+      - pragmatics.stance.hedging
+      - pragmatics.rhetoric.irony
+    sources:
+      - key: document
+        title: "The policy document, clause 4"
+        kind: report_extract
+        anchors: ["clause 4", "first twelve months", "excluding fixed-term"]
+        text: |
+          Under clause 4, staff may request a compressed week after
+          completing their first twelve months of continuous service,
+          excluding fixed-term appointments of under two years. Requests are
+          considered against operational need and may be refused with
+          written reasons. The provision does not create an entitlement.
+      - key: announcement
+        title: "Internal announcement"
+        kind: notice
+        anchors: ["four-day week", "now available to all staff", "from January"]
+        text: |
+          From January a four-day week is now available to all staff. We are
+          proud to be among the first in the sector to offer this, and we
+          encourage everyone to discuss the option with their manager.
+      - key: coverage
+        title: "How it was reported outside"
+        kind: article
+        anchors: ["scraps the five-day week", "no strings attached", "sector first"]
+        text: |
+          The organisation scraps the five-day week with no strings
+          attached, in what is being described as a sector first. Employees
+          will simply choose their hours, with managers said to have been
+          instructed not to stand in the way.
+      - key: clarification
+        title: "Later clarification to managers"
+        kind: email
+        anchors: ["some confusion", "not automatic", "refer to the wording"]
+        text: |
+          There has been some confusion. Approval is not automatic and
+          operational need remains the deciding factor. Colleagues in their
+          first year, and those on shorter fixed-term contracts, are not
+          within the provision at all. Please refer to the wording rather
+          than to the announcement.
