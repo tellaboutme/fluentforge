@@ -29,7 +29,26 @@ failures return `weak_password` and create no account.
 - `GET /profile` — **implemented**
 - `PATCH /profile` — **implemented**
 - `GET /profile/skill-map`
-- `GET /profile/errors`
+- `GET /profile/errors` — **implemented**. The learner's whole error log.
+
+Each entry carries a rendered `label` (clients must never show the raw code),
+the occurrence count, whether it blocks meaning, its priority, and whether it
+has recurred often enough to be `scheduled` for practice — so a learner can
+see that a single slip is recorded and not yet being drilled.
+
+`remedy_key` points at a study unit that drills the feature, where one
+exists. Where none does, `no_remedy_reason` says which kind of gap it is, and
+the distinction is the point:
+
+| value | meaning |
+| --- | --- |
+| `not_written` | no unit covers this feature yet |
+| `no_feature` | a legacy `item.<skill>` code names a skill rather than a practisable feature, so nothing could honestly claim to fix it |
+| `needs_speech` | a study unit is read and typed and cannot teach a sound contrast; this needs an audio pipeline the product does not have |
+
+Collapsing those into a bare null would suggest a missing audio pipeline is a
+backlog item. "We have not written this yet" and "nothing we can build in
+this format would help" are different promises.
 
 `GET /profile` returns a list of per-skill estimates. There is no field carrying
 a single current level for the learner. `target_level` is a goal, not an
