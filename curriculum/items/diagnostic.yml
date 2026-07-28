@@ -447,3 +447,437 @@ items:
     difficulty: 0.30
     instructions: "Rate 0 (not at all) to 4 (easily)."
     prompt: "People usually understand me without asking me to repeat myself."
+
+  # =========================================================================
+  # Expansion, 2026-07-28.
+  #
+  # This bank had become a functional constraint rather than merely a thin
+  # one. Benchmarks draw from it and require items the learner has **never
+  # seen** (`apps/api/app/learning/benchmarks.py`), and there were 27 closed
+  # items in total. A diagnostic consumes a dozen or more; a benchmark takes
+  # eight. So a learner got one benchmark and then met "there is not enough
+  # material you have never seen" for ever after -- a measurement that
+  # switches itself off after a single use.
+  #
+  # There were also no C2 items at all, so the diagnostic could not route
+  # anyone above C1 and a benchmark could not be pitched there.
+  #
+  # Closed types only below, deliberately: benchmarks may use nothing else,
+  # since full evaluator confidence is defensible only where the answer is
+  # known in advance.
+  #
+  # Distractors are misconceptions, not filler. A wrong option nobody would
+  # choose measures nothing, and one chosen at random tells you the learner
+  # guessed rather than what they believe.
+  # =========================================================================
+
+  # --- A1 -------------------------------------------------------------------
+  - key: grammar.a1.plural_form
+    feature: grammar.noun.countability
+    type: multiple_choice
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.14
+    prompt: "I have two ___."
+    options: ["children", "childs", "childrens", "child"]
+    answer: ["children"]
+    distractors:
+      childs: "'child' is irregular; it does not take -s."
+      childrens: "'children' is already plural, so it needs no second -s."
+      child: "'two' needs a plural noun."
+
+  - key: grammar.a1.preposition_time
+    feature: grammar.preposition.time_place
+    type: gap_fill
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.22
+    prompt: "The class starts ___ nine o'clock."
+    answer: ["at"]
+
+  - key: lexis.a1.days
+    feature: null
+    type: multiple_choice
+    skill: vocabulary.high_frequency_survival
+    level: A1
+    difficulty: 0.12
+    prompt: "Which day comes after Tuesday?"
+    options: ["Wednesday", "Monday", "Thursday", "Sunday"]
+    answer: ["Wednesday"]
+    distractors:
+      Monday: "Monday comes before Tuesday."
+      Thursday: "Thursday comes two days after Tuesday."
+
+  - key: grammar.a1.question_word
+    feature: grammar.word_order.question
+    type: multiple_choice
+    skill: grammar.basic_clause
+    level: A1
+    difficulty: 0.24
+    prompt: "___ do you live?"
+    options: ["Where", "What", "Who", "When"]
+    answer: ["Where"]
+    distractors:
+      What: "'What' asks about a thing, not a place."
+      Who: "'Who' asks about a person."
+      When: "'When' asks about a time."
+
+  # --- A2 -------------------------------------------------------------------
+  - key: grammar.a2.past_irregular
+    feature: grammar.tense.past_simple_form
+    type: gap_fill
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.34
+    prompt: "Yesterday I ___ (go) to the market."
+    answer: ["went"]
+
+  - key: grammar.a2.comparative_short
+    feature: grammar.comparison.form
+    type: multiple_choice
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.32
+    prompt: "This road is ___ than the other one."
+    options: ["busier", "more busy", "busiest", "busy"]
+    answer: ["busier"]
+    distractors:
+      more busy: "Short adjectives take -er rather than 'more'."
+      busiest: "'-est' is the superlative; 'than' needs a comparative."
+      busy: "The base form cannot be used with 'than'."
+
+  - key: grammar.a2.countable
+    feature: grammar.quantifier.choice
+    type: multiple_choice
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.38
+    prompt: "There isn't ___ milk left."
+    options: ["much", "many", "a few", "several"]
+    answer: ["much"]
+    distractors:
+      many: "'many' goes with things you can count; milk is uncountable."
+      a few: "'a few' also needs a countable noun."
+      several: "'several' needs a countable noun."
+
+  - key: lexis.a2.collocation_make
+    feature: lexis.collocation.verb_noun
+    type: multiple_choice
+    skill: vocabulary.everyday_topics
+    level: A2
+    difficulty: 0.40
+    prompt: "I need to ___ an appointment with the doctor."
+    options: ["make", "do", "take", "put"]
+    answer: ["make"]
+    distractors:
+      do: "'do' collocates with tasks and work, not appointments."
+      take: "'take an appointment' is not used; you take a seat, not an appointment."
+      put: "'put' needs a place or a direction."
+
+  - key: grammar.a2.word_order_adverb
+    feature: grammar.word_order.statement
+    type: word_order
+    skill: grammar.past_future_basic
+    level: A2
+    difficulty: 0.42
+    prompt: "Put the words in order: always / she / late / is"
+    answer: ["she is always late"]
+
+  # --- B1 -------------------------------------------------------------------
+  - key: grammar.b1.present_perfect_since
+    feature: grammar.tense.perfect_vs_past
+    type: gap_fill
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.48
+    prompt: "I ___ (live) here since 2019."
+    answer: ["have lived", "'ve lived"]
+
+  - key: grammar.b1.conditional_second
+    feature: grammar.conditional.form
+    type: multiple_choice
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.52
+    prompt: "If I had more time, I ___ take the course."
+    options: ["would", "will", "am going to", "had"]
+    answer: ["would"]
+    distractors:
+      will: "'will' pairs with a present tense 'if' clause, not a past one."
+      am going to: "The same problem: this describes a real future plan."
+      had: "This would repeat the past form rather than complete the sentence."
+
+  - key: lexis.b1.confusable_lend
+    feature: lexis.confusable.pair
+    type: multiple_choice
+    skill: vocabulary.independent_range
+    level: B1
+    difficulty: 0.50
+    prompt: "Could you ___ me your pen for a moment?"
+    options: ["lend", "borrow", "loan out", "rent"]
+    answer: ["lend"]
+    distractors:
+      borrow: "You borrow *from* someone; they lend *to* you. The subject here is the giver."
+      loan out: "Possible but formal and unusual in speech."
+      rent: "Renting involves payment."
+
+  - key: grammar.b1.relative_clause
+    feature: grammar.clause.relative
+    type: multiple_choice
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.54
+    prompt: "The colleague ___ sent the message is away today."
+    options: ["who", "which", "whose", "whom"]
+    answer: ["who"]
+    distractors:
+      which: "'which' refers to things, not people."
+      whose: "'whose' shows possession; nothing here belongs to the colleague."
+      whom: "'whom' is the object form, but the colleague is doing the sending."
+
+  - key: discourse.b1.connective_contrast
+    feature: discourse.cohesion.connective
+    type: multiple_choice
+    skill: grammar.connected_time_modality
+    level: B1
+    difficulty: 0.56
+    prompt: "It rained all day. ___, we still went for a walk."
+    options: ["However", "Therefore", "Because", "For example"]
+    answer: ["However"]
+    distractors:
+      Therefore: "'Therefore' signals a result, and this is a contrast."
+      Because: "'Because' introduces a reason and cannot start this clause."
+      For example: "Nothing here is being illustrated."
+
+  # --- B2 -------------------------------------------------------------------
+  - key: grammar.b2.past_perfect_sequence
+    feature: grammar.tense.sequence_backshift
+    type: gap_fill
+    skill: grammar.broad_control
+    level: B2
+    difficulty: 0.62
+    prompt: "By the time we arrived, the meeting ___ (already / finish)."
+    answer: ["had already finished"]
+
+  - key: grammar.b2.passive_flow
+    feature: grammar.passive.form
+    type: multiple_choice
+    skill: grammar.broad_control
+    level: B2
+    difficulty: 0.64
+    prompt: >
+      The previous sentence was about the report. Which continuation keeps
+      the report as the subject?
+    options:
+      - "The report was praised by both reviewers."
+      - "Both reviewers praised the report."
+      - "There was praise for the report."
+      - "Praise came from both reviewers."
+    answer: ["The report was praised by both reviewers."]
+    distractors:
+      Both reviewers praised the report.: "Grammatical, but it moves the reviewers into subject position and breaks the flow."
+      There was praise for the report.: "This buries both the report and the reviewers."
+
+  - key: lexis.b2.collocation_draw
+    feature: lexis.collocation.verb_noun
+    type: multiple_choice
+    skill: vocabulary.precision_collocation
+    level: B2
+    difficulty: 0.66
+    prompt: "It is too early to ___ a conclusion from one study."
+    options: ["draw", "make", "take", "do"]
+    answer: ["draw"]
+    distractors:
+      make: "'make a conclusion' is a very common learner error; the verb is 'draw'."
+      take: "'take a conclusion' is not used in English."
+      do: "'do' does not collocate with conclusion."
+
+  - key: pragmatics.b2.hedging
+    feature: pragmatics.stance.hedging
+    type: multiple_choice
+    skill: pragmatics.register_choice
+    level: B2
+    difficulty: 0.68
+    prompt: >
+      One small study found an association. Which sentence reports it
+      accurately?
+    options:
+      - "The results suggest a link, though the study was small."
+      - "The study proves that journals improve sleep."
+      - "It is now known that journals cure insomnia."
+      - "Journals have been shown to help everyone sleep."
+    answer: ["The results suggest a link, though the study was small."]
+    distractors:
+      The study proves that journals improve sleep.: "'Proves' claims far more than one small study can support."
+      It is now known that journals cure insomnia.: "This states as settled what was only an association."
+
+  - key: grammar.b2.modal_deduction
+    feature: grammar.modality.obligation
+    type: multiple_choice
+    skill: grammar.broad_control
+    level: B2
+    difficulty: 0.60
+    prompt: "The lights are off, so they ___ have left already."
+    options: ["must", "can", "should", "would"]
+    answer: ["must"]
+    distractors:
+      can: "'can have' is not used for deduction about the past."
+      should: "'should have' expresses expectation or regret, not deduction."
+      would: "'would have' belongs to a hypothetical, not an inference from evidence."
+
+  # --- C1 -------------------------------------------------------------------
+  - key: discourse.c1.cleft
+    feature: grammar.clause.subordination
+    type: gap_fill
+    skill: grammar.flexible_complexity
+    level: C1
+    difficulty: 0.74
+    prompt: "___ was the delay that annoyed them, not the cost. (cleft with 'it')"
+    answer: ["it"]
+
+  - key: pragmatics.c1.attribution
+    feature: pragmatics.attribution.source
+    type: multiple_choice
+    skill: pragmatics.nuance
+    level: C1
+    difficulty: 0.76
+    prompt: >
+      You worked out that two figures conflict. Neither source says so.
+      Which sentence is honest?
+    options:
+      - "The two figures cannot both be right, though neither source says so."
+      - "The report says the two figures cannot both be right."
+      - "As both sources point out, the figures conflict."
+      - "Everyone agrees the figures conflict."
+    answer: ["The two figures cannot both be right, though neither source says so."]
+    distractors:
+      The report says the two figures cannot both be right.: "This attributes your inference to a source that never made it."
+      As both sources point out, the figures conflict.: "Neither source pointed it out; you did."
+
+  - key: lexis.c1.idiom_goalposts
+    feature: lexis.idiom.figurative
+    type: multiple_choice
+    skill: vocabulary.broad_idiomatic
+    level: C1
+    difficulty: 0.72
+    prompt: "'They moved the goalposts' means that they ___."
+    options:
+      - "changed the requirements after work had started"
+      - "relocated some equipment"
+      - "postponed the decision"
+      - "made the task easier"
+    answer: ["changed the requirements after work had started"]
+    distractors:
+      relocated some equipment: "The literal reading; the phrase is figurative."
+      postponed the decision: "That would be 'kicked it into the long grass'."
+
+  - key: discourse.c1.information_flow
+    feature: discourse.organisation.information_flow
+    type: multiple_choice
+    skill: grammar.flexible_complexity
+    level: C1
+    difficulty: 0.78
+    prompt: "Which pair of sentences flows better for a reader?"
+    options:
+      - "The lease costs £61,000. That is the second largest line after salaries."
+      - "The second largest line after salaries is £61,000. The lease costs that."
+      - "£61,000 is what the lease costs. Salaries are larger."
+      - "Salaries are the largest line. £61,000."
+    answer: ["The lease costs £61,000. That is the second largest line after salaries."]
+    distractors:
+      The second largest line after salaries is £61,000. The lease costs that.: "This makes the reader hold a figure before knowing what it refers to."
+
+  # --- C2 -------------------------------------------------------------------
+  #
+  # The bank had none. Without them the diagnostic cannot route anyone above
+  # C1 and a benchmark cannot be pitched at the top band, which makes C2 a
+  # level the product describes and cannot assess.
+  - key: pragmatics.c2.irony
+    feature: pragmatics.rhetoric.irony
+    type: multiple_choice
+    skill: pragmatics.mastery
+    level: C2
+    difficulty: 0.84
+    prompt: >
+      A manager says "I have one or two reservations about the whole plan."
+      What is the likeliest meaning?
+    options:
+      - "Serious objections, put mildly."
+      - "Exactly two small points of detail."
+      - "Full agreement with the plan."
+      - "They have not read the plan."
+    answer: ["Serious objections, put mildly."]
+    distractors:
+      Exactly two small points of detail.: "Reading the understatement literally is the failure this tests."
+      Full agreement with the plan.: "The hedge signals the opposite."
+
+  - key: lexis.c2.fine_shade
+    feature: lexis.precision.approximation
+    type: multiple_choice
+    skill: vocabulary.fine_shades
+    level: C2
+    difficulty: 0.86
+    prompt: >
+      "The change was ___ about cost." Which word implies the stated reason
+      may not be the real one?
+    options: ["ostensibly", "evidently", "undeniably", "primarily"]
+    answer: ["ostensibly"]
+    distractors:
+      evidently: "'Evidently' asserts the reason is clear, not that it is doubtful."
+      undeniably: "This strengthens the claim rather than casting doubt on it."
+      primarily: "This ranks reasons; it does not question them."
+
+  - key: grammar.c2.marked_order
+    feature: grammar.word_order.statement
+    type: multiple_choice
+    skill: grammar.stylistic_control
+    level: C2
+    difficulty: 0.88
+    prompt: "Which sentence fronts an element for contrast?"
+    options:
+      - "This much, at least, nobody disputes."
+      - "Nobody disputes this much, at least."
+      - "At least nobody disputes this much."
+      - "Nobody at least disputes this much."
+    answer: ["This much, at least, nobody disputes."]
+    distractors:
+      Nobody disputes this much, at least.: "Ordinary order; nothing is fronted."
+      At least nobody disputes this much.: "The adverbial moves, but the object stays in place."
+
+  - key: pragmatics.c2.attribution_hedge
+    feature: pragmatics.attribution.source
+    type: multiple_choice
+    skill: pragmatics.mastery
+    level: C2
+    difficulty: 0.90
+    prompt: >
+      "Listeners may have drawn a firmer conclusion than was warranted."
+      Where does this place the responsibility?
+    options:
+      - "On the listeners, while appearing to concede the point."
+      - "On the speaker, clearly and without qualification."
+      - "On circumstances that changed later."
+      - "On whoever reported the statement."
+    answer: ["On the listeners, while appearing to concede the point."]
+    distractors:
+      On the speaker, clearly and without qualification.: "The grammar makes the listeners the ones who drew the conclusion."
+      On circumstances that changed later.: "No circumstance is mentioned in this sentence."
+
+  - key: discourse.c2.nominalisation
+    feature: discourse.organisation.information_flow
+    type: multiple_choice
+    skill: grammar.stylistic_control
+    level: C2
+    difficulty: 0.85
+    prompt: >
+      Which version makes the claim hardest to challenge, by removing who
+      did what?
+    options:
+      - "There has been a reassessment of the timetable."
+      - "We have reassessed the timetable."
+      - "The board reassessed the timetable."
+      - "They are reassessing the timetable."
+    answer: ["There has been a reassessment of the timetable."]
+    distractors:
+      We have reassessed the timetable.: "This names the agent, so it can be questioned."
+      The board reassessed the timetable.: "Also names the agent."

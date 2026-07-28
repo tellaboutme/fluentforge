@@ -621,3 +621,41 @@ def test_the_plan_item_points_at_the_benchmark_screen(
 
     item = next(item for item in plan.items if item.priority_components["kind"] == "benchmark")
     assert item.activity_key.startswith("benchmark:")
+
+
+# --- The bank has to be deep enough for the feature to keep working ---------
+
+
+def test_the_item_bank_supports_more_than_one_benchmark() -> None:
+    """A functional coupling, not a content preference.
+
+    Benchmarks require items the learner has never seen. The bank held 27
+    closed items; a diagnostic consumes a dozen or more and each benchmark
+    takes eight, so a learner got exactly one benchmark and then met "there
+    is not enough material you have never seen" for ever after — a
+    measurement that switches itself off after a single use.
+
+    Three benchmarks after a full diagnostic is the floor asserted here. It
+    is not a target, and the honest position is that a bank supporting a year
+    of three-weekly benchmarks would need several times this.
+    """
+    closed = [item for item in item_bank() if item.item_type in ALLOWED_ITEM_TYPES]
+    diagnostic_appetite = 20
+    assert len(closed) >= diagnostic_appetite + 3 * ITEM_COUNT
+
+
+def test_the_bank_can_pitch_a_benchmark_at_every_level() -> None:
+    """C2 had no items at all, so it was a level the product described and
+    could not assess: the diagnostic could not route anyone above C1 and a
+    benchmark could not be pitched at the top band."""
+    closed = [item for item in item_bank() if item.item_type in ALLOWED_ITEM_TYPES]
+    levels = {item.cefr_level for item in closed}
+    assert levels == set(CefrLevel)
+
+
+def test_a_benchmark_at_the_top_band_is_actually_at_the_top_band() -> None:
+    """Selection falls back to whatever is nearest when a band is empty, so
+    an empty C2 would have produced a C1 benchmark labelled C2 rather than an
+    error."""
+    chosen = select_items(item_bank(), band=CefrLevel.C2, seen_keys=(), count=4)
+    assert any(item.cefr_level is CefrLevel.C2 for item in chosen)
