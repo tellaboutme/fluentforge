@@ -8,7 +8,11 @@
  * machine codes, so the UI branches on `code` and never on message text.
  */
 
-import type { ApiErrorCode, Profile } from "@fluentforge/contracts";
+import type {
+  ApiErrorCode,
+  Profile,
+  SkillStatus,
+} from "@fluentforge/contracts";
 
 import { isOffline } from "./online";
 
@@ -920,4 +924,85 @@ export async function fetchAttemptFeedback(
   return request<AttemptFeedback>(`/api/v1/attempts/${attemptId}/feedback`, {
     token,
   });
+}
+
+// --- The error log ---------------------------------------------------------
+
+/**
+ * Why an error has no openable practice. Stable machine values; the wording
+ * lives in the screen, not on the wire.
+ */
+export type NoRemedyReason = "no_feature" | "needs_speech" | "not_written";
+
+export interface ErrorPattern {
+  code: string;
+  /** Rendered. Never show `code`: it is a machine identifier and reads as
+   * one. */
+  label: string;
+  description: string;
+  occurrences: number;
+  firstSeenAt: string;
+  lastSeenAt: string;
+  blocksMeaning: boolean;
+  priority: number;
+  /** Whether this has recurred often enough to be in the review queue. A
+   * single slip is recorded and not yet drilled, and the learner should be
+   * able to see that is deliberate. */
+  scheduled: boolean;
+  remedyKey: string | null;
+  remedyTitle: string | null;
+  /** Which kind of activity the remedy opens. A comprehension error opens
+   * another text, not a study unit. */
+  remedyType: string | null;
+  noRemedyReason: NoRemedyReason | null;
+}
+
+export interface ErrorLog {
+  items: ErrorPattern[];
+  withoutRemedy: number;
+}
+
+export async function fetchErrorLog(token: string): Promise<ErrorLog> {
+  return request<ErrorLog>("/api/v1/profile/errors", { token });
+}
+
+// --- The skill map ---------------------------------------------------------
+
+export interface SkillMapNode {
+  key: string;
+  title: string;
+  domain: string;
+  level: string;
+  status: SkillStatus;
+  masteryProbability: number;
+  confidence: number;
+  evidenceCount: number;
+  /** Null until the skill reaches `supported`. Render as "needs evidence",
+   * never as a low level. */
+  cefrEstimate: string | null;
+  /** Skills this one is holding back. Populated only where the learner is
+   * actually weak at it. */
+  blocking: string[];
+  /** Prerequisites of this skill the learner is weak at. */
+  blockedBy: string[];
+}
+
+export interface SkillMapEdge {
+  source: string;
+  target: string;
+  relation: "prerequisite" | "supports";
+  /** How strongly the claim is believed, not how important the skill is. */
+  weight: number;
+}
+
+export interface SkillMap {
+  nodes: SkillMapNode[];
+  edges: SkillMapEdge[];
+  /** Always non-empty, and the client must surface it: the graph is expert
+   * judgement, not measurement. */
+  caveats: string[];
+}
+
+export async function fetchSkillMap(token: string): Promise<SkillMap> {
+  return request<SkillMap>("/api/v1/profile/skill-map", { token });
 }

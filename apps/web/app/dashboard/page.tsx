@@ -110,6 +110,12 @@ export default function DashboardPage() {
           <Link className="button-quiet" href="/history">
             Your past work
           </Link>
+          <Link className="button-quiet" href="/errors">
+            What keeps coming up
+          </Link>
+          <Link className="button-quiet" href="/skills">
+            What depends on what
+          </Link>
           <button type="button" className="button-quiet" onClick={signOut}>
             Sign out
           </button>

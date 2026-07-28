@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **812 Python tests**; eslint, tsc, and **281 web
+curriculum validation, **812 Python tests**; eslint, tsc, and **301 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -57,7 +57,7 @@ development machine, driven through the shared project folder. The protocol is
 documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
-The Playwright suite has now **actually run and passed**: 38 tests across
+The Playwright suite has now **actually run and passed**: 40 tests across
 desktop and mobile viewports, covering registration, the diagnostic, the
 learning loop itself, reflection, a benchmark refusal, and an automated
 accessibility gate. Its
@@ -439,6 +439,19 @@ stored and unreachable.
   nothing at all to say about reading or listening.
 - **A comprehension error opens another text or clip**, not a study unit.
   There is no rule to explain about missing what a passage implies.
+
+### Two screens that had no way in
+
+Both endpoints existed and neither was reachable, which is the same as not
+existing. Both are now linked from the dashboard.
+
+- **`/errors` — the whole error log.** Never the raw code; always the label.
+  A missing remedy is explained in a sentence rather than rendered as a dash,
+  because the three gaps behind it are three different promises.
+- **`/skills` — the graph, as a list.** Fifty-odd nodes drawn as a diagram
+  would be unreadable and would look like more precision than exists. The
+  caveats render above the map rather than under it, with a test on the
+  document order. A filter narrows to skills waiting on a weak prerequisite.
 
 ### Sittings (new)
 

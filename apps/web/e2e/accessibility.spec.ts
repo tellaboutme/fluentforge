@@ -106,6 +106,30 @@ test.describe("accessibility", () => {
     await expectAccessible(page, "the diagnostic");
   });
 
+  test("the profile pages a learner explores are usable", async ({ page }) => {
+    // Both are long lists of generated text with no form controls, which is
+    // exactly the shape that ends up as a wall of unlabelled `div`s. The
+    // skill map also has a toggle whose pressed state has to be announced,
+    // because its label changes what the page shows.
+    await page.goto("/register");
+    await awaitHydration(page);
+    await page.getByLabel(/what should we call you/i).fill("Egor");
+    await page.getByLabel(/^email$/i).fill(uniqueEmail());
+    await page.getByLabel(/^password$/i).fill(PASSWORD);
+    await page.getByRole("button", { name: /create account/i }).click();
+    await expect(page).toHaveURL(/\/diagnostic/);
+
+    for (const [path, where] of [
+      ["/errors", "the error log"],
+      ["/skills", "the skill map"],
+    ] as const) {
+      await page.goto(path);
+      await awaitHydration(page);
+      await page.getByRole("heading", { level: 1 }).waitFor();
+      await expectAccessible(page, where);
+    }
+  });
+
   test("every learner-facing page declares its language", async ({ page }) => {
     // Not an axe rule at the grade we fail on, and it decides which voice a
     // screen reader uses. An English learning app read aloud in the user's
