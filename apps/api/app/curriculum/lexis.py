@@ -8,6 +8,7 @@ different memories (`docs/SKILL_MATRIX.md`).
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -99,6 +100,43 @@ def parse_lexis(
     return tuple(entries)
 
 
+def _uses(sentence: str, word: str) -> bool:
+    """Whether `sentence` contains `word` as a word rather than a fragment.
+
+    Word boundaries, plus the inflections English adds to a head word without
+    changing which item is being demonstrated: `put`/`puts`/`putting`,
+    `hedge`/`hedges`/`hedged`, `stop`/`stopped`.
+
+    The doubled final consonant is handled explicitly because leaving it out
+    rejected "Putting off the choice helped nobody" as an example of `put
+    off`, which is a perfectly good example. A validator that refuses correct
+    content costs more than one that occasionally accepts careless content:
+    the first teaches authors to write stilted citation forms to satisfy it,
+    the second lets one weak example through.
+
+    Deliberately shallow, and it stops short in two places. Irregular forms
+    are not covered -- "took" will not match `take` -- which is a false
+    negative an author fixes by choosing a different example, and arguably
+    the better example anyway. And it cannot tell sense apart: an example
+    using the head word in an unrelated meaning still passes. Closing that
+    needs a lemmatiser and a sense inventory, which is a large dependency for
+    one check in a content validator.
+    """
+    stem = re.escape(word.lower())
+    # `put` -> `putting`, `stop` -> `stopped`: the final consonant doubles.
+    doubled = re.escape(word[-1].lower() * 2) if word[-1].isalpha() else ""
+    endings = ["s", "es", "ed", "d", "ing"]
+    if doubled:
+        stem_without_last = re.escape(word[:-1].lower())
+        alternatives = "|".join(
+            [rf"{stem}(?:{'|'.join(endings)})?", rf"{stem_without_last}{doubled}(?:ed|ing)"]
+        )
+        pattern = rf"\b(?:{alternatives})\b"
+    else:
+        pattern = rf"\b{stem}(?:{'|'.join(endings)})?\b"
+    return re.search(pattern, sentence.lower()) is not None
+
+
 def _parse_entry(
     raw: Any,
     index: int,
@@ -146,9 +184,27 @@ def _parse_entry(
     if not isinstance(example, str) or not example.strip():
         errors.append(f"{where} has no example")
         return None
-    # An example that does not contain the item teaches the wrong thing.
-    if lemma.split()[0].lower() not in example.lower():
-        errors.append(f"{where} has an example that does not use the item")
+    # An example that does not contain the item teaches the wrong thing: the
+    # learner is shown a sentence, told it demonstrates a phrase, and the
+    # phrase is not in it.
+    #
+    # Matched on the head word as a *word*, not as a substring. The substring
+    # version passed "She took responsibility for the mistake." as an example
+    # of `take responsibility for`, because "mistake" contains "take" -- so
+    # the check was satisfied by a sentence that does not use the item at all.
+    #
+    # The head word rather than the whole phrase, because English inflects:
+    # "They put off the meeting" is the right example for `put off`, and
+    # requiring the exact string would push authors towards stilted citation
+    # forms. That leaves a gap -- an example using the head word in the wrong
+    # sense would still pass -- and closing it needs a lemmatiser, which is a
+    # dependency this validator does not have and probably should not gain
+    # for one check.
+    if not _uses(example, lemma.split()[0]):
+        errors.append(
+            f"{where} has an example that does not use the item "
+            f"(looked for the word {lemma.split()[0]!r})"
+        )
         return None
 
     raw_modes = raw.get("modes")

@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **694 Python tests**; eslint, tsc, and **273 web
+curriculum validation, **710 Python tests**; eslint, tsc, and **273 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -91,8 +91,8 @@ defaults. Tests run in parallel.
 
 55 objectives across A1–C2 with a **hand-authored skill graph of 119 edges**
 (105 prerequisite, 14 supporting), each carrying a written reason; a 36-item diagnostic
-bank (23 items tagged with the linguistic feature they exercise); a 14-entry
-phrase-first lexical bank (34 review cards); a 5-text reading library reaching
+bank (23 items tagged with the linguistic feature they exercise); a **56-entry
+phrase-first lexical bank (129 review cards, 52 of them multiword)**; a 5-text reading library reaching
 C1; **22 study units with 95 practice items spanning A1–C2**; 9 written output
 tasks across 8 genres reaching C2; 7 listening clips reaching C2; **7
 spoken output tasks reaching C2**; and **4 multi-source mediation tasks

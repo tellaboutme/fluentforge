@@ -125,3 +125,369 @@ entries:
     meaning: "generally speaking"
     example: "By and large, the changes have been welcomed."
     modes: [meaning_recognition, contextual_production]
+
+  # =========================================================================
+  # Expansion, 2026-07-27.
+  #
+  # The bank was 14 entries, which gave the review scheduler almost nothing
+  # to schedule: a learner cleared the whole queue in two sittings and then
+  # had a spaced-repetition system with nothing spaced in it.
+  #
+  # Phrase-first throughout, and more so at the higher bands. `curriculum/
+  # graph.yml` claims vocabulary gates production more tightly than grammar
+  # does -- a learner works around a missing structure and stops dead at a
+  # missing word -- so what is stored is the chunk a learner actually needs
+  # rather than the headword a dictionary would list. "Make a decision" is
+  # the unit; "decision" on its own is where the collocation error hides.
+  #
+  # Modes are chosen per entry rather than applied uniformly. Recognition
+  # and production are separate memories (`CLAUDE.md`), and scheduling
+  # production for an item a learner only ever needs to understand wastes
+  # the one resource the review queue is rationing: their attention.
+  # =========================================================================
+
+  # --- A1: survival, and the chunks that carry it --------------------------
+  - lemma: how much
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "asking the price or quantity of something"
+    example: "How much is this?"
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: I would like
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "a polite way to ask for something; softer than 'I want'"
+    example: "I would like a coffee, please."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: excuse me
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "getting someone's attention, or apologising for interrupting"
+    example: "Excuse me, where is the station?"
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: on the left
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "on that side; used for directions"
+    example: "The bank is on the left, after the bridge."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: every day
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "each day, as a routine"
+    example: "I walk to work every day."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: get up
+    pos: phrasal_verb
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "leave your bed in the morning"
+    example: "I get up at seven."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: a little
+    pos: phrase
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    meaning: "a small amount; softens a statement"
+    example: "I speak a little English."
+    modes: [meaning_recognition, contextual_production]
+
+  # --- A2: arranging, describing, coping -----------------------------------
+  - lemma: make an appointment
+    pos: collocation
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "arrange a time to meet someone officially"
+    example: "I need to make an appointment with the dentist."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: run out of
+    pos: phrasal_verb
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "have none of something left"
+    example: "We have run out of milk."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: get on well with
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "have a good relationship with someone"
+    example: "I get on well with my colleagues."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: it depends
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "the answer is not fixed; it changes with the situation"
+    example: "It depends on the weather."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: pay attention
+    pos: collocation
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "watch or listen carefully"
+    example: "Please pay attention to the safety instructions."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: at the moment
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "now, but not permanently"
+    example: "I am living with my sister at the moment."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: in advance
+    pos: phrase
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "before the time something happens"
+    example: "You have to book in advance."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: give up
+    pos: phrasal_verb
+    level: A2
+    skill: vocabulary.everyday_topics
+    meaning: "stop doing something, usually something difficult"
+    example: "Do not give up so quickly."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  # --- B1: reasons, opinions, and hedges -----------------------------------
+
+  - lemma: take responsibility for
+    pos: collocation
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "accept that something is your job or your fault"
+    example: "Someone has to take responsibility for the mistake."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: as far as I know
+    pos: phrase
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "marks a claim as limited by what you have heard"
+    example: "As far as I know, the office closes at six."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: put off
+    pos: phrasal_verb
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "postpone; the more formal single word is 'postpone'"
+    example: "They put off the meeting until Thursday."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: on the other hand
+    pos: phrase
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "introduces the opposite side of an argument"
+    example: "It is cheaper. On the other hand, it takes longer."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: come up with
+    pos: phrasal_verb
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "think of an idea or solution"
+    example: "We need to come up with a better plan."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: to be honest
+    pos: phrase
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "signals a frank opinion, often a mildly negative one"
+    example: "To be honest, I did not enjoy it."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: end up
+    pos: phrasal_verb
+    level: B1
+    skill: vocabulary.independent_range
+    meaning: "finish in a situation you did not plan"
+    example: "We ended up walking home."
+    modes: [meaning_recognition, form_recall]
+
+  # --- B2: precision, and the collocations that carry it -------------------
+  - lemma: raise a concern
+    pos: collocation
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "state a worry formally, without accusing anyone"
+    example: "Several staff raised a concern about the timetable."
+    modes: [meaning_recognition, form_recall, contextual_production]
+
+  - lemma: draw a conclusion
+    pos: collocation
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "decide what evidence means; 'make a conclusion' is wrong"
+    example: "It is too early to draw a conclusion from one study."
+    modes: [meaning_recognition, form_recall]
+
+
+
+  - lemma: in the long run
+    pos: phrase
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "over a long period, as opposed to immediately"
+    example: "In the long run, it will save money."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: meet a deadline
+    pos: collocation
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "finish by the required time; 'reach a deadline' is wrong"
+    example: "We have to meet the deadline on Friday."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: broadly speaking
+    pos: phrase
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "generally true, with exceptions the speaker is not listing"
+    example: "Broadly speaking, the response has been positive."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: rule out
+    pos: phrasal_verb
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "decide something is not possible, and exclude it"
+    example: "The report ruled out a technical fault."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: a marked difference
+    pos: collocation
+    level: B2
+    skill: vocabulary.precision_collocation
+    meaning: "a difference clear enough to be noticed without measuring"
+    example: "There is a marked difference between the two accounts."
+    modes: [meaning_recognition, form_recall]
+
+  # --- C1: idiom, stance, and saying how sure you are ----------------------
+  - lemma: a moot point
+    pos: idiom
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "something still open to argument, or no longer relevant"
+    example: "Whether it was affordable is now a moot point."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: move the goalposts
+    pos: idiom
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "change the requirements after work has started"
+    example: "They moved the goalposts halfway through the process."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: it is worth noting that
+    pos: phrase
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "flags a point as relevant without overstating it"
+    example: "It is worth noting that the sample was small."
+    modes: [meaning_recognition, contextual_production]
+
+
+  - lemma: to put it mildly
+    pos: phrase
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "signals deliberate understatement; the reality is stronger"
+    example: "The reception was cool, to put it mildly."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: a case in point
+    pos: idiom
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "an example that illustrates the argument being made"
+    example: "The Kestrel Road closure is a case in point."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: gloss over
+    pos: phrasal_verb
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "treat something difficult too briefly, to avoid dealing with it"
+    example: "The summary glosses over the disagreement between the sources."
+    modes: [meaning_recognition, form_recall]
+
+  - lemma: hedge your bets
+    pos: idiom
+    level: C1
+    skill: vocabulary.broad_idiomatic
+    meaning: "avoid committing, so as to be safe either way"
+    example: "The report hedges its bets on the cause."
+    modes: [meaning_recognition, meaning_recall]
+
+  # --- C2: fine shades, where the choice between near-synonyms is the point -
+  - lemma: ostensibly
+    pos: adverb
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "apparently, with a hint that the real reason is different"
+    example: "The change was ostensibly about cost."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: a fine distinction
+    pos: collocation
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "a difference small enough that it is easy to miss but matters"
+    example: "There is a fine distinction between reporting and endorsing."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: for want of a better word
+    pos: phrase
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "flags a word as imprecise while using it anyway"
+    example: "It was, for want of a better word, a compromise."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: not least because
+    pos: phrase
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "gives one reason while implying it is among the strongest"
+    example: "The plan failed, not least because nobody owned it."
+    modes: [meaning_recognition, contextual_production]
+
+  - lemma: qualified support
+    pos: collocation
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "support given with stated reservations, not full agreement"
+    example: "The board offered qualified support for the proposal."
+    modes: [meaning_recognition, meaning_recall]
+
+  - lemma: to all intents and purposes
+    pos: idiom
+    level: C2
+    skill: vocabulary.fine_shades
+    meaning: "in every practical sense, though not formally or technically"
+    example: "The scheme is, to all intents and purposes, finished."
+    modes: [meaning_recognition, meaning_recall]
