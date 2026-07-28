@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .routers.account import router as account_router
 from .routers.activities import router as activities_router
 from .routers.auth import router as auth_router
 from .routers.benchmarks import router as benchmarks_router
@@ -104,6 +105,7 @@ def create_app() -> FastAPI:
     app.include_router(errors_router, prefix=API_V1_PREFIX)
     app.include_router(skill_map_router, prefix=API_V1_PREFIX)
     app.include_router(sessions_router, prefix=API_V1_PREFIX)
+    app.include_router(account_router, prefix=API_V1_PREFIX)
 
     return app
 

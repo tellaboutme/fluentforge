@@ -123,6 +123,7 @@ test.describe("accessibility", () => {
       ["/errors", "the error log"],
       ["/skills", "the skill map"],
       ["/track", "the track chooser"],
+      ["/account", "the data page"],
     ] as const) {
       await page.goto(path);
       await awaitHydration(page);

@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **854 Python tests**; eslint, tsc, and **322 web
+curriculum validation, **874 Python tests**; eslint, tsc, and **333 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -509,6 +509,22 @@ looked at for four months.
 - **`mastery_probability` is untouched.** The learner has not become worse.
 - A skill losing `independent` after a year of silence falls out of
   `classify_status` by itself rather than from a new rule.
+
+### Export and deletion (new)
+
+`docs/PRIVACY_SAFETY.md` has listed "Provide export and deletion" under data
+minimisation since the beginning, and nothing implemented either — a worse gap
+than an ordinary missing feature, because this product stores what a person
+wrote and said.
+
+- **`GET /account/export`** returns the stored rows, not a report, with a
+  `not_included` list naming what it leaves out and why.
+- **`POST /account/delete`** is real deletion, relying on the schema's
+  `ondelete="CASCADE"` rather than a hand-written sweep. A test checks every
+  learner-owned table afterwards, including `plan_items`, which has no
+  `user_id`.
+- **Both are reachable** from `/account`, which tells the learner to export
+  before deleting — above the delete control, not after it.
 
 ## What is not yet implemented
 

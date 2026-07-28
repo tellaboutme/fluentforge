@@ -1122,3 +1122,59 @@ export async function chooseTrack(
     body: { track_key: trackKey },
   });
 }
+
+// --- Your data -------------------------------------------------------------
+
+/**
+ * Download everything stored about this learner.
+ *
+ * Deliberately not routed through `request`: the response is a file, and
+ * `camelise` would rewrite the keys of the learner's own exported data, which
+ * would make the file disagree with the API it came from. It also has to
+ * become a download rather than a parsed object.
+ */
+export async function downloadExport(token: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/account/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      "export_failed",
+      "Could not build your export.",
+      {},
+    );
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filenameFrom(response) ?? "fluentforge-export.json";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  // Released on the next tick: revoking synchronously can cancel the download
+  // in some browsers before it has started reading.
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function filenameFrom(response: Response): string | null {
+  const header = response.headers.get("content-disposition");
+  const match = header?.match(/filename="([^"]+)"/);
+  return match?.[1] ?? null;
+}
+
+/** The phrase a learner has to type. Kept next to the call that sends it. */
+export const DELETE_CONFIRM_PHRASE = "delete my account";
+
+export async function deleteAccount(
+  token: string,
+  input: { password: string; confirm: string },
+): Promise<void> {
+  await request<void>("/api/v1/account/delete", {
+    method: "POST",
+    token,
+    body: { password: input.password, confirm: input.confirm },
+  });
+}

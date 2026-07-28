@@ -120,6 +120,9 @@ export default function DashboardPage() {
           <Link className="button-quiet" href="/track">
             {profile.trackName ?? "Choose a track"}
           </Link>
+          <Link className="button-quiet" href="/account">
+            Your data
+          </Link>
           <button type="button" className="button-quiet" onClick={signOut}>
             Sign out
           </button>

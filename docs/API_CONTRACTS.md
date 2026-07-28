@@ -102,6 +102,28 @@ A track raises the priority of its domains and **can never suppress a weak
 prerequisite**. Its `levels` bound the track's situations, not what the learner
 may study.
 
+### Your data
+
+- `GET /account/export` — **implemented**. Everything stored about the
+  learner, as a JSON file. `Cache-Control: no-store`.
+- `POST /account/delete` — **implemented**. Irreversible.
+
+The export is the stored **rows**, not a report: `response` on every attempt
+comes back exactly as written, the evidence behind every estimate is included
+in full, and plan items carry their whole component breakdown. A summary would
+be the product deciding which parts of someone's own work they may have.
+
+`not_included` is always present and lists what the export does not contain and
+why. An export that silently omits something invites the reader to conclude
+they received everything.
+
+Deletion is real — not a flag, not an anonymisation pass. It requires the
+password again (a session token is not enough authorisation to destroy a year
+of work) and a typed confirmation phrase, matched case- and
+whitespace-insensitively. A mistyped phrase is `422 not_confirmed`, distinct
+from `401 wrong_password`. `POST` rather than `DELETE` because it carries a
+body.
+
 ### Diagnostic
 
 - `POST /diagnostics` — **implemented**. Starts or resumes a session.
