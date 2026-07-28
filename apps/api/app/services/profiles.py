@@ -25,6 +25,7 @@ from ..schemas.profile import (
     SkillEstimate,
 )
 from . import tracks
+from .evidence import current_confidence
 
 
 def get_profile(session: Session, user_id: uuid.UUID) -> LearnerProfile:
@@ -92,7 +93,7 @@ def build_profile_response(session: Session, user_id: uuid.UUID) -> ProfileRespo
     for node in nodes:
         state = states.get(node.id)
         mastery = state.mastery_probability if state else 0.0
-        confidence = state.confidence if state else 0.0
+        confidence = current_confidence(state)
         contexts = state.distinct_contexts if state else 0
         evidence_count = state.evidence_count if state else 0
 

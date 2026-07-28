@@ -54,6 +54,7 @@ from ..models.curriculum import SkillNode
 from ..models.enums import SessionStatus
 from ..models.learning import Attempt, EvidenceEvent, LearningSession, SkillState
 from ..models.planning import Plan, PlanItem
+from .evidence import current_confidence
 
 #: `context["kind"]` of a sitting the learner opened deliberately, as opposed
 #: to the per-activity sessions opened on their behalf.
@@ -403,7 +404,7 @@ def _skills_touched(
         contexts = state.distinct_contexts if state else 0
         status = classify_status(
             mastery_probability=state.mastery_probability if state else 0.0,
-            confidence=state.confidence if state else 0.0,
+            confidence=current_confidence(state),
             distinct_contexts=contexts,
             evidence_count=state.evidence_count if state else 0,
             thresholds=thresholds,

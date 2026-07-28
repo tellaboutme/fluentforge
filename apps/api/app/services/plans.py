@@ -39,6 +39,7 @@ from ..models.identity import LearnerProfile
 from ..models.learning import ErrorPattern, SkillState
 from ..models.planning import Plan, PlanItem, ReviewQueueItem
 from . import activities, benchmarks, tracks
+from .evidence import current_confidence
 
 #: How long each kind of activity is assumed to take. Replaced by real
 #: activity durations when the `activities` table lands in Milestone 3.
@@ -298,7 +299,7 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
         kind = DOMAIN_KINDS.get(node.domain, ActivityKind.STUDY)
         status = classify_status(
             mastery_probability=state.mastery_probability if state else 0.0,
-            confidence=state.confidence if state else 0.0,
+            confidence=current_confidence(state, now),
             distinct_contexts=state.distinct_contexts if state else 0,
             evidence_count=state.evidence_count if state else 0,
             thresholds=thresholds,
@@ -335,7 +336,7 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
                 estimated_minutes=skill_minutes,
                 title=skill_title,
                 mastery_probability=state.mastery_probability if state else 0.0,
-                confidence=state.confidence if state else 0.0,
+                confidence=current_confidence(state, now),
                 status=status,
                 is_openable=openable is not None,
                 has_evidence=bool(state and state.evidence_count > 0),

@@ -44,6 +44,7 @@ from ..learning.mastery import (
 from ..models.curriculum import SkillEdge, SkillNode
 from ..models.enums import CefrLevel, SkillDomain, SkillRelation
 from ..models.learning import SkillState
+from ..services.evidence import current_confidence
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
@@ -140,7 +141,7 @@ def read_skill_map(user: CurrentUser, session: SessionDep) -> SkillMap:
         state = states.get(node.id)
         status = classify_status(
             mastery_probability=state.mastery_probability if state else 0.0,
-            confidence=state.confidence if state else 0.0,
+            confidence=current_confidence(state),
             distinct_contexts=state.distinct_contexts if state else 0,
             evidence_count=state.evidence_count if state else 0,
             thresholds=thresholds,
@@ -153,7 +154,7 @@ def read_skill_map(user: CurrentUser, session: SessionDep) -> SkillMap:
                 level=node.cefr_min,
                 status=status,
                 mastery_probability=state.mastery_probability if state else 0.0,
-                confidence=state.confidence if state else 0.0,
+                confidence=current_confidence(state),
                 evidence_count=state.evidence_count if state else 0,
                 cefr_estimate=cefr_estimate_for(status, node.cefr_max),
                 blocking=sorted(blocking[node.key]),

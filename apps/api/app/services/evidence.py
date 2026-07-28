@@ -21,6 +21,7 @@ from ..learning.evidence import (
     MasteryResult,
     Observation,
     compute_mastery,
+    decay_since,
 )
 from ..models.enums import EvidenceType
 from ..models.learning import EvidenceEvent, SkillState
@@ -155,3 +156,26 @@ def recompute_all_skill_states(
         )
         for skill_id in skill_ids
     ]
+
+
+def current_confidence(
+    state: SkillState | None,
+    now: datetime | None = None,
+    config: MasteryModelConfig = DEFAULT_CONFIG,
+) -> float:
+    """The confidence to report, decayed to this moment.
+
+    Every read of a skill state goes through this. `SkillState.confidence` is
+    the value as of `updated_at`, and reading it directly reports March's
+    certainty in July -- which the product's own invariants forbid and which
+    the profile screen would render as "confident" about something nobody has
+    looked at since.
+
+    Applied on read rather than by a nightly job, deliberately. A scheduled
+    refresh has a window during which every answer is stale by up to a day and
+    a failure mode where the job stops and nothing says so. This has neither,
+    and needs no worker.
+    """
+    if state is None:
+        return 0.0
+    return decay_since(state.confidence, state.updated_at, now or utcnow(), config)

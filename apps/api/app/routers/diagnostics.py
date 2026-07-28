@@ -26,6 +26,7 @@ from ..schemas.diagnostics import (
     SubmitResponseResult,
 )
 from ..services import diagnostics as service
+from ..services.evidence import current_confidence
 
 router = APIRouter(prefix="/diagnostics", tags=["diagnostics"])
 
@@ -129,18 +130,21 @@ def _build_report(
         .order_by(SkillNode.domain, SkillNode.cefr_min)
     ).all()
 
+    # Decayed like every other read. A report is not only opened the moment
+    # it is produced -- a learner returning to it in September must not see
+    # July's certainty presented as current.
     outcomes = [
         DiagnosticSkillOutcome(
             skill_key=node.key,
             title=node.title,
             cefr_level=node.cefr_max,
             mastery_probability=state.mastery_probability,
-            confidence=state.confidence,
+            confidence=current_confidence(state),
             evidence_count=state.evidence_count,
             distinct_contexts=state.distinct_contexts,
             status=classify_status(
                 mastery_probability=state.mastery_probability,
-                confidence=state.confidence,
+                confidence=current_confidence(state),
                 distinct_contexts=state.distinct_contexts,
                 evidence_count=state.evidence_count,
                 thresholds=thresholds,

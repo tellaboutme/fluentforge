@@ -158,6 +158,43 @@ class MasteryResult:
         return sum(item.effective for item in self.breakdowns)
 
 
+def decay_since(
+    confidence: float,
+    computed_at: datetime | None,
+    now: datetime,
+    config: MasteryModelConfig = DEFAULT_CONFIG,
+) -> float:
+    """Further confidence decay since a stored state was last recomputed.
+
+    `confidence_for` already folds recency in, but only as of the moment it
+    ran. A state written in March and read in July still carried March's
+    certainty, so the product was claiming to be sure about a skill it had not
+    seen for four months -- against its own invariant that "mastery decays in
+    confidence when not observed".
+
+    The correction is exactly the ratio of the two recency terms, and the
+    concentration and breadth terms cancel out of it:
+
+        stored     = concentration * breadth * 0.5 ** ((computed_at - seen) / h)
+        true now   = concentration * breadth * 0.5 ** ((now        - seen) / h)
+        true / stored                       = 0.5 ** ((now - computed_at) / h)
+
+    So the additional decay depends only on how long the *state* has sat
+    unrecomputed, which means it can be applied on read with no scheduled job
+    and no window during which the answer is wrong.
+
+    Nothing here touches `mastery_probability`. The learner has not become
+    worse; we have become less sure.
+    """
+    if computed_at is None:
+        return _clamp(confidence)
+    elapsed_days = max((now - computed_at).total_seconds(), 0.0) / 86400.0
+    # Rounded because this runs on every read: without it a state read twice
+    # in one request returns two values differing in the twelfth decimal, and
+    # a learner who just practised sees 0.6999999973 where 0.7 was stored.
+    return round(_clamp(confidence * 0.5 ** (elapsed_days / config.confidence_halflife_days)), 6)
+
+
 def _clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
     return max(low, min(high, value))
 

@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **843 Python tests**; eslint, tsc, and **322 web
+curriculum validation, **854 Python tests**; eslint, tsc, and **322 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -492,6 +492,23 @@ to summarise three papers were being offered the same plan.
   track and stay there.
 - **`/track` shows what each one actually does**, not just its name, and the
   caveat that a track never removes anything renders above the choice.
+
+### Confidence now actually decays
+
+`CLAUDE.md` states the invariant: mastery decays in confidence when not
+observed. The model implemented it and then the value was written to a row and
+never touched again, so a state computed in March still carried March's
+certainty in July — the profile said "confident" about a skill nobody had
+looked at for four months.
+
+- **Applied on read**, through `services.evidence.current_confidence`, which
+  every reader now goes through: profile, skill map, plan scoring, session
+  summary and the diagnostic report.
+- **No worker needed.** A nightly job has a window during which every answer
+  is stale and a failure mode where it stops silently. This has neither.
+- **`mastery_probability` is untouched.** The learner has not become worse.
+- A skill losing `independent` after a year of silence falls out of
+  `classify_status` by itself rather than from a new rule.
 
 ## What is not yet implemented
 
