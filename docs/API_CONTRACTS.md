@@ -28,7 +28,34 @@ failures return `weak_password` and create no account.
 
 - `GET /profile` — **implemented**
 - `PATCH /profile` — **implemented**
-- `GET /profile/skill-map`
+- `GET /profile/skill-map` — **implemented**. Every skill, its state, and
+  what the authored graph says depends on what.
+
+`curriculum/graph.yml` holds 119 claims about what depends on what, and until
+now only the planner read them: a learner could be told a prerequisite was
+weak and had no way to see which one, or why the claim was made.
+`docs/ADAPTIVE_ENGINE.md` forbids an opaque priority score so a learner can
+disagree with the reasoning rather than receive it, and the graph was the
+largest piece of reasoning they could not inspect.
+
+`blocked_by` names the prerequisites of a skill that the learner is weak at —
+the answer to "why can I not get anywhere with this?". `blocking` is the
+mirror, and both are populated **only where the learner is actually weak**:
+listing what a skill gates regardless of state would tell someone their
+strongest skills are holding them back.
+
+Only `prerequisite` edges block. `supports` is a real relation and never
+gates, and reporting it as blocking would put an accent standard back into
+the product through the side door — pronunciation supports speaking.
+
+`cefr_estimate` stays null until a skill reaches `supported`, exactly as on
+the profile. A grid of blanks looks unfinished; a grid of invented levels
+would be worse.
+
+`caveats` is always non-empty and clients must surface it. The first is
+permanent: the dependencies are expert judgement, not measurement. Each is
+defensible and none has been validated against learner outcomes, so a line
+between two skills is an argument rather than a finding.
 - `GET /profile/errors` — **implemented**. The learner's whole error log.
 
 Each entry carries a rendered `label` (clients must never show the raw code),

@@ -24,6 +24,7 @@ from .routers.plans import router as plans_router
 from .routers.profile import router as profile_router
 from .routers.reflection import router as reflection_router
 from .routers.reviews import router as reviews_router
+from .routers.skill_map import router as skill_map_router
 from .settings import settings
 
 API_V1_PREFIX = "/api/v1"
@@ -100,6 +101,7 @@ def create_app() -> FastAPI:
     app.include_router(reflection_router, prefix=API_V1_PREFIX)
     app.include_router(history_router, prefix=API_V1_PREFIX)
     app.include_router(errors_router, prefix=API_V1_PREFIX)
+    app.include_router(skill_map_router, prefix=API_V1_PREFIX)
 
     return app
 
