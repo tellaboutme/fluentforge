@@ -107,8 +107,29 @@ contexts. `caveats` is always non-empty and must be surfaced in the UI.
 - `GET /plans/today` — **implemented**. Generates on first request, then stable
   for the rest of the day.
 - `POST /plans/generate` — **implemented**. `{"regenerate": true}` replaces today's.
-- `POST /sessions`
-- `POST /sessions/{id}/complete`
+- `POST /sessions` — **implemented**. Opens a sitting, or resumes today's.
+- `POST /sessions/{id}/complete` — **implemented**. Ends it and describes it.
+
+A sitting is idempotent within a day: a reload or a retried request returns the
+one already open, with `resumed: true`, rather than a second that splits the
+learner's work in half. Sessions left open on an earlier day are `abandoned`,
+not resumed and not completed — nobody finished them.
+
+Starting a sitting binds it to today's plan if one exists and **never generates
+one**: sitting down must not manufacture a plan for a day the learner never
+planned.
+
+The completion summary reports **what was done, never how much better the
+learner got**. There is no mastery delta, no gain, no level-up; each skill
+carries `evidence_recorded` for this sitting and the `distinct_contexts` it now
+stands on, which is the quantity the mastery model gates on. `open_minutes` is
+elapsed time the sitting was open and clients must not label it as study time —
+this product does not measure time on task. `notes` is always non-empty and
+must be surfaced; the first note says a single sitting proves nothing on its
+own.
+
+Completing an already-completed sitting returns the original summary with the
+original `ended_at`. Completing an abandoned one is `409 session_already_ended`.
 
 Every plan item carries `reason_codes`, a learner-facing `explanation`, and the
 full `components` breakdown that produced its priority — including components

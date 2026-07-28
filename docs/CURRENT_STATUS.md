@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **771 Python tests**; eslint, tsc, and **281 web
+curriculum validation, **795 Python tests**; eslint, tsc, and **281 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -424,7 +424,7 @@ stored and unreachable.
 
 ### Error taxonomy (new)
 
-- **Errors name a linguistic feature**, from a closed set of 36 codes in
+- **Errors name a linguistic feature**, from a closed set of 41 codes in
   `apps/api/app/learning/taxonomy.py`, rather than the skill an item belonged
   to. `grammar.tense.perfect_vs_past` can be practised; "something in
   `grammar.connected_time_modality`" cannot.
@@ -433,6 +433,22 @@ stored and unreachable.
 - **A recurring error opens the study unit that drills it**, where one exists.
 - **Legacy `item.<skill>` codes still render** and still schedule practice;
   they simply get no feature-based remedy, because none would be honest.
+
+### Sittings (new)
+
+- **`POST /sessions` opens a sitting deliberately** and is idempotent within a
+  day. Sessions used to be opened implicitly by whichever activity a learner
+  started, reused regardless of age, and never ended — one opened in March was
+  still collecting attempts in July. Starting a sitting abandons what was left
+  open on an earlier day.
+- **`POST /sessions/{id}/complete` reports what was done, not how much better
+  the learner got.** No mastery delta, no gain, no level-up: each skill carries
+  the evidence recorded in the sitting and the distinct contexts it now stands
+  on. A test asserts no field named for an improvement figure ever enters the
+  shape.
+- **`open_minutes` is elapsed time, and says so.** This product does not
+  measure time on task, and a summary that presented wall-clock as study time
+  would be the easiest lie in the feature.
 
 ## What is not yet implemented
 

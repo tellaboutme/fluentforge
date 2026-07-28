@@ -77,6 +77,7 @@ from ..providers import (
 from ..settings import settings
 from .errors_log import record_error, sync_error_cards
 from .evidence import recompute_skill_state, record_evidence
+from .sessions import SITTING_KIND
 
 # --- Activity types, as they appear on the wire -----------------------------
 
@@ -1540,17 +1541,33 @@ def _skill_node(session: Session, skill_key: str) -> SkillNode | None:
 
 
 def _open_session(session: Session, user_id: uuid.UUID, kind: str) -> LearningSession:
-    """Reuse an open session of this kind, or start one."""
-    existing = session.execute(
-        select(LearningSession)
-        .where(
-            LearningSession.user_id == user_id,
-            LearningSession.status == SessionStatus.IN_PROGRESS,
-        )
-        .order_by(LearningSession.started_at.desc())
-    ).scalars()
-    for candidate in existing:
-        if candidate.context.get("kind") == kind:
+    """The session this attempt belongs to.
+
+    A sitting the learner opened deliberately wins, so that work done during
+    one is attributable to it rather than scattered across a session per
+    activity kind.
+
+    Failing that, an open session of this kind *started today*. The day check
+    is load-bearing: without it a session opened in March was still collecting
+    attempts in July, `ended_at` was null on every row, and `started_at` meant
+    nothing. `services.sessions.start` abandons the leftovers.
+    """
+    today = utcnow().date()
+    candidates = list(
+        session.execute(
+            select(LearningSession)
+            .where(
+                LearningSession.user_id == user_id,
+                LearningSession.status == SessionStatus.IN_PROGRESS,
+            )
+            .order_by(LearningSession.started_at.desc())
+        ).scalars()
+    )
+    for candidate in candidates:
+        if candidate.context.get("kind") == SITTING_KIND and candidate.started_at.date() == today:
+            return candidate
+    for candidate in candidates:
+        if candidate.context.get("kind") == kind and candidate.started_at.date() == today:
             return candidate
 
     learning_session = LearningSession(
