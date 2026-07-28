@@ -459,3 +459,67 @@ def _user(session: Session) -> User:
     session.add(user)
     session.commit()
     return user
+
+
+# --- The library as content -------------------------------------------------
+
+
+def test_the_clip_library_reaches_every_level(curriculum_dir: Path) -> None:
+    from apps.api.app.models.enums import CefrLevel
+
+    levels = {clip.cefr_level for clip in parse_listening(curriculum_dir)}
+    assert levels == set(CefrLevel)
+
+
+def test_there_is_more_than_one_clip_per_level(curriculum_dir: Path) -> None:
+    """With one clip per band, a learner's second listening session there is a
+    replay of something they have already understood — which measures memory,
+    and does so worse than reading would, because they can also simply
+    remember the answers."""
+    from collections import Counter
+
+    counts = Counter(clip.cefr_level for clip in parse_listening(curriculum_dir))
+    thin = [level.value for level, count in counts.items() if count < 2]
+    assert not thin, f"only one clip at: {', '.join(sorted(thin))}"
+
+
+def test_speech_slows_down_for_lower_levels(curriculum_dir: Path) -> None:
+    """Rate is pedagogy, not a setting. A1 material read at conversational
+    pace measures whether a learner can catch weak forms they have never been
+    taught."""
+    clips = parse_listening(curriculum_dir)
+    lowest = min(clips, key=lambda clip: clip.cefr_level.rank)
+    highest = max(clips, key=lambda clip: clip.cefr_level.rank)
+    assert lowest.speech_rate < highest.speech_rate
+
+
+def test_speech_rate_stays_in_a_range_synthesis_handles(
+    curriculum_dir: Path,
+) -> None:
+    """A guard against a typo, not a ruling on pedagogy.
+
+    Whether a B2 clip should run slightly above natural pace is a real
+    question and this test does not answer it: one clip in the bank sits at
+    1.05 deliberately, on the view that coping with brisk speech is part of
+    what B2 listening means. That claim is unvalidated, like every other
+    constant here, and `docs/DECISION_LOG.md` records it as open.
+
+    What is not a matter of judgement is that browser synthesis degrades
+    badly outside a narrow band. Below about 0.6 it stops sounding like
+    connected speech at all and starts teaching word-by-word decoding; above
+    about 1.2 the artefacts dominate and the learner is fighting the
+    synthesiser rather than the language. A rate outside those is a mistake,
+    whatever the pedagogical intent.
+    """
+    for clip in parse_listening(curriculum_dir):
+        assert 0.6 <= clip.speech_rate <= 1.2, f"{clip.key}: {clip.speech_rate}"
+
+
+def test_every_clip_above_a1_asks_something_inferential(
+    curriculum_dir: Path,
+) -> None:
+    for clip in parse_listening(curriculum_dir):
+        if clip.cefr_level.rank == 0:
+            continue
+        types = {question.question_type for question in clip.questions}
+        assert "inference" in types, f"{clip.key} asks nothing inferential"

@@ -355,3 +355,260 @@ clips:
           - "Is confirming the original deadline."
         answer: "Concedes the point mid-sentence and changes tack."
 
+
+  # =========================================================================
+  # Expansion, 2026-07-28.
+  #
+  # Seven clips, one at most levels, so a learner's second listening session
+  # at their band was a replay of something they had already understood.
+  # These add a second at every level.
+  #
+  # Speech rate falls as the level rises, but not to normal: even at C2 it
+  # stays a shade under 1.0. Browser synthesis at full speed drops the weak
+  # forms and elisions that make real speech hard, so a clip that *sounds*
+  # native-paced would still be measuring something easier than listening.
+  # The honest position is that these are synthesised, the evidence records
+  # `synthesised: true`, and the rate is set for intelligibility rather than
+  # realism.
+  #
+  # Each transcript is written to be heard rather than read: false starts,
+  # self-correction, and information given in the order a speaker would give
+  # it rather than the order a reader would want it.
+  # =========================================================================
+
+  - key: listen.a1.answerphone
+    level: A1
+    skill: listening.basic_personal
+    title: "A message about a delivery"
+    setting: "A recorded message left on your phone by a delivery company."
+    minutes: 4
+    speech_rate: 0.8
+    transcript: |
+      Hello, this is a message about your parcel.
+      We came to your address today at eleven o'clock,
+      but nobody was at home.
+      The parcel is now at the post office on King Street.
+      You can collect it from Tuesday. Please bring some identification.
+      Thank you.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "Why is the company calling?"
+        options:
+          - "They could not deliver a parcel."
+          - "The parcel is lost."
+          - "They want to change the address."
+          - "The parcel has been sent back."
+        answer: "They could not deliver a parcel."
+      - key: detail
+        type: detail
+        prompt: "Where is the parcel now?"
+        options:
+          - "At the post office on King Street."
+          - "At the delivery company."
+          - "With a neighbour."
+          - "Still on the van."
+        answer: "At the post office on King Street."
+      - key: inference
+        type: inference
+        prompt: "What do you need to take with you?"
+        options:
+          - "Something that shows who you are."
+          - "The money for the parcel."
+          - "The delivery van's number."
+          - "Nothing at all."
+        answer: "Something that shows who you are."
+
+  - key: listen.a2.rearranged_class
+    level: A2
+    skill: listening.routine_messages
+    title: "A class has moved"
+    setting: "A voice message from a language school to a student."
+    minutes: 5
+    speech_rate: 0.85
+    transcript: |
+      Hi, it's Farah from the school. Sorry, quick change -
+      your Wednesday class is moving to Thursday, same time,
+      seven o'clock. It's just for next week, then it goes back
+      to Wednesday. Oh, and it's in room twelve, not room five,
+      because they're painting the corridor. Sorry about that.
+      See you Thursday.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the message about?"
+        options:
+          - "A change to the day and the room of one class."
+          - "A class that has been cancelled."
+          - "A new teacher for the class."
+          - "A change to the time of the class."
+        answer: "A change to the day and the room of one class."
+      - key: detail
+        type: detail
+        prompt: "How long does the change last?"
+        options:
+          - "One week only."
+          - "The rest of the term."
+          - "Two weeks."
+          - "She does not say."
+        answer: "One week only."
+      - key: inference
+        type: inference
+        prompt: "Why has the room changed?"
+        options:
+          - "Work is being done in the corridor."
+          - "Room five is too small."
+          - "Another class is using room five."
+          - "Room twelve is closer to the entrance."
+        answer: "Work is being done in the corridor."
+
+  - key: listen.b2.two_accounts
+    level: B2
+    skill: listening.complex_argument
+    title: "Two people remember the same meeting"
+    setting: "Two colleagues talking after a meeting they both attended."
+    minutes: 8
+    speech_rate: 0.9
+    transcript: |
+      - So that went well, I thought. We got a decision.
+      - Did we? I'm not sure we did, actually. I mean, nobody
+        objected, but that's not the same thing.
+      - Sam said he was happy with it.
+      - Sam said he "didn't have a problem with it", which is -
+        look, I've worked with him for six years. That's what he
+        says when he thinks something is a mistake and he doesn't
+        want to be the one arguing about it.
+      - That seems like a lot to read into one sentence.
+      - Maybe. But he didn't ask a single question, and Sam always
+        asks questions when he's actually on board. That's the bit
+        that worries me.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What are the two speakers disagreeing about?"
+        options:
+          - "Whether the meeting really reached agreement."
+          - "Whether Sam should have been invited."
+          - "What the decision actually was."
+          - "Who is responsible for the next step."
+        answer: "Whether the meeting really reached agreement."
+      - key: detail
+        type: detail
+        prompt: "What does the second speaker say Sam did not do?"
+        options:
+          - "Ask any questions."
+          - "Attend the whole meeting."
+          - "Say anything at all."
+          - "Read the proposal."
+        answer: "Ask any questions."
+      - key: inference
+        type: inference
+        prompt: "Why does the second speaker quote Sam's exact words?"
+        options:
+          - "Because the wording was deliberately non-committal."
+          - "Because Sam had misunderstood the proposal."
+          - "Because Sam spoke too quietly to be sure."
+          - "Because Sam had said the opposite earlier."
+        answer: "Because the wording was deliberately non-committal."
+
+  - key: listen.c1.the_correction
+    level: C1
+    skill: listening.implicit_extended
+    title: "A correction that is not quite an apology"
+    setting: "An extract from a radio interview with a company spokesperson."
+    minutes: 9
+    speech_rate: 0.95
+    transcript: |
+      - You told this programme in March that no jobs would be
+        affected. Two hundred people have since lost their jobs.
+      - What I said in March reflected the information available
+        at that time, and I stand by the process we followed.
+      - That isn't quite what I asked. Was the statement wrong?
+      - I think it's important to recognise that circumstances
+        changed considerably over the summer, and -
+      - Was it wrong?
+      - With hindsight, it's clear the position was more finely
+        balanced than the language we used suggested. And I'd
+        accept that people who heard that statement may have
+        drawn a firmer conclusion than was warranted.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is happening in this exchange?"
+        options:
+          - "The interviewer presses for an admission the spokesperson avoids making directly."
+          - "The spokesperson apologises for misleading listeners."
+          - "The two disagree about how many jobs were lost."
+          - "The interviewer accepts the spokesperson's explanation."
+        answer: "The interviewer presses for an admission the spokesperson avoids making directly."
+      - key: detail
+        type: detail
+        prompt: "What does the spokesperson say they stand by?"
+        options:
+          - "The process that was followed."
+          - "The exact wording used in March."
+          - "The decision to cut the jobs."
+          - "The figure of two hundred."
+        answer: "The process that was followed."
+      - key: inference
+        type: inference
+        prompt: >
+          The spokesperson says listeners "may have drawn a firmer conclusion
+          than was warranted". Where does this place the responsibility?
+        options:
+          - "On the listeners, while appearing to concede the point."
+          - "On the company, clearly and without qualification."
+          - "On the interviewer for misquoting the statement."
+          - "On circumstances that changed later."
+        answer: "On the listeners, while appearing to concede the point."
+
+  - key: listen.c2.the_seminar_question
+    level: C2
+    skill: listening.near_unrestricted
+    title: "A question that is really an objection"
+    setting: "The question period after an academic talk."
+    minutes: 10
+    speech_rate: 0.95
+    transcript: |
+      - Thank you, that was fascinating. I wonder if I could ask
+        a very small technical question, really more of a
+        clarification. You describe the second cohort as
+        comparable to the first. Comparable in what respect?
+      - In respect of age and region, principally.
+      - Ah. Not in respect of how they were recruited.
+      - No, the recruitment differed, as I said in the paper.
+      - You did, you did. I only raise it because the effect you
+        report is, if I've followed correctly, roughly the size
+        one would expect from that difference alone. Which is
+        not to say it explains the finding. Only that I couldn't
+        quite see, from the paper, how one would tell.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the questioner actually doing?"
+        options:
+          - "Raising a fundamental objection in the form of a small clarification."
+          - "Asking for a definition they did not understand."
+          - "Praising the design of the study."
+          - "Suggesting a larger sample next time."
+        answer: "Raising a fundamental objection in the form of a small clarification."
+      - key: detail
+        type: detail
+        prompt: "In what respects were the two cohorts comparable?"
+        options:
+          - "Age and region."
+          - "Age and recruitment."
+          - "Region and size."
+          - "Every respect that mattered."
+        answer: "Age and region."
+      - key: inference
+        type: inference
+        prompt: >
+          Why does the questioner add "which is not to say it explains the
+          finding"?
+        options:
+          - "To keep the objection unanswerable by making no claim of their own."
+          - "To withdraw the objection politely."
+          - "To agree that the finding is sound."
+          - "To admit they had not read the paper carefully."
+        answer: "To keep the objection unanswerable by making no claim of their own."
