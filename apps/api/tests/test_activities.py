@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from apps.api.app.curriculum.content import parse_library
 from apps.api.app.curriculum.parser import CurriculumError, parse_curriculum
-from apps.api.app.models.enums import EvidenceType
+from apps.api.app.models.enums import CefrLevel, EvidenceType
 from apps.api.app.models.learning import Attempt, EvidenceEvent
 from apps.api.app.services import activities as service
 from apps.api.tests.helpers import register
@@ -315,3 +315,48 @@ def _user(session: Session):  # type: ignore[no-untyped-def]
     session.add(user)
     session.commit()
     return user
+
+
+# --- The library as content, not as machinery -------------------------------
+#
+# Everything above tests what the reading lab *does* with a text. These test
+# whether there is enough of the right kind of text for it to do anything
+# with, which is a different failure and one that unit tests of the machinery
+# cannot see: every mechanism can work perfectly against a library too thin
+# to teach from.
+
+
+def test_the_library_reaches_every_level(curriculum_dir: Path) -> None:
+    """It stopped at C1, so the one band where reading *is* the skill under
+    test had nothing in it."""
+    levels = {text.cefr_level for text in parse_library(curriculum_dir)}
+    assert levels == set(CefrLevel)
+
+
+def test_there_is_more_than_one_text_per_level(curriculum_dir: Path) -> None:
+    """One text per level means a learner's second reading session at their
+    band is a re-read, which measures memory rather than comprehension."""
+    from collections import Counter
+
+    counts = Counter(text.cefr_level for text in parse_library(curriculum_dir))
+    thin = [level.value for level, count in counts.items() if count < 2]
+    assert not thin, f"only one text at: {', '.join(sorted(thin))}"
+
+
+def test_every_text_asks_something_beyond_recall(curriculum_dir: Path) -> None:
+    """A text with only gist and detail questions can be answered by pattern
+    matching against the page. Inference is where reading stops being
+    scanning, and `docs/LEARNING_SCIENCE.md` asks for it explicitly."""
+    for text in parse_library(curriculum_dir):
+        if text.cefr_level.rank == 0:
+            continue  # A1 texts are notices; there may be little to infer.
+        types = {question.question_type for question in text.questions}
+        assert "inference" in types, f"{text.key} asks nothing inferential"
+
+
+def test_no_question_has_an_answer_outside_its_options(curriculum_dir: Path) -> None:
+    """Enforced by the parser; asserted here against what ships, because a
+    text whose answer is unreachable marks every learner wrong."""
+    for text in parse_library(curriculum_dir):
+        for question in text.questions:
+            assert question.answer in question.options, f"{text.key}/{question.key}"

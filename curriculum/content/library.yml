@@ -231,3 +231,378 @@ texts:
           - "The review was commissioned by the owners."
         answer: "The food is good and the pretension is entertaining."
 
+
+  # =========================================================================
+  # Expansion, 2026-07-28.
+  #
+  # Five texts was two sessions of reading, and the library stopped at C1 —
+  # so the one band where reading *is* the skill being tested had nothing in
+  # it. These add a second text at every level and take the library to C2.
+  #
+  # Each is written so the inference question has a real answer in the text
+  # rather than a plausible guess outside it. That is the hard part of
+  # authoring these: an inference item whose answer cannot be defended from
+  # the words on the page is a vocabulary test wearing a comprehension
+  # label, and it marks down the careful reader who refuses to invent.
+  # =========================================================================
+
+  - key: text.a1.opening_hours
+    level: A1
+    skill: reading.signs_forms
+    title: "Opening hours at a small library"
+    minutes: 4
+    body: |
+      CENTRAL LIBRARY
+
+      Monday to Friday: 10am - 6pm
+      Saturday: 10am - 1pm
+      Sunday: closed
+
+      Returns box open at all times.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What does this sign tell you?"
+        options:
+          - "When the library is open."
+          - "How to join the library."
+          - "Which books are new."
+          - "Where the library is."
+        answer: "When the library is open."
+      - key: detail
+        type: detail
+        prompt: "Can you go to the library on Sunday?"
+        options:
+          - "No, it is closed."
+          - "Yes, from 10am to 1pm."
+          - "Yes, from 10am to 6pm."
+          - "Only in the morning."
+        answer: "No, it is closed."
+      - key: inference
+        type: inference
+        prompt: "You finish a book on Sunday. What can you still do?"
+        options:
+          - "Put it in the returns box."
+          - "Borrow another book."
+          - "Ask a librarian for help."
+          - "Nothing until Monday."
+        answer: "Put it in the returns box."
+
+  - key: text.a2.neighbour_note
+    level: A2
+    skill: reading.short_everyday_texts
+    title: "A note from a neighbour"
+    minutes: 5
+    body: |
+      Hi,
+
+      I am away next week, from Monday to Friday. Could you water the
+      plants on the balcony? They only need water every two days, not
+      every day - the small one dies if you give it too much.
+
+      The key is with Mrs Alvarez in flat 4. I will bring you something
+      from Portugal.
+
+      Thanks so much,
+      Nuno
+    questions:
+      - key: gist
+        type: gist
+        prompt: "Why is Nuno writing?"
+        options:
+          - "To ask a neighbour to look after his plants."
+          - "To say he is moving to Portugal."
+          - "To complain about the balcony."
+          - "To invite the neighbour for dinner."
+        answer: "To ask a neighbour to look after his plants."
+      - key: detail
+        type: detail
+        prompt: "How often should the plants be watered?"
+        options:
+          - "Every two days."
+          - "Every day."
+          - "Once during the week."
+          - "Only on Monday and Friday."
+        answer: "Every two days."
+      - key: inference
+        type: inference
+        prompt: "Why does Nuno mention the small plant?"
+        options:
+          - "To warn that too much water would kill it."
+          - "To say it is his favourite."
+          - "To explain that it is new."
+          - "To ask the neighbour to move it inside."
+        answer: "To warn that too much water would kill it."
+
+  - key: text.b1.night_bus
+    level: B1
+    skill: reading.familiar_arguments
+    title: "Should the night bus keep running?"
+    minutes: 7
+    body: |
+      The council is deciding whether to keep the number 12 night bus. It
+      runs once an hour between midnight and five, and it is expensive: on
+      an average night it carries eleven passengers.
+
+      Those eleven passengers are not a random group. Most of them work
+      shifts at the hospital or clean offices in the centre, and for many
+      of them a taxi would cost more than an hour's pay. When the service
+      was suspended for three weeks in February, the hospital reported
+      that six staff arrived late on more than one occasion.
+
+      Supporters of ending the service point out, fairly, that eleven
+      passengers is a small number for a bus that costs the council
+      £90,000 a year. Nobody disputes the figure. What is disputed is
+      whether the right question is how many people use the bus, or what
+      happens to those people if it stops.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is this text mainly doing?"
+        options:
+          - "Setting out a disagreement about what the decision should turn on."
+          - "Arguing that the council is wasting money."
+          - "Explaining how to catch the night bus."
+          - "Reporting that the service has already ended."
+        answer: "Setting out a disagreement about what the decision should turn on."
+      - key: detail
+        type: detail
+        prompt: "What happened when the service was suspended in February?"
+        options:
+          - "Six hospital staff arrived late more than once."
+          - "Passenger numbers rose."
+          - "The council saved £90,000."
+          - "A taxi service replaced it."
+        answer: "Six hospital staff arrived late more than once."
+      - key: inference
+        type: inference
+        prompt: "The writer says the eleven passengers are 'not a random group'. Why does this matter?"
+        options:
+          - "Because the effect of cancelling falls on people with few alternatives."
+          - "Because the same eleven people travel every night."
+          - "Because the council counted them incorrectly."
+          - "Because most passengers are tourists."
+        answer: "Because the effect of cancelling falls on people with few alternatives."
+
+  - key: text.b2.two_studies
+    level: B2
+    skill: reading.complex_contemporary
+    title: "Two studies, one headline"
+    minutes: 9
+    body: |
+      In March a university press office announced that people who walk to
+      work report lower stress than people who drive. Within a week the
+      finding had become, in several places, the claim that walking to work
+      reduces stress.
+
+      The difference is not pedantry. The study measured two groups at one
+      moment; it did not follow anyone over time, and it did not assign
+      anyone to walk or drive. People who are able to walk to work tend to
+      live closer to it, and living closer to work is itself associated
+      with lower stress, shorter hours and higher pay. Any of those could
+      produce the result the study found.
+
+      The authors said as much. Their paper uses "associated with"
+      throughout and devotes a paragraph to exactly this problem. The press
+      release used "linked to", which is looser but still careful. It was
+      the reporting that supplied the causal verb, and once supplied it
+      proved impossible to remove: a correction published three weeks later
+      was read by a small fraction of those who read the original.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the writer's main point?"
+        options:
+          - "A careful finding was turned into a stronger claim as it was reported."
+          - "Walking to work does not reduce stress."
+          - "The study was badly designed."
+          - "Press offices should not publish research."
+        answer: "A careful finding was turned into a stronger claim as it was reported."
+      - key: detail
+        type: detail
+        prompt: "According to the text, who introduced the causal claim?"
+        options:
+          - "The reporting, not the authors or the press release."
+          - "The study's authors."
+          - "The university press office."
+          - "The people who were surveyed."
+        answer: "The reporting, not the authors or the press release."
+      - key: inference
+        type: inference
+        prompt: "Why does the writer mention that people who walk tend to live closer to work?"
+        options:
+          - "To offer an explanation the study cannot rule out."
+          - "To argue that walking is only possible for some people."
+          - "To suggest the sample was too small."
+          - "To show that the authors made a mistake."
+        answer: "To offer an explanation the study cannot rule out."
+
+  - key: text.c1.the_quiet_part
+    level: C1
+    skill: reading.demanding_implicit
+    title: "A reference nobody wrote down"
+    minutes: 10
+    body: |
+      The reference was, on its face, warm. It confirmed the dates of
+      employment, described the candidate as punctual and well liked, and
+      noted that she had been given responsibility for the department's
+      social calendar. It ran to four sentences and mentioned no piece of
+      work she had done.
+
+      Everyone in the room understood it. Nobody said so. The chair
+      observed that the reference was "brief", the head of department said
+      the candidate had "clearly been popular", and the conversation moved
+      on to the second applicant with the ease of a group that had reached
+      agreement without needing to state it.
+
+      What is interesting is not that the referee declined to praise her
+      work. It is that the form of the reference - complete, courteous,
+      answering every question asked and volunteering nothing - carried the
+      message more reliably than a criticism would have. A criticism can be
+      challenged, and might have been. An absence cannot be, because
+      nothing was said.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the text about?"
+        options:
+          - "How a reference conveyed a negative judgement by leaving something out."
+          - "A dispute between a candidate and her former employer."
+          - "How hiring panels should be organised."
+          - "A referee who wrote an unfair reference."
+        answer: "How a reference conveyed a negative judgement by leaving something out."
+      - key: detail
+        type: detail
+        prompt: "What did the reference not include?"
+        options:
+          - "Any mention of work she had done."
+          - "The dates of her employment."
+          - "Whether colleagues liked her."
+          - "The name of her department."
+        answer: "Any mention of work she had done."
+      - key: inference
+        type: inference
+        prompt: "Why does the writer say an absence 'cannot be challenged'?"
+        options:
+          - "Because there is no stated claim to argue with."
+          - "Because the panel had already decided."
+          - "Because the referee could not be contacted."
+          - "Because references are confidential."
+        answer: "Because there is no stated claim to argue with."
+
+  - key: text.c2.against_the_word
+    level: C2
+    skill: reading.near_unrestricted
+    title: "Against the word 'engagement'"
+    minutes: 12
+    body: |
+      There was a time when a word like "engagement" would have been asked
+      to declare itself. Engaged in what, and to what end? The question is
+      not asked now, and the word has flourished in the space where the
+      question used to be.
+
+      Its usefulness is precisely its emptiness. A report that says a
+      programme increased engagement has said something that cannot be
+      checked, because nothing in particular has been claimed. Attendance
+      can be counted and found wanting; understanding can be tested and
+      found absent; engagement can only be reported, and the reporting is
+      the evidence. One might call this a rhetorical convenience, though
+      the people who use the word are rarely being convenient on purpose.
+      They have inherited a vocabulary in which the measurable words have
+      acquired uncomfortable associations - "attainment" sounds like
+      sorting, "compliance" like coercion - and engagement has the
+      considerable virtue of sounding like neither.
+
+      The cost is borne later, and elsewhere. A field that cannot say what
+      it has achieved cannot say what has failed either, and so it repeats
+      itself. Every few years the vocabulary is renewed, the same
+      programmes are described in newer words, and the absence of a
+      measurable claim is experienced not as a gap but as a kind of
+      progress.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the writer arguing?"
+        options:
+          - "A vague term persists because its vagueness serves those who use it."
+          - "Engagement is less important than attainment."
+          - "Writers should use simpler vocabulary."
+          - "The word 'engagement' is used incorrectly."
+        answer: "A vague term persists because its vagueness serves those who use it."
+      - key: detail
+        type: detail
+        prompt: "What does the writer say happens every few years?"
+        options:
+          - "The vocabulary is renewed and the same programmes are redescribed."
+          - "Programmes are properly evaluated."
+          - "The word 'engagement' falls out of use."
+          - "New measurable terms are introduced."
+        answer: "The vocabulary is renewed and the same programmes are redescribed."
+      - key: inference
+        type: inference
+        prompt: "The writer says users of the word 'are rarely being convenient on purpose'. What does this concede?"
+        options:
+          - "That the effect is real but the motive is usually not cynical."
+          - "That the word is sometimes used correctly."
+          - "That the writer has used the word too."
+          - "That the problem is too small to matter."
+        answer: "That the effect is real but the motive is usually not cynical."
+
+  - key: text.c2.the_committee_minute
+    level: C2
+    skill: reading.near_unrestricted
+    title: "What the minute records"
+    minutes: 12
+    body: |
+      The minute of the meeting runs to a page and a half and is, by the
+      standards of such documents, unusually well written. It records that
+      the proposal was discussed, that several members raised questions
+      about the timetable, and that it was agreed to proceed. Nothing in it
+      is false.
+
+      What it does not record is that the questions about the timetable
+      were raised by the same two people who had raised them at the
+      previous three meetings, that neither received an answer on this
+      occasion either, and that the agreement to proceed followed a remark
+      by the chair to the effect that the matter had now been aired at
+      length. A reader of the minute would take from it a body deliberating
+      and reaching a conclusion. A person in the room would have seen a
+      body running out of appetite for a question it had not answered.
+
+      Both accounts are accurate. This is what makes minutes so much more
+      interesting than they look: the convention that they record decisions
+      rather than deliberations is not a limitation that everybody works
+      around but a resource that some people work with. A chair who
+      understands the convention can allow an objection to be made,
+      recorded, and neutralised in a single motion, and can do so without
+      anything improper occurring at any point in the sequence.
+    questions:
+      - key: gist
+        type: gist
+        prompt: "What is the writer's central observation?"
+        options:
+          - "An accurate record can still leave a misleading impression."
+          - "The minute contains factual errors."
+          - "Committees should record their discussions in full."
+          - "The chair acted improperly."
+        answer: "An accurate record can still leave a misleading impression."
+      - key: detail
+        type: detail
+        prompt: "What does the minute omit?"
+        options:
+          - "That the same questions had been raised before and went unanswered."
+          - "That the proposal was discussed."
+          - "That members asked about the timetable."
+          - "That it was agreed to proceed."
+        answer: "That the same questions had been raised before and went unanswered."
+      - key: inference
+        type: inference
+        prompt: >
+          The writer says the convention is "a resource that some people work
+          with". What is being suggested?
+        options:
+          - "That the form of the record can be used deliberately, without any rule being broken."
+          - "That minutes are usually written dishonestly."
+          - "That the convention should be abolished."
+          - "That the chair had not read the previous minutes."
+        answer: "That the form of the record can be used deliberately, without any rule being broken."
