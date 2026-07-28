@@ -7,6 +7,8 @@ they produced it *well*.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -338,3 +340,19 @@ def test_writing_prompt_reaches_the_client_with_its_requirements(
     prompt = items_by_key()["writing.b2.argument"].as_prompt()
     assert prompt["min_words"] == 90
     assert prompt["item_type"] == "written_response"
+
+
+def test_every_level_has_more_than_one_writing_task(curriculum_dir: Path) -> None:
+    """One task per band means a learner's second piece of writing at their
+    level is the same prompt again."""
+    from collections import Counter
+
+    from apps.api.app.curriculum.tasks import parse_writing_tasks
+    from apps.api.app.models.enums import CefrLevel
+
+    tasks = parse_writing_tasks(curriculum_dir)
+    assert {task.cefr_level for task in tasks} == set(CefrLevel)
+
+    counts = Counter(task.cefr_level for task in tasks)
+    thin = [level.value for level, count in counts.items() if count < 2]
+    assert not thin, f"only one writing task at: {', '.join(sorted(thin))}"

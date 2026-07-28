@@ -240,3 +240,138 @@ tasks:
       - pragmatics.stance.hedging
       - discourse.organisation.information_flow
       - lexis.precision.approximation
+
+  # =========================================================================
+  # Expansion, 2026-07-28. Every band below C2 held a single task, so a
+  # second speaking session at a learner's level was a repeat of the first.
+  # =========================================================================
+
+  - key: speak.a1.your_town
+    level: A1
+    skill: speaking.basic_identity
+    title: "Describe where you live"
+    format: description
+    minutes: 6
+    preparation_seconds: 45
+    min_seconds: 25
+    max_seconds: 90
+    min_words: 35
+    prompt: |
+      Someone new to your town asks what it is like.
+
+      Tell them. Say what there is, what you like about it, and one thing
+      you would change.
+    guidance:
+      - "Full sentences, even short ones."
+      - "Say what you like, and why if you can."
+      - "It is fine to pause. Silence is not a mistake."
+    required_elements: ["like"]
+    target_features:
+      - grammar.tense.present_simple_form
+      - grammar.article.definite_indefinite
+
+  - key: speak.a2.explain_a_photo
+    level: A2
+    skill: speaking.simple_description
+    title: "Say what is happening in a scene"
+    format: description
+    minutes: 7
+    preparation_seconds: 45
+    min_seconds: 35
+    max_seconds: 120
+    min_words: 55
+    prompt: |
+      Picture a busy railway station on a Friday evening. You are describing
+      it to someone on the phone who cannot see it.
+
+      Say who is there, what they are doing, and how it feels to be in it.
+    guidance:
+      - "Use present continuous for what is happening now: people are waiting, someone is running."
+      - "Join your ideas with 'and', 'but', 'because' or 'so'."
+      - "Say how it feels, not only what you see."
+    required_elements: ["feels"]
+    target_features:
+      - grammar.tense.progressive_vs_simple
+      - discourse.cohesion.connective
+
+  - key: speak.b1.a_time_it_went_wrong
+    level: B1
+    skill: speaking.connected_narrative
+    title: "Tell a story about something going wrong"
+    format: narrative
+    minutes: 9
+    preparation_seconds: 60
+    min_seconds: 60
+    max_seconds: 150
+    min_words: 90
+    prompt: |
+      Think of a time when something you had planned went wrong — a journey,
+      an event, a piece of work.
+
+      Tell the story. Say what was supposed to happen, what actually
+      happened, and what you did about it.
+    guidance:
+      - "Set the scene before the problem: the listener needs to know what was expected."
+      - "Use past forms throughout, and past perfect for what had happened earlier."
+      - "Say what you did about it, not only what went wrong."
+    required_elements: ["happened"]
+    target_features:
+      - grammar.tense.past_simple_form
+      - grammar.tense.sequence_backshift
+      - discourse.cohesion.connective
+
+  - key: speak.b2.explain_a_trade_off
+    level: B2
+    skill: speaking.develop_viewpoint
+    title: "Explain a trade-off to someone who has not thought about it"
+    format: opinion
+    minutes: 10
+    preparation_seconds: 90
+    min_seconds: 75
+    max_seconds: 180
+    min_words: 130
+    prompt: |
+      Choose a decision where both options cost something real — working
+      from home against working in an office, learning quickly against
+      learning thoroughly, any decision you have actually faced.
+
+      Explain the trade-off to someone who has not thought about it. Do not
+      resolve it for them.
+    guidance:
+      - "Name what each side gives up, not only what it gains."
+      - "Resist deciding. The task is to make the difficulty clear."
+      - "Say which parts rest on evidence and which on what you happen to value."
+    required_elements: ["evidence"]
+    target_features:
+      - pragmatics.stance.hedging
+      - discourse.organisation.information_flow
+      - grammar.clause.subordination
+
+  - key: speak.c1.disagree_without_a_fight
+    level: C1
+    skill: speaking.complex_precise
+    title: "Disagree with someone you need to keep working with"
+    format: opinion
+    minutes: 12
+    preparation_seconds: 90
+    min_seconds: 90
+    max_seconds: 210
+    min_words: 160
+    prompt: |
+      A colleague has proposed something you think is a mistake. They are
+      senior to you, they are not wrong about everything, and you will be
+      working with them either way.
+
+      Say what you think. Be clear enough that your objection cannot be
+      missed, and leave them room to change their mind without losing face.
+    guidance:
+      - "Concede what is right before you object, and mean it."
+      - "State the objection once, plainly. Repeating it makes it a fight."
+      - "Hedge what you are unsure of and commit plainly to what you are not."
+      - "Leave them a way to move without conceding they were wrong."
+    required_elements: ["think"]
+    target_features:
+      - pragmatics.stance.hedging
+      - pragmatics.politeness.directness
+      - pragmatics.register.formality
+      - grammar.modality.obligation

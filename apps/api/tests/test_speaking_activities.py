@@ -387,3 +387,25 @@ def _user(session: Session) -> User:
     session.add(user)
     session.commit()
     return user
+
+
+# --- The bank as content ----------------------------------------------------
+
+
+def test_every_level_has_more_than_one_spoken_task(curriculum_dir: Path) -> None:
+    """With one task per band, a learner's second speaking session at their
+    level is the same prompt again — and unlike a re-read, they will
+    reproduce the answer they rehearsed last time, which measures memory of
+    their own words."""
+    from collections import Counter
+
+    counts = Counter(task.cefr_level for task in parse_speaking_tasks(curriculum_dir))
+    thin = [level.value for level, count in counts.items() if count < 2]
+    assert not thin, f"only one spoken task at: {', '.join(sorted(thin))}"
+
+
+def test_the_bank_reaches_every_level(curriculum_dir: Path) -> None:
+    from apps.api.app.models.enums import CefrLevel
+
+    levels = {task.cefr_level for task in parse_speaking_tasks(curriculum_dir)}
+    assert levels == set(CefrLevel)

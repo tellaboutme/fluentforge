@@ -287,3 +287,89 @@ tasks:
       - discourse.organisation.paragraphing
       - grammar.passive.form
 
+
+  # =========================================================================
+  # Expansion, 2026-07-28. A1, C1 and C2 held one task each, so a learner's
+  # second piece of writing at those bands was the same prompt again.
+  # =========================================================================
+
+  - key: write.a1.postcard
+    level: A1
+    skill: writing.basic_sentences
+    title: "A postcard home"
+    genre: message
+    minutes: 10
+    prompt: |
+      You are away for a few days. Write a short postcard to a friend.
+
+      Say where you are, what the weather is like, and one thing you did.
+    guidance:
+      - "Short sentences are fine. Three or four is enough."
+      - "Use 'and' or 'but' to join two ideas."
+      - "Say what the weather is like."
+    min_words: 25
+    max_words: 90
+    min_sentences: 3
+    min_connectives: 1
+    required_elements: ["weather"]
+    target_features:
+      - grammar.tense.present_simple_form
+      - mechanics.punctuation.sentence_boundary
+
+  - key: write.c1.a_difficult_email
+    level: C1
+    skill: writing.well_structured_complex
+    title: "Declining without closing the door"
+    genre: email
+    minutes: 22
+    prompt: |
+      A colleague you like and will work with again has asked you to join a
+      project. You cannot: your existing commitments make it unrealistic,
+      and taking it on would mean doing it badly.
+
+      Write the email. Decline clearly enough that they do not have to ask
+      twice, and leave the relationship intact.
+    guidance:
+      - "Decide early whether the refusal comes before or after the reason, and commit to it."
+      - "One reason, given plainly. Several reasons read as excuses."
+      - "Do not offer a maybe you do not mean; it is kinder to be clear now."
+      - "Say what you can do, if anything, and nothing you cannot."
+    min_words: 130
+    max_words: 320
+    min_sentences: 6
+    min_connectives: 3
+    required_elements: ["reason"]
+    target_features:
+      - pragmatics.register.formality
+      - pragmatics.politeness.directness
+      - pragmatics.stance.hedging
+      - discourse.organisation.information_flow
+
+  - key: write.c2.the_case_against
+    level: C2
+    skill: writing.rhetorical_mastery
+    title: "The strongest case against your own position"
+    genre: argument
+    minutes: 30
+    prompt: |
+      Choose a position you actually hold about language learning — how it
+      should be taught, tested, or measured.
+
+      Write the strongest case *against* it. Not a straw version you can
+      knock down afterwards: the case its most capable opponent would make,
+      argued as well as you can argue it.
+    guidance:
+      - "Give the opposing case its best evidence, not its worst."
+      - "Concede whatever genuinely tells against your own view."
+      - "Do not answer it at the end. The piece is the case, not a debate."
+      - "Mark clearly which claims rest on evidence and which on judgement."
+    min_words: 300
+    max_words: 700
+    min_sentences: 12
+    min_connectives: 5
+    required_elements: ["evidence"]
+    target_features:
+      - pragmatics.stance.hedging
+      - pragmatics.attribution.source
+      - discourse.organisation.information_flow
+      - lexis.collocation.verb_noun
