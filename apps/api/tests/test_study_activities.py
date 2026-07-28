@@ -529,3 +529,43 @@ def _user(session: Session) -> User:
     session.add(user)
     session.commit()
     return user
+
+
+# --- The bank as content ----------------------------------------------------
+
+
+def test_no_level_is_left_with_almost_nothing(curriculum_dir: Path) -> None:
+    """The bank had two units at A1 and two at C2 against six at B2 — the two
+    thinnest bands being the two where a learner is most likely to be stuck.
+
+    The beginner cannot yet read around a gap in the material, and the
+    advanced learner's remaining errors are the subtle ones that need a unit
+    written for them specifically. A bank that is deepest in the middle
+    serves the learners who need it least.
+    """
+    from collections import Counter
+
+    counts = Counter(unit.cefr_level for unit in parse_study_units(curriculum_dir))
+    thin = [level.value for level, count in counts.items() if count < 3]
+    assert not thin, f"fewer than three study units at: {', '.join(sorted(thin))}"
+
+
+def test_every_practice_item_names_a_feature_that_can_be_drilled(
+    curriculum_dir: Path,
+) -> None:
+    """A study unit exists so a recurring error has somewhere to go. An item
+    whose feature is not in the taxonomy breaks that path silently: the error
+    log names something, and nothing answers it."""
+    from apps.api.app.learning import taxonomy
+
+    for unit in parse_study_units(curriculum_dir):
+        for item in unit.items:
+            assert taxonomy.is_known(item.feature), f"{unit.key}/{item.key}: {item.feature}"
+
+
+def test_every_wrong_answer_is_explained(curriculum_dir: Path) -> None:
+    """The note is the teaching moment. An item that marks a learner wrong
+    and says nothing has taken their attempt and given nothing back."""
+    for unit in parse_study_units(curriculum_dir):
+        for item in unit.items:
+            assert item.note.strip(), f"{unit.key}/{item.key} has no note"

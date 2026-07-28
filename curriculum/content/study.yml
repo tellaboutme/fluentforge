@@ -1637,3 +1637,363 @@ units:
         note: >
           The other three are dead metaphors nobody registers. Two live ones
           in a row draw attention and rarely survive it.
+
+  # =========================================================================
+  # Expansion, 2026-07-28. A1 and C2 held two units each against six at B2 —
+  # the two bands with the least material being the two where a learner is
+  # most likely to be stuck: the beginner who cannot yet read around a gap,
+  # and the advanced learner whose remaining errors are the subtle ones.
+  # =========================================================================
+
+  - key: study.a1.questions
+    level: A1
+    skill: grammar.basic_clause
+    title: "Asking a question: the word order changes"
+    minutes: 8
+    explanation: |
+      In a statement, the subject comes first: "You are ready." In a
+      question, the verb 'be' moves in front of it: "Are you ready?"
+
+      With other verbs, English uses 'do' or 'does' to carry the question,
+      and the main verb goes back to its plain form:
+
+      She works here. -> Does she work here?  (not "Does she works")
+      They live nearby. -> Do they live nearby?
+
+      Question words come first, before all of that: "Where do they live?"
+
+      The commonest mistake is keeping statement order and only changing the
+      voice: "You are ready?" will usually be understood, but "Where you
+      live?" often will not, because the listener is waiting for the verb.
+    examples:
+      - "Are you a student?"
+      - "Does he work on Fridays?"
+      - "Where do they live?"
+      - "What time does the shop open?"
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.word_order.question
+        prompt: "___ you a student?"
+        options: ["Are", "You are", "Do", "Is"]
+        answer: "Are"
+        note: >
+          With 'be', the verb moves in front of the subject. No 'do' is
+          needed, because 'be' can ask the question by itself.
+      - key: i2
+        type: choice
+        feature: grammar.word_order.question
+        prompt: "___ he work on Fridays?"
+        options: ["Does", "Do", "Is", "Has"]
+        answer: "Does"
+        note: >
+          He/she/it takes 'does'. The main verb then stays plain: 'work',
+          not 'works'.
+      - key: i3
+        type: gap_fill
+        feature: grammar.word_order.question
+        prompt: "Where ___ they live?"
+        answer: "do"
+        note: >
+          The question word comes first, then 'do', then the subject. This
+          is the order learners most often lose.
+      - key: i4
+        type: choice
+        feature: grammar.word_order.question
+        prompt: "Which one is correct English? ___"
+        options:
+          - "What time does the shop open?"
+          - "What time the shop opens?"
+          - "What time does the shop opens?"
+          - "What time opens the shop?"
+        answer: "What time does the shop open?"
+        note: >
+          'Does' carries the question, so 'open' stays plain. Leaving 'does'
+          out entirely is the version listeners find hardest.
+
+  - key: study.a1.past_of_be
+    level: A1
+    skill: grammar.basic_clause
+    title: "Was and were: talking about before"
+    minutes: 8
+    explanation: |
+      'Be' has two past forms and they follow the subject:
+
+      I / he / she / it -> was
+      you / we / they   -> were
+
+      Negatives add 'not': "I was not there", "They were not open".
+      In speech these usually shorten: wasn't, weren't.
+
+      This is worth learning properly at A1 because 'be' appears in almost
+      every sentence about a past situation - where you were, how something
+      was, who was with you. A learner who reaches for 'were' after 'he'
+      will make the same slip hundreds of times before anyone corrects it.
+    examples:
+      - "I was at home yesterday."
+      - "The shop was closed."
+      - "They were very kind."
+      - "We weren't late."
+    items:
+      - key: i1
+        type: gap_fill
+        feature: grammar.agreement.subject_verb
+        prompt: "Yesterday I ___ at home all day."
+        answer: "was"
+        note: "'I' takes 'was'."
+      - key: i2
+        type: gap_fill
+        feature: grammar.agreement.subject_verb
+        prompt: "They ___ very kind to us."
+        answer: "were"
+        note: "'They' takes 'were', like 'you' and 'we'."
+      - key: i3
+        type: choice
+        feature: grammar.agreement.subject_verb
+        prompt: "The shop ___ closed when we arrived."
+        options: ["was", "were", "is", "are"]
+        answer: "was"
+        note: >
+          'The shop' is one thing, so it takes 'was'. 'Is' would move the
+          sentence into the present, which contradicts 'arrived'.
+      - key: i4
+        type: choice
+        feature: grammar.negation.form
+        prompt: "We ___ late, we were early."
+        options: ["weren't", "wasn't", "not were", "didn't"]
+        answer: "weren't"
+        note: >
+          'We' takes 'were', so the negative is 'weren't'. 'Didn't' is for
+          other verbs, not for 'be'.
+
+  - key: study.a1.this_that
+    level: A1
+    skill: vocabulary.high_frequency_survival
+    title: "This, that, these, those"
+    minutes: 7
+    explanation: |
+      Two things decide the word: how near, and how many.
+
+      near + one   -> this      near + more than one   -> these
+      far  + one   -> that      far  + more than one   -> those
+
+      "This bag is mine." (in your hand)
+      "That bag is mine." (over there)
+      "These shoes are new." / "Those shoes are new."
+
+      They also work without a noun: "What is this?", "How much are those?"
+
+      Learners often use 'this' for everything, which is understood but
+      leaves the listener unsure which object is meant - and pointing does
+      not survive a phone call.
+    examples:
+      - "This is my bag."
+      - "How much are those?"
+      - "These shoes are new."
+      - "That is not mine."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.noun.countability
+        prompt: "(holding one book) ___ book is very good."
+        options: ["This", "These", "Those", "That"]
+        answer: "This"
+        note: "One book, and it is near you."
+      - key: i2
+        type: choice
+        feature: grammar.noun.countability
+        prompt: "(pointing across the room) ___ shoes are expensive."
+        options: ["Those", "These", "This", "That"]
+        answer: "Those"
+        note: "More than one, and far away."
+      - key: i3
+        type: gap_fill
+        feature: grammar.pronoun.reference
+        prompt: "What is ___? (about something in your hand)"
+        answer: "this"
+        note: >
+          These words work on their own, with no noun after them, when it is
+          obvious what you mean.
+      - key: i4
+        type: choice
+        feature: grammar.noun.countability
+        prompt: "Which sentence is correct? ___"
+        options:
+          - "These apples are cheap."
+          - "This apples are cheap."
+          - "Those apple is cheap."
+          - "That apples are cheap."
+        answer: "These apples are cheap."
+        note: >
+          Plural noun takes a plural word. Mixing them is the commonest slip
+          here.
+
+  - key: study.c2.nominalisation
+    level: C2
+    skill: grammar.stylistic_control
+    title: "Turning actions into things, and what it hides"
+    minutes: 11
+    explanation: |
+      English lets you turn a verb into a noun: decide -> decision, reassess
+      -> reassessment, fail -> failure. The effect on a sentence is larger
+      than it looks.
+
+      "We reassessed the timetable" names an agent. "There has been a
+      reassessment of the timetable" does not: the action survives and the
+      actor disappears. Nothing false has been said, and there is now nobody
+      to ask.
+
+      This is a genuine tool. It compresses: "the reassessment" can carry a
+      whole clause you have already stated, so the sentence can move on to
+      what matters. It also raises register, which is why it is everywhere
+      in formal writing.
+
+      And it is the standard way of removing responsibility from a sentence
+      without lying in it. "Mistakes were made" is the passive doing this;
+      "there was a failure of oversight" is nominalisation doing it more
+      thoroughly, because now even the verb has gone.
+
+      At C2 the skill is not avoiding it. It is noticing when it is doing
+      compression and when it is doing concealment - in what you read, and
+      in what you write.
+    examples:
+      - "The reassessment took three weeks. (compression: we know who did it)"
+      - "There has been a reassessment. (concealment: we no longer do)"
+      - "Their refusal to comment was itself informative."
+      - "A failure of oversight occurred."
+    items:
+      - key: i1
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: "Which version makes it hardest to ask who is responsible? ___"
+        options:
+          - "There has been a failure of oversight."
+          - "We failed to oversee it."
+          - "The board failed to oversee it."
+          - "They did not oversee it."
+        answer: "There has been a failure of oversight."
+        note: >
+          The verb has become a noun and the agent has gone with it. The
+          other three all name someone.
+      - key: i2
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: >
+          "We reassessed the timetable. The reassessment took three weeks."
+          What is the second sentence doing? ___
+        options:
+          - "Compressing what was just said so the sentence can move on."
+          - "Hiding who did the reassessing."
+          - "Repeating the first sentence unnecessarily."
+          - "Changing the subject."
+        answer: "Compressing what was just said so the sentence can move on."
+        note: >
+          The agent is already established, so the nominalisation costs
+          nothing and buys brevity. This is the legitimate use.
+      - key: i3
+        type: choice
+        feature: pragmatics.attribution.source
+        prompt: >
+          You are writing a report and want to be accountable. Which do you
+          choose? ___
+        options:
+          - "We decided to postpone the launch."
+          - "A decision was taken to postpone the launch."
+          - "There was a postponement of the launch."
+          - "The launch has undergone postponement."
+        answer: "We decided to postpone the launch."
+        note: >
+          Naming the agent is what accountability looks like in a sentence.
+          The other three are progressively further from it.
+      - key: i4
+        type: gap_fill
+        feature: lexis.word_form.derivation
+        prompt: "refuse -> their ___ to comment was itself informative"
+        answer: "refusal"
+        note: >
+          Knowing the noun form is what lets you choose it deliberately -
+          or decline to.
+
+  - key: study.c2.marked_word_order
+    level: C2
+    skill: grammar.stylistic_control
+    title: "Putting the wrong thing first, on purpose"
+    minutes: 11
+    explanation: |
+      English word order is fairly fixed, which is exactly why breaking it
+      carries meaning. Move an element to the front and you have told the
+      reader that this, specifically, is what is at issue.
+
+      Fronting for contrast:
+        "This much, at least, nobody disputes."
+        (implying: other things are disputed)
+
+      Inversion after a negative adverbial:
+        "Not once did they answer the question."
+        (the auxiliary comes before the subject, as in a question)
+
+      It-clefts, which pick one element out and background everything else:
+        "It was the delay that annoyed them, not the cost."
+
+      What-clefts, which build anticipation:
+        "What worries me is the maintenance."
+
+      Each of these is doing the same job by different means: deciding what
+      the reader treats as given and what as news. Used once, it lands. Used
+      three times on a page, it reads as mannerism, and the emphasis stops
+      meaning anything because everything is emphasised.
+    examples:
+      - "This much, at least, nobody disputes."
+      - "Not once did they answer the question."
+      - "It was the delay that annoyed them, not the cost."
+      - "What worries me is the maintenance burden."
+    items:
+      - key: i1
+        type: choice
+        feature: grammar.word_order.statement
+        prompt: "Which sentence fronts an element for contrast? ___"
+        options:
+          - "This much, at least, nobody disputes."
+          - "Nobody disputes this much, at least."
+          - "At least nobody disputes this much."
+          - "Nobody at least disputes this much."
+        answer: "This much, at least, nobody disputes."
+        note: >
+          The object has moved to the front. In the others the object stays
+          where ordinary word order puts it.
+      - key: i2
+        type: gap_fill
+        feature: grammar.word_order.question
+        prompt: "Not once ___ they answer the question."
+        answer: "did"
+        note: >
+          After a negative adverbial the auxiliary comes before the subject,
+          exactly as in a question. Leaving it out is the usual slip.
+      - key: i3
+        type: choice
+        feature: grammar.clause.subordination
+        prompt: >
+          You want to say the delay was the problem, not the cost. Which
+          form does that most precisely? ___
+        options:
+          - "It was the delay that annoyed them."
+          - "The delay annoyed them."
+          - "They were annoyed by the delay."
+          - "What annoyed them was annoying."
+        answer: "It was the delay that annoyed them."
+        note: >
+          The it-cleft singles out one element as the answer to an implied
+          question and backgrounds everything else. Plain order does not.
+      - key: i4
+        type: choice
+        feature: discourse.organisation.information_flow
+        prompt: "What goes wrong if every sentence on a page is marked? ___"
+        options:
+          - "Nothing stands out, because everything is emphasised."
+          - "The sentences become ungrammatical."
+          - "The register becomes too informal."
+          - "The reader loses track of the tense."
+        answer: "Nothing stands out, because everything is emphasised."
+        note: >
+          Marked order works by contrast with unmarked order. Remove the
+          contrast and the device stops doing anything.
