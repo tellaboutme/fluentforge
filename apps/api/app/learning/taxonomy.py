@@ -27,6 +27,22 @@ Design rules
 - ``typically_blocks_meaning`` is a *default*, not a verdict. Whether a
   particular slip destroyed the message depends on the utterance, so content
   and evaluators may override it per occurrence.
+
+Production and comprehension
+----------------------------
+Most features here describe something a learner *produced* wrongly. Six
+describe a failure to take meaning in — `reading.comprehension.*` and
+`listening.comprehension.*`, keyed on the question types the content already
+carries. They are here rather than in a parallel structure because the learner
+question is identical in both directions: "what do I keep getting wrong, and
+what can I do about it?" A reader who reliably answers detail questions and
+reliably misses inference has a pattern worth naming, and before these existed
+the error log had nothing at all to say about reading or listening — a learner
+could work through a dozen texts, miss every inference, and see an empty list.
+
+The remedy differs, and `services.activities.remedy_for_feature` knows it: a
+comprehension feature is answered by another text or clip that asks that kind
+of question, never by a study unit, because there is no rule to explain.
 """
 
 from __future__ import annotations
@@ -394,6 +410,62 @@ _ALL: tuple[Feature, ...] = (
         "Word stress",
         "Stress on the wrong syllable, which can make a familiar word unrecognisable.",
         SkillDomain.PRONUNCIATION,
+        True,
+    ),
+    # --- Comprehension ------------------------------------------------------
+    # The only features here that describe a failure to *take in* meaning
+    # rather than to produce it. `typically_blocks_meaning` is read the same
+    # way in both directions: whether the message was lost. For a reader that
+    # is the whole question, so the flag distinguishes losing the message from
+    # losing a fact within it — otherwise every comprehension miss would
+    # outrank every grammar error and the priority ordering would collapse to
+    # "receptive first, always".
+    _f(
+        "reading.comprehension.gist",
+        "Getting the overall point of a text",
+        "The main point, purpose or outcome of a text taken wrongly, even where "
+        "individual sentences were understood.",
+        SkillDomain.READING,
+        True,
+    ),
+    _f(
+        "reading.comprehension.detail",
+        "Finding specific information in a text",
+        "A stated fact, figure or condition missed or misread while the general "
+        "sense was followed.",
+        SkillDomain.READING,
+        False,
+    ),
+    _f(
+        "reading.comprehension.inference",
+        "Reading what a text implies",
+        "What the text implies without stating it — attitude, cause, or what "
+        "follows — missed, or an inference drawn that the words do not support.",
+        SkillDomain.READING,
+        True,
+    ),
+    _f(
+        "listening.comprehension.gist",
+        "Getting the overall point of what you hear",
+        "The main point or purpose of a spoken passage taken wrongly, even where "
+        "individual words were caught.",
+        SkillDomain.LISTENING,
+        True,
+    ),
+    _f(
+        "listening.comprehension.detail",
+        "Catching specific information by ear",
+        "A stated time, number, name or condition missed or misheard while the "
+        "general sense was followed.",
+        SkillDomain.LISTENING,
+        False,
+    ),
+    _f(
+        "listening.comprehension.inference",
+        "Hearing what a speaker implies",
+        "Attitude, intention or implication missed, or read into a speaker's "
+        "words when nothing in them supports it.",
+        SkillDomain.LISTENING,
         True,
     ),
 )

@@ -289,6 +289,7 @@ items:
   - key: reading.a1.sign
     type: multiple_choice
     skill: reading.signs_forms
+    feature: reading.comprehension.gist
     level: A1
     difficulty: 0.14
     prompt: "A sign says 'NO ENTRY'. What does it mean?"
@@ -299,6 +300,7 @@ items:
   - key: reading.a2.message
     type: multiple_choice
     skill: reading.short_everyday_texts
+    feature: reading.comprehension.detail
     level: A2
     difficulty: 0.38
     prompt: >
@@ -311,6 +313,7 @@ items:
   - key: reading.b1.inference
     type: multiple_choice
     skill: reading.familiar_arguments
+    feature: reading.comprehension.inference
     level: B1
     difficulty: 0.55
     prompt: >
@@ -326,6 +329,7 @@ items:
   - key: reading.b2.stance
     type: multiple_choice
     skill: reading.complex_contemporary
+    feature: reading.comprehension.inference
     level: B2
     difficulty: 0.70
     prompt: >

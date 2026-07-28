@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **795 Python tests**; eslint, tsc, and **281 web
+curriculum validation, **812 Python tests**; eslint, tsc, and **281 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -424,7 +424,7 @@ stored and unreachable.
 
 ### Error taxonomy (new)
 
-- **Errors name a linguistic feature**, from a closed set of 41 codes in
+- **Errors name a linguistic feature**, from a closed set of 47 codes in
   `apps/api/app/learning/taxonomy.py`, rather than the skill an item belonged
   to. `grammar.tense.perfect_vs_past` can be practised; "something in
   `grammar.connected_time_modality`" cannot.
@@ -433,6 +433,12 @@ stored and unreachable.
 - **A recurring error opens the study unit that drills it**, where one exists.
 - **Legacy `item.<skill>` codes still render** and still schedule practice;
   they simply get no feature-based remedy, because none would be honest.
+- **Comprehension is in the taxonomy**, as `reading.comprehension.*` and
+  `listening.comprehension.*` keyed on the `gist | detail | inference` type
+  every authored question already carries. Before this the error log had
+  nothing at all to say about reading or listening.
+- **A comprehension error opens another text or clip**, not a study unit.
+  There is no rule to explain about missing what a passage implies.
 
 ### Sittings (new)
 
@@ -462,9 +468,11 @@ stored and unreachable.
   default is still `disabled`, so writing and mediation stay provisional out
   of the box and every test runs against the no-AI path. Nothing here has
   been run against a real model.
-- **Diagnostic errors still use legacy codes.** `services/diagnostics.py` logs
-  `item.<skill_key>`; the taxonomy exists but the diagnostic does not use it
-  yet. Study activities do.
+- **One diagnostic item still logs a legacy code.** `lexis.a1.days` asks
+  which day follows Tuesday, which is a specific word rather than a
+  practisable feature. The four reading items that were the bulk of this gap
+  now name comprehension features, and a test pins the exception at one item
+  so it cannot quietly grow.
 - **A deployed instance.** Both container images now build and a compose
   stack describes the whole product, but nothing has been run end to end in
   containers, and `services/worker` is still a stub — nothing in the product

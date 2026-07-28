@@ -429,6 +429,25 @@ class QuestionResult:
 
 
 @dataclass(frozen=True)
+class _Remedy:
+    """Something openable that answers a recurring error.
+
+    Deliberately not a `StudyUnit`: the answer to a comprehension error is a
+    text or a clip, and a return type that could only be a study unit is what
+    kept reading and listening errors unanswerable.
+    """
+
+    activity_key: str
+    activity_type: str
+    title: str
+    minutes: int
+    #: The curriculum skill this activity evidences. The planner needs it to
+    #: place the candidate against a skill node rather than against a
+    #: taxonomy code, which names a feature and not a skill.
+    skill_key: str
+
+
+@dataclass(frozen=True)
 class ActivityResult:
     activity_key: str
     score: float
@@ -709,6 +728,10 @@ def complete_reading(
         recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
         recorded = True
 
+    _log_comprehension_errors(
+        session, user_id, results, domain="reading", source=f"the text '{text.title}'"
+    )
+
     session.flush()
     return ActivityResult(
         activity_key=activity_key,
@@ -971,6 +994,14 @@ def complete_listening(
         )
         recompute_skill_state(session, user_id=user_id, skill_node_id=node.id)
         recorded = True
+
+    if not used_transcript:
+        # A learner who read the transcript answered a reading task. Logging
+        # a listening error there would name the wrong skill, and the error
+        # log would fill with listening patterns from work done by eye.
+        _log_comprehension_errors(
+            session, user_id, results, domain="listening", source=f"the clip '{clip.title}'"
+        )
 
     session.flush()
     return ListeningResult(
@@ -1526,6 +1557,136 @@ def complete(
 def _difficulty_for(level_rank: int) -> float:
     """Map a CEFR rank onto the 0..1 difficulty the mastery model expects."""
     return round((level_rank + 0.5) / 6, 4)
+
+
+#: Question types the content carries, and the comprehension feature each
+#: maps to. A type outside this map is logged as nothing rather than guessed
+#: at: the closed taxonomy is the point, and inventing a code from a typo in
+#: curriculum source is the failure it exists to prevent.
+COMPREHENSION_TYPES = ("gist", "detail", "inference")
+
+
+def _log_comprehension_errors(
+    session: Session,
+    user_id: uuid.UUID,
+    results: tuple[QuestionResult, ...],
+    *,
+    domain: str,
+    source: str,
+) -> None:
+    """Record what kind of comprehension question the learner missed.
+
+    Before this, the error log had nothing at all to say about reading or
+    listening: someone could work through a dozen texts, miss every inference
+    question, and see an empty list. Whether a reader gets the facts and
+    misses what is implied is one of the more useful things anyone could tell
+    them, and it was sitting unused in the stored results.
+
+    **Once per question type, not once per question.** A text with four
+    inference questions would otherwise push that feature past the recurrence
+    threshold on its own, and the whole point of the threshold is that one bad
+    afternoon is not a pattern. This matches how wrong study items are logged.
+    """
+    missed = {
+        result.question_type
+        for result in results
+        if not result.correct and result.question_type in COMPREHENSION_TYPES
+    }
+    if not missed:
+        return
+
+    for question_type in sorted(missed):
+        code = f"{domain}.comprehension.{question_type}"
+        record_error(
+            session,
+            user_id,
+            taxonomy_code=code,
+            description=taxonomy.describe(code),
+            example=source,
+            blocks_meaning=taxonomy.blocks_meaning_default(code),
+        )
+    sync_error_cards(session, user_id)
+
+
+def remedy_for_feature(feature_code: str) -> _Remedy | None:
+    """Something the learner can open that answers this error.
+
+    Two kinds of answer, because two kinds of error. A production feature is
+    answered by a study unit: there is a rule, and explaining it then drilling
+    it is what helps. A comprehension feature has no rule to explain — the
+    answer is another text or clip that asks that kind of question, so the
+    learner meets it again with a fresh passage rather than reading about
+    inference in the abstract.
+
+    Returns `None` where nothing exists, which the error log reports as
+    `not_written` rather than passing off an unrelated activity as a remedy.
+    """
+    if not taxonomy.is_known(feature_code):
+        return None
+
+    domain, _, question_type = feature_code.partition(".comprehension.")
+    if question_type in COMPREHENSION_TYPES:
+        return _comprehension_remedy(domain, question_type)
+
+    units = study_for_feature(feature_code)
+    if not units:
+        return None
+    unit = min(units, key=lambda item: (item.minutes, item.key))
+    return _Remedy(
+        activity_key=study_key_for(unit),
+        activity_type=STUDY_TYPE,
+        title=unit.title,
+        minutes=unit.minutes,
+        skill_key=unit.skill_key,
+    )
+
+
+def _comprehension_remedy(domain: str, question_type: str) -> _Remedy | None:
+    """The shortest text or clip that asks this kind of question.
+
+    Shortest rather than most relevant: the learner is being sent back to a
+    skill they just got wrong, and a twenty-minute C1 article is a poor place
+    to try again. Ties break on key so the same error always opens the same
+    thing.
+    """
+    if domain == "reading":
+        candidates = [
+            (
+                _Remedy(
+                    activity_key=activity_key_for(text),
+                    activity_type=READING_TYPE,
+                    title=text.title,
+                    minutes=text.minutes,
+                    skill_key=text.skill_key,
+                ),
+                text.minutes,
+                text.key,
+            )
+            for text in library()
+            if any(question.question_type == question_type for question in text.questions)
+        ]
+    elif domain == "listening":
+        candidates = [
+            (
+                _Remedy(
+                    activity_key=listening_key_for(clip),
+                    activity_type=LISTENING_TYPE,
+                    title=clip.title,
+                    minutes=clip.minutes,
+                    skill_key=clip.skill_key,
+                ),
+                clip.minutes,
+                clip.key,
+            )
+            for clip in listening_clips()
+            if any(question.question_type == question_type for question in clip.questions)
+        ]
+    else:
+        return None
+
+    if not candidates:
+        return None
+    return min(candidates, key=lambda pair: (pair[1], pair[2]))[0]
 
 
 def _skill_node(session: Session, skill_key: str) -> SkillNode | None:

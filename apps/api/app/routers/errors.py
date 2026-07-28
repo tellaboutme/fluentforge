@@ -60,9 +60,14 @@ class ErrorPatternView(BaseModel):
     #: queue. Surfaced so a learner can see that a single slip is recorded
     #: and not yet being drilled.
     scheduled: bool
-    #: A study unit that drills this, or null.
+    #: Something openable that answers this, or null. A study unit for a
+    #: production error; another text or clip for a comprehension one, since
+    #: there is no rule to explain about missing what a text implies.
     remedy_key: str | None
     remedy_title: str | None
+    #: Which kind of activity `remedy_key` opens. Clients need it to say
+    #: "practise this" versus "read another one" honestly.
+    remedy_type: str | None
     #: Present only when `remedy_key` is null. Says which kind of gap it is.
     no_remedy_reason: str | None
 
@@ -82,8 +87,7 @@ def read_errors(user: CurrentUser, session: SessionDep) -> ErrorLog:
 
     for pattern in active_errors(session, user.id):
         code = pattern.taxonomy_code
-        units = activities.study_for_feature(code) if taxonomy.is_known(code) else ()
-        remedy = min(units, key=lambda unit: (unit.minutes, unit.key)) if units else None
+        remedy = activities.remedy_for_feature(code)
 
         items.append(
             ErrorPatternView(
@@ -96,8 +100,9 @@ def read_errors(user: CurrentUser, session: SessionDep) -> ErrorLog:
                 blocks_meaning=pattern.blocks_meaning,
                 priority=priority_for(pattern),
                 scheduled=schedulable(pattern),
-                remedy_key=activities.study_key_for(remedy) if remedy else None,
+                remedy_key=remedy.activity_key if remedy else None,
                 remedy_title=remedy.title if remedy else None,
+                remedy_type=remedy.activity_type if remedy else None,
                 no_remedy_reason=None if remedy else _why_not(code),
             )
         )
@@ -120,6 +125,11 @@ def _why_not(code: str) -> str:
         # feature. Nothing could honestly claim to fix "something in
         # grammar.connected_time_modality".
         return NO_FEATURE
+    if ".comprehension." in code:
+        # A comprehension feature is answered by another text or clip, so
+        # reaching here means the bank has none asking that question type —
+        # a content gap, not a format one.
+        return NOT_WRITTEN
     if code.startswith("pronunciation."):
         # A study unit is read and typed. It cannot teach a sound contrast,
         # and one claiming to would be lying about what the practice does.

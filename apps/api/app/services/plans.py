@@ -252,18 +252,21 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
         )
 
     # 2. Error patterns — a repeated mistake outranks new material.
-    #    Where a study unit drills the feature that went wrong, the candidate
-    #    points at that unit: an error the learner can act on beats a reminder
-    #    that they keep getting something wrong.
+    #    Where something drills the feature that went wrong, the candidate
+    #    points at it: an error the learner can act on beats a reminder that
+    #    they keep getting something wrong. For a production error that is a
+    #    study unit; for a comprehension one it is another text or clip
+    #    asking the kind of question they missed, because there is no rule to
+    #    explain about not catching what a speaker implied.
     for pattern in session.execute(
         select(ErrorPattern).where(ErrorPattern.user_id == user_id)
     ).scalars():
-        remedy = _study_for_error(pattern.taxonomy_code)
+        remedy = activities.remedy_for_feature(pattern.taxonomy_code)
         feature = taxonomy.get(pattern.taxonomy_code)
 
         if remedy is not None:
-            error_key = activities.study_key_for(remedy)
-            error_type = activities.STUDY_TYPE
+            error_key = remedy.activity_key
+            error_type = remedy.activity_type
             error_skill = remedy.skill_key
             error_minutes = remedy.minutes
             error_title = remedy.title
