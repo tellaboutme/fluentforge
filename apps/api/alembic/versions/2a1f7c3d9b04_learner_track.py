@@ -29,10 +29,18 @@ depends_on: str | Sequence[str] | None = None
 def upgrade() -> None:
     # Existing learners become `general`, which is what they were being
     # planned as. Nothing about their plans changes on deploy.
+    #
+    # The server default exists only to backfill: the column is NOT NULL and
+    # the table already has rows, so there has to be something to put in them.
+    # It is dropped immediately afterwards, because the model declares a
+    # Python-side default and no server default -- leaving one behind is
+    # schema drift, and `alembic check` in CI fails on exactly that.
     op.add_column(
         "learner_profiles",
         sa.Column("track_key", sa.String(length=64), nullable=False, server_default="general"),
     )
+    with op.batch_alter_table("learner_profiles") as batch_op:
+        batch_op.alter_column("track_key", server_default=None)
 
 
 def downgrade() -> None:
