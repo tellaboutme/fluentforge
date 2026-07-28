@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **750 Python tests**; eslint, tsc, and **273 web
+curriculum validation, **750 Python tests**; eslint, tsc, and **281 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -386,6 +386,25 @@ unlinked the whole time.
   perform one.
 - Writing the tests found a real defect: two reflections in one sitting
   collided on the attempt uniqueness constraint and crashed.
+
+### A learner's own work (new)
+
+`GET /attempts/{id}/feedback` had been in the API contract since the first
+commit and unimplemented. Everything a learner wrote, said or answered was
+stored and unreachable.
+
+- **Feedback is returned as recorded, never recomputed.** The checks, the
+  curriculum version and the evaluator can all have moved since. Re-deriving
+  would show a verdict nobody ever gave, in the one place a learner comes to
+  check what they were actually told.
+- **It is dated and attributed on screen**, with the evaluator that produced
+  it, and presented as a record rather than a current judgement.
+- **Reading history records nothing.** No evidence, no attempt, no
+  re-scoring — counting it would be counting rereading as practice.
+- Reflections appear, marked unjudged and with no score. Hiding them would
+  leave a gap in the learner's own record; showing a score would invent one.
+- Reachable from the dashboard, because an endpoint with no way in is the
+  same as no endpoint.
 
 ### Accessibility gate (new)
 

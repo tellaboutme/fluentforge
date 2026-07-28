@@ -105,6 +105,11 @@ export default function DashboardPage() {
               ? "Start the diagnostic"
               : "Continue practising"}
           </Link>
+          {/* Reachable from the dashboard because an endpoint with no way
+              in is the same as no endpoint. */}
+          <Link className="button-quiet" href="/history">
+            Your past work
+          </Link>
           <button type="button" className="button-quiet" onClick={signOut}>
             Sign out
           </button>
