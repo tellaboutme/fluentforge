@@ -1,6 +1,12 @@
 id: technology-career
 name: Technology and Career English
+# Starts at A2 rather than B1: a junior engineer can be doing standups and
+# code review in English long before their general English is B1, and a
+# track that refused to acknowledge that would leave them with nothing.
+# As with every track, this bounds the scenarios and not what may be
+# studied.
 levels: [A2, B1, B2, C1, C2]
+
 scenarios:
   - explain_code_and_bugs
   - ask_clarifying_questions
@@ -12,3 +18,22 @@ scenarios:
   - present_architecture
   - disagree_professionally
   - synthesise_research
+
+# Nearly every scenario here is someone talking to someone else in real
+# time, so both spoken domains lead. `spoken_interaction` covers the
+# standup, the interview, the meeting; `spoken_production` the parts where
+# one person holds the floor -- presenting an architecture, explaining a bug.
+#
+# `written_interaction` is where most of this work actually happens: review
+# comments, tickets, threads. `mediation` because explaining a technical
+# decision to someone who does not share the background is the defining
+# task of the role and is not the same skill as explaining it to a peer.
+# `pragmatics` because "disagree_professionally" and "negotiate_scope" are
+# failures of tone before they are failures of grammar, and tone is the
+# thing a general plan never gets round to.
+priority_domains:
+  - spoken_interaction
+  - spoken_production
+  - written_interaction
+  - mediation
+  - pragmatics

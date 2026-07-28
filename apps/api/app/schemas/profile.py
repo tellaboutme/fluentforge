@@ -57,6 +57,14 @@ class ProfileResponse(BaseModel):
     timezone: str
     goals: dict[str, Any]
     interests: dict[str, Any]
+    #: What the learner is studying English for. Raises the priority of its
+    #: domains and can never suppress a weak prerequisite: see
+    #: `app/services/tracks.py`.
+    track_key: str
+    #: The track's display name, or null when the curriculum no longer defines
+    #: the key stored on the profile. Null is the honest answer there, and a
+    #: client should offer the choice again rather than invent a name.
+    track_name: str | None
     curriculum_version: str
     skills: list[SkillEstimate]
     domain_summaries: list[DomainSummary]
@@ -72,3 +80,31 @@ class ProfileUpdateRequest(BaseModel):
     timezone: str | None = Field(default=None, min_length=1, max_length=64)
     goals: dict[str, Any] | None = None
     interests: dict[str, Any] | None = None
+    #: Validated against the curriculum rather than an enum, because tracks
+    #: are versioned source: adding one is an authoring action.
+    track_key: str | None = Field(default=None, min_length=1, max_length=64)
+
+
+class TrackOption(BaseModel):
+    """One track a learner may choose."""
+
+    key: str
+    name: str
+    #: The levels this track's *scenarios* live at. It does not restrict what
+    #: the learner may study, and clients must not present it as a
+    #: requirement: someone on the academic track with weak A2 grammar still
+    #: gets A2 grammar.
+    levels: list[CefrLevel]
+    #: What someone on this track is trying to do. Empty for `general`, which
+    #: is deliberately for people who have not chosen a purpose.
+    scenarios: list[str]
+    #: Domains the planner raises. Surfaced so the choice is inspectable
+    #: rather than a name with unstated consequences.
+    priority_domains: list[SkillDomain]
+
+
+class TrackOptions(BaseModel):
+    tracks: list[TrackOption]
+    #: What a track does and does not do, in the learner's own terms. Always
+    #: non-empty; clients must surface it next to the choice.
+    caveats: list[str]

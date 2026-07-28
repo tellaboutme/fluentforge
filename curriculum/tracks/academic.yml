@@ -1,6 +1,12 @@
 id: academic
 name: Academic English
+# The levels the track's scenarios live at. It does not restrict what a
+# learner may study: someone on this track with weak A2 grammar still gets
+# A2 grammar, because a track that could hide a gap would be a way of
+# avoiding the thing holding them back.
 levels: [B1, B2, C1, C2]
+
+# What someone on this track is actually trying to do.
 scenarios:
   - read_and_annotate
   - summarise_source
@@ -10,3 +16,21 @@ scenarios:
   - lecture_notes
   - seminar_discussion
   - research_presentation
+
+# Domains the planner nudges up. Ordered by how central each is to the
+# scenarios above, though the planner treats the list as a set: a ranking
+# would imply a precision nobody has measured.
+#
+# `reading` and `written_production` are what academic English mostly is.
+# `mediation` is the whole middle of the list -- summarising a source,
+# comparing two, paraphrasing without lifting -- and it is the domain most
+# under-weighted by a general plan. `discourse` because an academic argument
+# is judged on how it is organised at least as much as on what it claims.
+# `listening` earns its place through lectures and seminars, where the
+# learner cannot ask the speaker to slow down.
+priority_domains:
+  - reading
+  - written_production
+  - mediation
+  - discourse
+  - listening

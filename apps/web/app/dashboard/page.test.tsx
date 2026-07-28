@@ -81,6 +81,8 @@ function profile(overrides: Partial<Profile> = {}): Profile {
     timezone: "UTC",
     goals: {},
     interests: {},
+    trackKey: "general",
+    trackName: "General English",
     curriculumVersion: "0.2.0",
     skills: [UNOBSERVED, EMERGING],
     domainSummaries: [],

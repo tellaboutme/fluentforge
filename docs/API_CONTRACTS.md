@@ -85,6 +85,23 @@ assessment. Each skill carries `mastery_probability`, `confidence`,
 until the skill reaches `supported`; clients must render that as "needs
 evidence", never as a low level.
 
+`GET /curriculum/tracks` — **implemented**, unauthenticated. Lists the tracks a
+learner may choose, each with its `priority_domains`, so the choice is
+inspectable rather than a name with unstated consequences. `caveats` is always
+non-empty and must be surfaced next to the choice; the first says a track never
+removes anything.
+
+`PATCH /profile` accepts `track_key`. An unknown key is `422 unknown_track`
+rather than stored: a typo that silently saved would show the learner a track
+they believe they chose while their plan quietly fell back to general. `GET
+/profile` returns `track_key` and `track_name`, and `track_name` is null when
+the curriculum no longer defines the stored key — clients must offer the choice
+again rather than render the key.
+
+A track raises the priority of its domains and **can never suppress a weak
+prerequisite**. Its `levels` bound the track's situations, not what the learner
+may study.
+
 ### Diagnostic
 
 - `POST /diagnostics` — **implemented**. Starts or resumes a session.

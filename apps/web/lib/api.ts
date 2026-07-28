@@ -1085,3 +1085,40 @@ export async function completeSession(
     token,
   });
 }
+
+// --- Tracks ----------------------------------------------------------------
+
+export interface TrackOption {
+  key: string;
+  name: string;
+  /** Where this track's *situations* live. Not a requirement to meet before
+   * choosing it, and clients must not present it as one. */
+  levels: string[];
+  /** Empty for `general`, which is deliberately for people who have not
+   * chosen a purpose. */
+  scenarios: string[];
+  /** Domains the planner raises. Shown so the choice is inspectable rather
+   * than a name with unstated consequences. */
+  priorityDomains: string[];
+}
+
+export interface TrackOptions {
+  tracks: TrackOption[];
+  /** Always non-empty. Must be surfaced next to the choice. */
+  caveats: string[];
+}
+
+export async function fetchTracks(): Promise<TrackOptions> {
+  return request<TrackOptions>("/api/v1/curriculum/tracks");
+}
+
+export async function chooseTrack(
+  token: string,
+  trackKey: string,
+): Promise<Profile> {
+  return request<Profile>("/api/v1/profile", {
+    method: "PATCH",
+    token,
+    body: { track_key: trackKey },
+  });
+}

@@ -142,3 +142,19 @@ class CurriculumNotLoadedError(AppError):
 
     def __init__(self) -> None:
         super().__init__("No curriculum version is loaded. Run `make load-curriculum` to seed it.")
+
+
+class UnknownTrackError(AppError):
+    """A track key the active curriculum does not define.
+
+    Rejected rather than stored, because a typo that silently saved would
+    leave the learner looking at a track they believe they chose while their
+    plan quietly fell back to general -- a personalisation that does nothing,
+    with nothing anywhere saying so.
+    """
+
+    code = "unknown_track"
+    status_code_default = 422
+
+    def __init__(self, key: str) -> None:
+        super().__init__(f"No track named {key!r} in this curriculum.")

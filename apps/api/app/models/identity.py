@@ -47,6 +47,12 @@ class LearnerProfile(TimestampMixin, Base):
     target_level: Mapped[CefrLevel] = mapped_column(
         enum_column(CefrLevel, "cefr_level"), default=CefrLevel.C2, nullable=False
     )
+    #: Which track the learner is following. A plain string rather than an
+    #: enum because tracks are versioned curriculum source: adding one must
+    #: be an authoring action, not a schema migration. An unknown key falls
+    #: back to `general` at read time rather than raising -- dropping a track
+    #: from the curriculum must not lock a learner out of their own profile.
+    track_key: Mapped[str] = mapped_column(String(64), default="general", nullable=False)
 
     goals: Mapped[dict[str, Any]] = mapped_column(JSONB(), default=dict, nullable=False)
     interests: Mapped[dict[str, Any]] = mapped_column(JSONB(), default=dict, nullable=False)

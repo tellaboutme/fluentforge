@@ -200,7 +200,7 @@
           "due_review": 0.4,
           "error_follow_up": 0.0,
           "expected_gain": 0.0,
-          "goal_relevance": 0.0,
+          "goal_relevance": 0.3,
           "modality_diversity": 0.0,
           "repetition_penalty": -0.0,
           "skill_balance": 0.5,
@@ -212,11 +212,11 @@
         "estimated_minutes": 8,
         "explanation": "You have not spent much time on this recently.",
         "kind": "review",
-        "priority": 1.2,
+        "priority": 1.5,
         "reason_codes": [
           "SKILL_BALANCE",
           "DUE_REVIEW",
-          "UNCERTAINTY"
+          "GOAL_RELEVANCE"
         ],
         "sequence": 0,
         "skill_key": "week",
@@ -229,7 +229,7 @@
           "due_review": 0.0,
           "error_follow_up": 0.0,
           "expected_gain": 0.0,
-          "goal_relevance": 0.0,
+          "goal_relevance": 0.3,
           "modality_diversity": 0.0,
           "repetition_penalty": -0.0,
           "skill_balance": 0.5,
@@ -241,9 +241,10 @@
         "estimated_minutes": 7,
         "explanation": "You have not spent much time on this recently.",
         "kind": "input",
-        "priority": 0.8,
+        "priority": 1.1,
         "reason_codes": [
           "SKILL_BALANCE",
+          "GOAL_RELEVANCE",
           "UNCERTAINTY"
         ],
         "sequence": 1,
@@ -257,7 +258,7 @@
           "due_review": 0.0,
           "error_follow_up": 0.0,
           "expected_gain": 0.0,
-          "goal_relevance": 0.0,
+          "goal_relevance": 0.3,
           "modality_diversity": 0.0,
           "repetition_penalty": -0.0,
           "skill_balance": 0.5,
@@ -269,9 +270,10 @@
         "estimated_minutes": 9,
         "explanation": "You have not spent much time on this recently.",
         "kind": "study",
-        "priority": 0.8,
+        "priority": 1.1,
         "reason_codes": [
           "SKILL_BALANCE",
+          "GOAL_RELEVANCE",
           "UNCERTAINTY"
         ],
         "sequence": 2,
@@ -285,7 +287,7 @@
           "due_review": 0.0,
           "error_follow_up": 0.0,
           "expected_gain": 0.744315,
-          "goal_relevance": 0.0,
+          "goal_relevance": 0.1,
           "modality_diversity": 0.0,
           "repetition_penalty": -0.6,
           "skill_balance": 0.5,
@@ -297,7 +299,7 @@
         "estimated_minutes": 8,
         "explanation": "Right at the edge of what you can already do.",
         "kind": "output",
-        "priority": 1.328161,
+        "priority": 1.428161,
         "reason_codes": [
           "EXPECTED_GAIN",
           "UNCERTAINTY",
@@ -1074,6 +1076,8 @@
     ],
     "target_level": "C2",
     "timezone": "UTC",
+    "track_key": "general",
+    "track_name": "General English",
     "user_id": "00000000-0000-4000-8000-000000000003"
   },
   "reading_activity": {

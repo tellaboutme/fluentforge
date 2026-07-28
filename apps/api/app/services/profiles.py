@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..curriculum.loader import active_curriculum_version
-from ..errors import CurriculumNotLoadedError, ProfileNotFoundError
+from ..errors import CurriculumNotLoadedError, ProfileNotFoundError, UnknownTrackError
 from ..learning.mastery import (
     MasteryThresholds,
     cefr_estimate_for,
@@ -24,6 +24,7 @@ from ..schemas.profile import (
     ProfileUpdateRequest,
     SkillEstimate,
 )
+from . import tracks
 
 
 def get_profile(session: Session, user_id: uuid.UUID) -> LearnerProfile:
@@ -37,7 +38,17 @@ def update_profile(
     session: Session, user_id: uuid.UUID, changes: ProfileUpdateRequest
 ) -> LearnerProfile:
     profile = get_profile(session, user_id)
-    for field, value in changes.model_dump(exclude_unset=True).items():
+    updates = changes.model_dump(exclude_unset=True)
+
+    # Tracks are curriculum source, not an enum, so the check lives here
+    # rather than in the schema. Rejecting an unknown key matters: a typo that
+    # silently stored would leave the learner looking at a track name they
+    # chose while their plan quietly fell back to general.
+    track_key = updates.get("track_key")
+    if track_key is not None and tracks.get(track_key) is None:
+        raise UnknownTrackError(track_key)
+
+    for field, value in updates.items():
         if value is not None:
             setattr(profile, field, value)
     session.flush()
@@ -127,6 +138,11 @@ def build_profile_response(session: Session, user_id: uuid.UUID) -> ProfileRespo
         timezone=profile.timezone,
         goals=profile.goals,
         interests=profile.interests,
+        track_key=profile.track_key,
+        # Null rather than the raw key when the curriculum no longer defines
+        # it. A client that showed the key would present a machine identifier
+        # as the learner's chosen purpose.
+        track_name=(chosen.name if (chosen := tracks.get(profile.track_key)) else None),
         curriculum_version=version.semantic_version,
         skills=skills,
         domain_summaries=sorted(summaries, key=lambda item: item.domain.value),

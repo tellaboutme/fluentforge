@@ -67,6 +67,12 @@ export interface Profile {
   timezone: string;
   goals: Record<string, unknown>;
   interests: Record<string, unknown>;
+  /** What the learner is studying English for. Raises the priority of its
+   * domains; it can never suppress a weak prerequisite. */
+  trackKey: string;
+  /** Null when the curriculum no longer defines the stored key. Null is the
+   * honest answer: offer the choice again rather than invent a name. */
+  trackName: string | null;
   curriculumVersion: string;
   skills: SkillEstimate[];
   domainSummaries: DomainSummary[];

@@ -1,4 +1,16 @@
 id: general
 name: General English
 levels: [A1, A2, B1, B2, C1, C2]
-priority_domains: [listening, spoken_interaction, reading, written_interaction, vocabulary, grammar]
+
+# No scenarios, deliberately. This is the track for someone who has not
+# chosen a purpose yet, and inventing one for them would be worse than
+# admitting there is none. It is domain-led instead, and the domains are
+# the ones a person needs to live in a language rather than to do a
+# particular job in it.
+priority_domains:
+  - listening
+  - spoken_interaction
+  - reading
+  - written_interaction
+  - vocabulary
+  - grammar

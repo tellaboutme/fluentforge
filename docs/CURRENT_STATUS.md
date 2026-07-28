@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **817 Python tests**; eslint, tsc, and **315 web
+curriculum validation, **843 Python tests**; eslint, tsc, and **322 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -474,6 +474,24 @@ existing. Both are now linked from the dashboard.
   dashboard. A test asserts the words "improved", "gained", "streak",
   "points" and "xp" never reach the screen — the failure mode is not a bug,
   it is somebody later deciding the page looks bare.
+
+### Tracks (new)
+
+Three tracks had been in `curriculum/tracks/` since the beginning: parsed,
+validated, hashed into every curriculum version, and chosen by nobody. A
+junior engineer who needed to survive a standup and a postgraduate who needed
+to summarise three papers were being offered the same plan.
+
+- **A track raises `goal_match`**, a priority component that existed with a
+  weight of 0.40 and had never once been non-zero.
+- **It can never suppress a weak prerequisite.** The boost is additive and
+  bounded and cannot reach `due_pressure`, `prerequisite_weakness` or
+  `error_pressure`. Tests assert a blocked skill and a due review both still
+  outrank on-track work.
+- **Off-track work scores 0.25, not 0**, so a plan cannot narrow into the
+  track and stay there.
+- **`/track` shows what each one actually does**, not just its name, and the
+  caveat that a track never removes anything renders above the choice.
 
 ## What is not yet implemented
 

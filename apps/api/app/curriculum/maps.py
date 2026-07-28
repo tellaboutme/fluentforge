@@ -43,7 +43,7 @@ from typing import Any
 
 import yaml
 
-from ..models.enums import CefrLevel
+from ..models.enums import CefrLevel, SkillDomain
 from .parser import CurriculumError
 
 FUNCTIONS_PATH = Path("functions") / "communication-functions.yml"
@@ -309,6 +309,21 @@ def _parse_track(path: Path, errors: list[str]) -> Track | None:
     raw_domains = document.get("priority_domains", [])
     if not isinstance(raw_domains, list):
         errors.append(f"{path.name}: priority_domains must be a list")
+        return None
+
+    # Checked against the enum because a typo here fails silently in the worst
+    # possible way: the track loads, the learner picks it, and nothing about
+    # their plan ever changes. There is no error anywhere and no way to tell
+    # from the outside that the track is doing nothing.
+    for domain in raw_domains:
+        if str(domain) not in {member.value for member in SkillDomain}:
+            errors.append(
+                f"{path.name}: unknown priority domain {domain!r}, so it would "
+                f"silently boost nothing"
+            )
+            return None
+    if len(set(map(str, raw_domains))) != len(raw_domains):
+        errors.append(f"{path.name}: lists the same priority domain twice")
         return None
 
     # A track is either scenario-led or domain-led. One with neither is a

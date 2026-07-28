@@ -9,7 +9,7 @@ fabricating a schedule.
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, timedelta
 
 from sqlalchemy import select
@@ -38,7 +38,7 @@ from ..models.enums import PlanStatus, SkillDomain, SkillRelation
 from ..models.identity import LearnerProfile
 from ..models.learning import ErrorPattern, SkillState
 from ..models.planning import Plan, PlanItem, ReviewQueueItem
-from . import activities, benchmarks
+from . import activities, benchmarks, tracks
 
 #: How long each kind of activity is assumed to take. Replaced by real
 #: activity durations when the `activities` table lands in Milestone 3.
@@ -363,7 +363,41 @@ def collect_candidates(session: Session, user_id: uuid.UUID) -> list[Candidate]:
         )
     )
 
-    return candidates
+    return _apply_track(session, user_id, candidates)
+
+
+def _apply_track(
+    session: Session, user_id: uuid.UUID, candidates: list[Candidate]
+) -> list[Candidate]:
+    """Raise `goal_match` on candidates in the learner's track.
+
+    Applied here, once, over the finished list rather than at each of the five
+    places a candidate is built. A new candidate kind would otherwise be
+    silently born off-track, and the bug would look like a ranking quirk.
+
+    Additive and bounded: nothing is removed for being off-track, and a
+    candidate outside the track keeps a real floor. A track states what the
+    learner is *for*, and cannot reach `due_pressure`, `error_pressure` or
+    `prerequisite_weakness` — so it can never bury the thing actually holding
+    them back.
+
+    Reflection is left at zero. It targets no skill, and a track has nothing
+    to say about whether someone should think about their week.
+    """
+    profile = session.execute(
+        select(LearnerProfile).where(LearnerProfile.user_id == user_id)
+    ).scalar_one_or_none()
+    track_key = profile.track_key if profile else None
+
+    return [
+        candidate
+        if not candidate.targets_a_skill
+        else replace(
+            candidate,
+            goal_match=tracks.goal_match_for(candidate.domain, track_key),
+        )
+        for candidate in candidates
+    ]
 
 
 @dataclass(frozen=True)
