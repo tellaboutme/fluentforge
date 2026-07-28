@@ -57,7 +57,7 @@ development machine, driven through the shared project folder. The protocol is
 documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
-The Playwright suite has now **actually run and passed**: 42 tests across
+The Playwright suite has now **actually run and passed**: 44 tests across
 desktop and mobile viewports, covering registration, the diagnostic, the
 learning loop itself, reflection, a benchmark refusal, and an automated
 accessibility gate. Its

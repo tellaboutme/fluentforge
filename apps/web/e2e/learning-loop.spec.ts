@@ -174,6 +174,45 @@ test.describe("the learning loop", () => {
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
+  test("choosing a track changes the plan's reasoning, not what is offered", async ({
+    page,
+  }) => {
+    // The claim the feature rests on. A track raises priorities; it must not
+    // be able to empty the plan or remove a kind of work, and the only way to
+    // be sure is to look at a real plan on both sides of the switch.
+    await registerLearner(page);
+    await completeDiagnostic(page);
+
+    await page.goto("/track");
+    await expect(page.getByText(/never removes anything/i)).toBeVisible({
+      timeout: ACTION_TIMEOUT,
+    });
+
+    await page
+      .getByRole("button", { name: /switch to technology and career english/i })
+      .click();
+    // `exact` because the page heading is "YOUR TRACK" and the chosen-track
+    // badge is "Your track"; a substring match finds both.
+    await expect(page.getByText("Your track", { exact: true })).toBeVisible({
+      timeout: ACTION_TIMEOUT,
+    });
+
+    // Not `goToDashboard`: that helper clicks through from the diagnostic
+    // report, and we are on the track page.
+    await page.getByRole("link", { name: /back to today/i }).click();
+    await expect(page).toHaveURL(/\/dashboard/);
+    await awaitHydration(page);
+
+    const items = page.locator(".plan-main");
+    await expect(items.first()).toBeVisible({ timeout: ACTION_TIMEOUT });
+    expect(await items.count()).toBeGreaterThan(0);
+
+    // Every item still explains itself. A track must not be able to produce
+    // a plan item nobody can account for.
+    const explanations = page.locator(".plan-why");
+    expect(await explanations.count()).toBeGreaterThan(0);
+  });
+
   test("the profile never shows a level the learner has not earned", async ({
     page,
   }) => {

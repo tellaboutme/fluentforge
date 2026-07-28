@@ -122,6 +122,7 @@ test.describe("accessibility", () => {
     for (const [path, where] of [
       ["/errors", "the error log"],
       ["/skills", "the skill map"],
+      ["/track", "the track chooser"],
     ] as const) {
       await page.goto(path);
       await awaitHydration(page);
