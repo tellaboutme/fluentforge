@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **812 Python tests**; eslint, tsc, and **301 web
+curriculum validation, **817 Python tests**; eslint, tsc, and **315 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -57,7 +57,7 @@ development machine, driven through the shared project folder. The protocol is
 documented in `CLAUDE.md`. Every slice since it existed has been gated before
 being committed.
 
-The Playwright suite has now **actually run and passed**: 40 tests across
+The Playwright suite has now **actually run and passed**: 42 tests across
 desktop and mobile viewports, covering registration, the diagnostic, the
 learning loop itself, reflection, a benchmark refusal, and an automated
 accessibility gate. Its
@@ -468,6 +468,12 @@ existing. Both are now linked from the dashboard.
 - **`open_minutes` is elapsed time, and says so.** This product does not
   measure time on task, and a summary that presented wall-clock as study time
   would be the easiest lie in the feature.
+- **`GET /sessions/current` is a read that starts nothing**, so that loading
+  the dashboard does not begin a sitting and start counting a tab left open.
+- **`/finish/{id}` shows the summary**, reachable from a control on the
+  dashboard. A test asserts the words "improved", "gained", "streak",
+  "points" and "xp" never reach the screen — the failure mode is not a bug,
+  it is somebody later deciding the page looks bare.
 
 ## What is not yet implemented
 

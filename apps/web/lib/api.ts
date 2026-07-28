@@ -1006,3 +1006,82 @@ export interface SkillMap {
 export async function fetchSkillMap(token: string): Promise<SkillMap> {
   return request<SkillMap>("/api/v1/profile/skill-map", { token });
 }
+
+// --- Sittings --------------------------------------------------------------
+
+export interface SessionStarted {
+  sessionId: string;
+  startedAt: string;
+  planId: string | null;
+  /** True when this returned a sitting that was already open. Do not say
+   * "session started" to someone who is resuming one. */
+  resumed: boolean;
+}
+
+export interface CurrentSession {
+  sessionId: string | null;
+  startedAt: string | null;
+  planId: string | null;
+}
+
+export interface SessionActivity {
+  activityKey: string;
+  activityType: string;
+  submittedAt: string;
+  score: number | null;
+  wasJudged: boolean;
+  /** Whether it was on today's plan. Work off the plan still counts. */
+  onPlan: boolean;
+}
+
+export interface SessionSkill {
+  key: string;
+  title: string;
+  evidenceRecorded: number;
+  /** The total after this sitting, which is what the model gates on. */
+  distinctContexts: number;
+  status: SkillStatus;
+  /** What would move this skill on, or null when nothing is outstanding. */
+  needs: string | null;
+}
+
+export interface SessionSummary {
+  sessionId: string;
+  status: "in_progress" | "completed" | "abandoned";
+  startedAt: string;
+  endedAt: string | null;
+  /** Elapsed time the sitting was open. Never label this as study time: the
+   * product does not measure time on task. */
+  openMinutes: number;
+  planId: string | null;
+  activities: SessionActivity[];
+  skills: SessionSkill[];
+  planItemsDone: number;
+  planItemsTotal: number;
+  /** Always non-empty, and the client must surface it. */
+  notes: string[];
+}
+
+export async function startSession(token: string): Promise<SessionStarted> {
+  return request<SessionStarted>("/api/v1/sessions", {
+    method: "POST",
+    token,
+    body: {},
+  });
+}
+
+export async function fetchCurrentSession(
+  token: string,
+): Promise<CurrentSession> {
+  return request<CurrentSession>("/api/v1/sessions/current", { token });
+}
+
+export async function completeSession(
+  token: string,
+  sessionId: string,
+): Promise<SessionSummary> {
+  return request<SessionSummary>(`/api/v1/sessions/${sessionId}/complete`, {
+    method: "POST",
+    token,
+  });
+}

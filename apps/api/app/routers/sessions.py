@@ -94,6 +94,27 @@ def start_session(
     return view
 
 
+class CurrentSession(BaseModel):
+    #: Null when nothing is open. A separate read rather than a side effect of
+    #: `POST /sessions`, so that opening the dashboard does not begin a
+    #: sitting and start counting elapsed time on a page nobody is reading.
+    session_id: uuid.UUID | None
+    started_at: datetime | None
+    plan_id: uuid.UUID | None
+
+
+@router.get("/current", response_model=CurrentSession)
+def read_current_session(user: CurrentUser, session: SessionDep) -> CurrentSession:
+    """Today's open sitting, or nulls. Never 404: having no sitting open is
+    an ordinary state, not a missing resource."""
+    sitting = service.current(session, user.id)
+    if sitting is None:
+        return CurrentSession(session_id=None, started_at=None, plan_id=None)
+    return CurrentSession(
+        session_id=sitting.id, started_at=sitting.started_at, plan_id=sitting.plan_id
+    )
+
+
 @router.post("/{session_id}/complete", response_model=SessionSummaryView)
 def complete_session(
     session_id: uuid.UUID, user: CurrentUser, session: SessionDep

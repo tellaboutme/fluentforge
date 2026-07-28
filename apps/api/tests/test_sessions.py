@@ -499,3 +499,73 @@ def test_completing_a_sitting_that_does_not_exist_is_a_404(seeded_client: TestCl
     response = seeded_client.post(f"/api/v1/sessions/{uuid.uuid4()}/complete", headers=headers)
 
     assert response.status_code == 404
+
+
+# --- Reading the current sitting --------------------------------------------
+
+
+def test_reading_the_current_sitting_starts_nothing(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    """The reason this endpoint exists. If a client had to call `start` to
+    find out whether one was open, merely opening the dashboard would begin a
+    sitting and `open_minutes` would count an abandoned browser tab."""
+    user = _learner(db_session)
+
+    assert service.current(db_session, user.id) is None
+    assert (
+        db_session.execute(select(LearningSession).where(LearningSession.user_id == user.id))
+        .scalars()
+        .all()
+        == []
+    )
+
+
+def test_it_finds_the_sitting_that_is_open(loaded_curriculum: Session, db_session: Session) -> None:
+    user = _learner(db_session)
+    sitting = service.start(db_session, user.id).sitting
+
+    found = service.current(db_session, user.id)
+
+    assert found is not None
+    assert found.id == sitting.id
+
+
+def test_it_does_not_abandon_anything(loaded_curriculum: Session, db_session: Session) -> None:
+    """A read must not have the side effect that `start` does, or a client
+    polling for state would silently close yesterday's work."""
+    user = _learner(db_session)
+    stale = LearningSession(
+        user_id=user.id,
+        status=SessionStatus.IN_PROGRESS,
+        context={"kind": "writing_lab"},
+        started_at=utcnow() - timedelta(days=3),
+    )
+    db_session.add(stale)
+    db_session.commit()
+
+    service.current(db_session, user.id)
+    db_session.refresh(stale)
+
+    assert stale.status is SessionStatus.IN_PROGRESS
+
+
+def test_a_finished_sitting_is_no_longer_current(
+    loaded_curriculum: Session, db_session: Session
+) -> None:
+    user = _learner(db_session)
+    sitting = service.start(db_session, user.id).sitting
+    service.complete(db_session, user.id, sitting.id)
+
+    assert service.current(db_session, user.id) is None
+
+
+def test_current_is_nulls_rather_than_a_404(seeded_client: TestClient) -> None:
+    """Having no sitting open is an ordinary state, not a missing resource,
+    and a 404 would make clients treat it as an error to report."""
+    headers = register(seeded_client, "sitting-current@example.com")
+
+    response = seeded_client.get("/api/v1/sessions/current", headers=headers)
+
+    assert response.status_code == 200
+    assert response.json()["session_id"] is None

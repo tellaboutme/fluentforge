@@ -189,6 +189,29 @@ def start(
     return Started(sitting=sitting, resumed=False)
 
 
+def current(session: Session, user_id: uuid.UUID) -> LearningSession | None:
+    """Today's open sitting, if there is one.
+
+    A read, so it starts nothing and abandons nothing. The client needs to
+    know which control to show, and finding out by calling `start` would mean
+    that merely opening the dashboard began a sitting — after which
+    `open_minutes` would count the time the browser tab was left open on a
+    page nobody was reading.
+    """
+    today = utcnow().date()
+    for candidate in session.execute(
+        select(LearningSession)
+        .where(
+            LearningSession.user_id == user_id,
+            LearningSession.status == SessionStatus.IN_PROGRESS,
+        )
+        .order_by(LearningSession.started_at.desc())
+    ).scalars():
+        if candidate.context.get("kind") == SITTING_KIND and candidate.started_at.date() == today:
+            return candidate
+    return None
+
+
 def complete(session: Session, user_id: uuid.UUID, session_id: uuid.UUID) -> SessionSummary:
     """End a sitting and describe it.
 
@@ -501,6 +524,7 @@ __all__ = [
     "SkillTouched",
     "Started",
     "complete",
+    "current",
     "start",
     "summarise",
 ]

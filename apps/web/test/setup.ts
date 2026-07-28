@@ -18,6 +18,7 @@ afterEach(() => {
   routerMock.push.mockClear();
   routerMock.replace.mockClear();
   window.sessionStorage.clear();
+  for (const key of Object.keys(paramsMock)) delete paramsMock[key];
 });
 
 export const routerMock = {
@@ -25,8 +26,15 @@ export const routerMock = {
   replace: vi.fn(),
 };
 
+/**
+ * Route parameters a dynamic-segment page reads. Set by a test that renders
+ * one; cleared after every test so a stale id cannot leak between them.
+ */
+export const paramsMock: Record<string, string> = {};
+
 vi.mock("next/navigation", () => ({
   useRouter: () => routerMock,
+  useParams: () => paramsMock,
 }));
 
 vi.mock("next/link", () => ({

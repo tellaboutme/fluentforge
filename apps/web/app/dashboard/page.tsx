@@ -15,6 +15,7 @@ import {
 } from "@/lib/labels";
 import { useSession } from "@/lib/session";
 import { Empty, ErrorNotice, Loading } from "@/components/Status";
+import { SessionControl } from "@/components/SessionControl";
 import { BenchmarkInvitation } from "@/components/BenchmarkInvitation";
 import { TodayPlan } from "@/components/TodayPlan";
 
@@ -121,6 +122,8 @@ export default function DashboardPage() {
           </button>
         </div>
       </header>
+
+      {token ? <SessionControl token={token} /> : null}
 
       {token ? <TodayPlan token={token} /> : null}
 

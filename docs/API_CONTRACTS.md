@@ -108,6 +108,7 @@ contexts. `caveats` is always non-empty and must be surfaced in the UI.
   for the rest of the day.
 - `POST /plans/generate` — **implemented**. `{"regenerate": true}` replaces today's.
 - `POST /sessions` — **implemented**. Opens a sitting, or resumes today's.
+- `GET /sessions/current` — **implemented**. The open sitting, or nulls.
 - `POST /sessions/{id}/complete` — **implemented**. Ends it and describes it.
 
 A sitting is idempotent within a day: a reload or a retried request returns the

@@ -147,6 +147,33 @@ test.describe("the learning loop", () => {
     }
   });
 
+  test("a sitting can be started, worked in, and finished", async ({
+    page,
+  }) => {
+    // The round trip the summary depends on. Nothing here asserts a number,
+    // because the point of the screen is that it does not produce one: it
+    // asserts that the work lands inside the sitting and that the disclaimer
+    // survives to the browser.
+    await registerLearner(page);
+    await completeDiagnostic(page);
+    await goToDashboard(page);
+
+    await page.getByRole("button", { name: /start a session/i }).click();
+    const finish = page.getByRole("button", { name: /finish for today/i });
+    await expect(finish).toBeVisible({ timeout: ACTION_TIMEOUT });
+
+    await finish.click();
+    await expect(page).toHaveURL(/\/finish\//, { timeout: ACTION_TIMEOUT });
+
+    // Always present, whatever the learner did or did not do.
+    await expect(page.getByText(/not proof of anything/i)).toBeVisible({
+      timeout: ACTION_TIMEOUT,
+    });
+
+    await page.getByRole("link", { name: /back to today/i }).click();
+    await expect(page).toHaveURL(/\/dashboard/);
+  });
+
   test("the profile never shows a level the learner has not earned", async ({
     page,
   }) => {
