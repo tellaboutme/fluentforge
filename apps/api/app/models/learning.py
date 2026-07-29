@@ -189,3 +189,37 @@ class ErrorPattern(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         enum_column(ErrorStatus, "error_status"), default=ErrorStatus.ACTIVE, nullable=False
     )
     examples: Mapped[list[Any]] = mapped_column(JSONB(), default=list, nullable=False)
+
+
+class FeedbackReport(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """A learner saying a verdict was wrong.
+
+    `docs/AI_TUTOR_BEHAVIOR.md` positions AI judgement as an accelerator
+    rather than an authority. That is a claim about how the product behaves,
+    and it needs somewhere for the disagreement to go.
+
+    One per attempt, enforced here rather than in the service: reporting the
+    same thing five times is one complaint, and letting it repeat would turn
+    the confidence reduction it causes into a way to zero an observation out.
+
+    ``evaluator_id`` is copied from the attempt at report time rather than
+    joined at read time. The evaluator can be replaced, and the useful
+    question later is which one produced the feedback somebody objected to --
+    not which one is running now.
+    """
+
+    __tablename__ = "feedback_reports"
+    __table_args__ = (UniqueConstraint("attempt_id", name="uq_feedback_reports_attempt"),)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    attempt_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("attempts.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    #: From a closed set. Free text alone cannot be counted, and a report
+    #: nobody can count is a report nobody acts on.
+    reason: Mapped[str] = mapped_column(String(32), nullable=False)
+    #: The learner explaining themselves, verbatim and optional.
+    note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    evaluator_id: Mapped[str | None] = mapped_column(String(64), nullable=True)

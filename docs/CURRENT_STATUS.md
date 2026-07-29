@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **891 Python tests**; eslint, tsc, and **333 web
+curriculum validation, **907 Python tests**; eslint, tsc, and **337 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -540,6 +540,20 @@ could raise.
   N times what is configured; Redis is the deployment answer.
 - **Registration is the loosest limit on purpose** — a classroom shares one
   address, and an attacker does not.
+
+### Reporting bad feedback (new)
+
+`docs/AI_TUTOR_BEHAVIOR.md` calls AI judgement an accelerator rather than an
+authority. That is a claim about how the product behaves, and it was not true
+of anything: a learner marked wrong by a check that had misread them could
+watch the verdict feed their profile with no way to object.
+
+- **`POST /attempts/{id}/report`** lowers the confidence of the evidence that
+  attempt produced and leaves the score alone.
+- **Which makes it ungameable.** Disputing everything cannot inflate a
+  profile; it can only make it say "we do not really know".
+- **Nothing is deleted**, and the response always says the score did not
+  change.
 
 ## What is not yet implemented
 

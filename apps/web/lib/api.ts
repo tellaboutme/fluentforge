@@ -1178,3 +1178,40 @@ export async function deleteAccount(
     body: { password: input.password, confirm: input.confirm },
   });
 }
+
+// --- Disagreeing with a verdict --------------------------------------------
+
+/**
+ * What a learner can say is wrong. A closed set: free text alone cannot be
+ * counted, and a report nobody can count is a report nobody acts on.
+ */
+export const REPORT_REASONS = [
+  { key: "wrong_verdict", label: "The judgement is wrong" },
+  { key: "unclear_feedback", label: "I do not understand the feedback" },
+  { key: "bad_content", label: "The task itself has a problem" },
+  { key: "other", label: "Something else" },
+] as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[number]["key"];
+
+export interface ReportResult {
+  reportId: string;
+  reportedAt: string;
+  /** How many observations became less certain. */
+  evidenceSoftened: number;
+  /** Always non-empty, and must be surfaced: a report that said only
+   * "thanks" would let someone believe their score had been overturned. */
+  notes: string[];
+}
+
+export async function reportFeedback(
+  token: string,
+  attemptId: string,
+  input: { reason: ReportReason; note?: string },
+): Promise<ReportResult> {
+  return request<ReportResult>(`/api/v1/attempts/${attemptId}/report`, {
+    method: "POST",
+    token,
+    body: { reason: input.reason, note: input.note || null },
+  });
+}

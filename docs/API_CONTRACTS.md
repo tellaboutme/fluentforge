@@ -186,6 +186,7 @@ must not look like a complete one.
 - `GET /attempts` — **implemented**. The learner's own past work, newest
   first, paginated by `before` rather than an offset.
 - `GET /attempts/{id}/feedback` — **implemented**. One attempt in full.
+- `POST /attempts/{id}/report` — **implemented**. Say a verdict was wrong.
 
 Feedback is returned **as it was recorded**, never recomputed. The checks,
 the curriculum version and the evaluator may all have moved since, and
@@ -193,6 +194,14 @@ re-deriving would show the learner a verdict nobody ever gave them. The
 response carries `submitted_at`, the `evaluator_id` that produced it, and
 `is_stale` — true whenever it might be judged differently today. Clients must
 date the feedback rather than present it as current.
+
+A report lowers the **confidence** of the evidence that attempt produced and
+leaves the **score** alone. Confidence is how sure the model is;
+`mastery_probability` is what it believes, and disagreeing is a reason for the
+first and not the second — which is also what makes reporting ungameable, since
+disputing everything can only make a profile say "we do not really know".
+Nothing is deleted, one report is allowed per attempt (`409 already_reported`),
+and `notes` always says the score did not change.
 
 Reading history records nothing: no evidence, no new attempt, no re-scoring.
 A system that recorded it would be counting rereading as practice.

@@ -45,7 +45,14 @@ from sqlalchemy.orm import Session
 
 from ..errors import AppError
 from ..models.identity import User
-from ..models.learning import Attempt, ErrorPattern, EvidenceEvent, LearningSession, SkillState
+from ..models.learning import (
+    Attempt,
+    ErrorPattern,
+    EvidenceEvent,
+    FeedbackReport,
+    LearningSession,
+    SkillState,
+)
 from ..models.planning import Plan, PlanItem, ReviewQueueItem
 from ..security.passwords import verify_password
 
@@ -237,6 +244,19 @@ def export_account(session: Session, user: User) -> dict[str, Any]:
                 "scheduler_version": row.scheduler_version,
             }
             for row in _rows(session, ReviewQueueItem, user.id, ReviewQueueItem.due_at)
+        ],
+        # The learner's own objections, in their words. Exported for the
+        # same reason their writing is: they wrote it.
+        "feedback_reports": [
+            {
+                "id": str(row.id),
+                "attempt_id": str(row.attempt_id),
+                "reason": row.reason,
+                "note": row.note,
+                "evaluator_id": row.evaluator_id,
+                "reported_at": _iso(row.created_at),
+            }
+            for row in _rows(session, FeedbackReport, user.id, FeedbackReport.created_at)
         ],
         "not_included": _not_included(),
     }

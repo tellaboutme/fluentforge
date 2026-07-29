@@ -20,6 +20,7 @@ import HistoryScreen from "./page";
 const mocks = vi.hoisted(() => ({
   fetchHistory: vi.fn(),
   fetchAttemptFeedback: vi.fn(),
+  reportFeedback: vi.fn(),
 }));
 
 vi.mock("@/lib/api", async (importOriginal) => ({
@@ -89,9 +90,27 @@ function renderPage() {
 beforeEach(() => {
   mocks.fetchHistory.mockReset();
   mocks.fetchAttemptFeedback.mockReset();
+  mocks.reportFeedback.mockReset();
   mocks.fetchHistory.mockResolvedValue(PAGE);
   mocks.fetchAttemptFeedback.mockResolvedValue(JUDGED);
+  mocks.reportFeedback.mockResolvedValue({
+    reportId: "r1",
+    reportedAt: "2026-07-28T10:00:00Z",
+    evidenceSoftened: 1,
+    notes: [
+      "Your score has not changed, and neither has the feedback you were given.",
+      "This will show up as lower confidence on the skills involved.",
+    ],
+  });
 });
+
+/** Open the first attempt's detail, which is where reporting lives. */
+async function openFirstAttempt() {
+  await userEvent.click(
+    await screen.findByText(/last weekend i visited my sister/i),
+  );
+  await screen.findByText(/feedback as it was recorded/i);
+}
 
 describe("the list", () => {
   it("shows the learner's own words rather than a score", async () => {
@@ -162,5 +181,71 @@ describe("opening one", () => {
     await open(/visited my sister/i);
     const detail = await screen.findByRole("status");
     expect(detail.textContent).toContain("visited my sister");
+  });
+});
+
+describe("disagreeing with a verdict", () => {
+  /**
+   * `docs/AI_TUTOR_BEHAVIOR.md` calls AI judgement an accelerator rather than
+   * an authority. That is only true if the disagreement has somewhere to go —
+   * and only honest if the learner is told what reporting actually does,
+   * which is not what they might hope.
+   */
+  it("offers a way to say the feedback is wrong", async () => {
+    renderPage();
+    await openFirstAttempt();
+
+    expect(
+      screen.getByRole("button", { name: /this feedback is wrong/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("sends the reason and the learner's own note", async () => {
+    renderPage();
+    await openFirstAttempt();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /this feedback is wrong/i }),
+    );
+    await userEvent.click(
+      screen.getByLabelText(/i do not understand the feedback/i),
+    );
+    await userEvent.type(
+      screen.getByLabelText(/anything you want to add/i),
+      "Which word was wrong?",
+    );
+    await userEvent.click(screen.getByRole("button", { name: /^send$/i }));
+
+    expect(mocks.reportFeedback).toHaveBeenCalledWith("test-token", "a1", {
+      reason: "unclear_feedback",
+      note: "Which word was wrong?",
+    });
+  });
+
+  it("says plainly that the score has not changed", async () => {
+    // Otherwise someone believes their mark was overturned, and finding out
+    // later is worse than being told now.
+    renderPage();
+    await openFirstAttempt();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /this feedback is wrong/i }),
+    );
+    await userEvent.click(screen.getByRole("button", { name: /^send$/i }));
+
+    expect(await screen.findByText(/has not changed/i)).toBeInTheDocument();
+  });
+
+  it("can be backed out of", async () => {
+    renderPage();
+    await openFirstAttempt();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /this feedback is wrong/i }),
+    );
+    await userEvent.click(screen.getByRole("button", { name: /never mind/i }));
+
+    expect(screen.queryByLabelText(/anything you want to add/i)).toBeNull();
+    expect(mocks.reportFeedback).not.toHaveBeenCalled();
   });
 });

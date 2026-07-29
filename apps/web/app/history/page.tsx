@@ -5,10 +5,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import {
+  REPORT_REASONS,
   fetchAttemptFeedback,
   fetchHistory,
+  reportFeedback,
   type AttemptFeedback,
   type HistoryItem,
+  type ReportReason,
+  type ReportResult,
 } from "@/lib/api";
 import { kindLabel } from "@/lib/labels";
 import { useSession } from "@/lib/session";
@@ -37,6 +41,10 @@ export default function HistoryPage() {
   const [open, setOpen] = useState<AttemptFeedback | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
+  const [reporting, setReporting] = useState(false);
+  const [reason, setReason] = useState<ReportReason>("wrong_verdict");
+  const [note, setNote] = useState("");
+  const [reported, setReported] = useState<ReportResult | null>(null);
 
   useEffect(() => {
     if (ready && token === null) router.replace("/sign-in");
@@ -87,6 +95,26 @@ export default function HistoryPage() {
     if (!token) return;
     try {
       setOpen(await fetchAttemptFeedback(token, attemptId));
+      // A fresh attempt means a fresh disagreement, not the previous one's
+      // outcome left on screen under someone else's work.
+      setReporting(false);
+      setReported(null);
+      setNote("");
+      setReason("wrong_verdict");
+    } catch (cause) {
+      setError(cause);
+    }
+  }
+
+  async function submitReport(event: React.FormEvent) {
+    event.preventDefault();
+    if (!token || !open) return;
+    try {
+      setReported(
+        await reportFeedback(token, open.attemptId, { reason, note }),
+      );
+      setReporting(false);
+      setError(null);
     } catch (cause) {
       setError(cause);
     }
@@ -155,6 +183,72 @@ export default function HistoryPage() {
           <pre className="transcript">
             {JSON.stringify(open.response, null, 2)}
           </pre>
+
+          {/* `docs/AI_TUTOR_BEHAVIOR.md` calls AI judgement an accelerator
+              rather than an authority. That is only true if the
+              disagreement has somewhere to go. */}
+          {reported ? (
+            <div role="status">
+              {reported.notes.map((line) => (
+                <p key={line} className="hint">
+                  {line}
+                </p>
+              ))}
+            </div>
+          ) : reporting ? (
+            <form onSubmit={(event) => void submitReport(event)}>
+              <fieldset>
+                <legend>What is wrong with this?</legend>
+                {REPORT_REASONS.map((option) => (
+                  <label key={option.key} htmlFor={`reason-${option.key}`}>
+                    <input
+                      id={`reason-${option.key}`}
+                      type="radio"
+                      name="reason"
+                      value={option.key}
+                      checked={reason === option.key}
+                      onChange={() => setReason(option.key)}
+                    />
+                    {option.label}
+                  </label>
+                ))}
+              </fieldset>
+
+              <label htmlFor="report-note">
+                Anything you want to add (optional)
+                <textarea
+                  id="report-note"
+                  rows={3}
+                  maxLength={2000}
+                  value={note}
+                  onChange={(event) => setNote(event.target.value)}
+                />
+              </label>
+
+              <p className="actions">
+                <button type="submit" className="button">
+                  Send
+                </button>
+                <button
+                  type="button"
+                  className="button-quiet"
+                  onClick={() => setReporting(false)}
+                >
+                  Never mind
+                </button>
+              </p>
+            </form>
+          ) : (
+            <p className="actions">
+              <button
+                type="button"
+                className="button-quiet"
+                onClick={() => setReporting(true)}
+              >
+                This feedback is wrong
+              </button>
+            </p>
+          )}
 
           <button type="button" onClick={() => setOpen(null)}>
             Close
