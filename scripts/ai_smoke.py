@@ -22,6 +22,18 @@ read them.
 Usage:
     uv run python scripts/ai_smoke.py
 
+It runs in two stages, and the first one exists because of a lesson learned
+the hard way. The provider collapses *every* failure into `None` -- a 404, a
+rate limit, a truncated answer, an invented quotation. That is exactly right
+for a learner, who must never see a stack trace because a model was busy. It
+is useless for working out what went wrong, and the first version of this
+script confidently advised "try a larger model" at somebody staring at a
+100% abstention rate from a 120-billion-parameter one.
+
+So stage one talks to the endpoint directly and prints what came back. Stage
+two runs the real provider. If stage one fails, nothing about stage two is
+informative.
+
 Reads `.env` like the API does. Prints a summary and exits non-zero if
 everything abstained, because that is a configuration failure worth noticing
 in a script's exit code.
@@ -29,9 +41,12 @@ in a script's exit code.
 
 from __future__ import annotations
 
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+import httpx
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
@@ -41,6 +56,8 @@ from apps.api.app.providers.base import (
     MIN_USABLE_CONFIDENCE,
     WritingEvaluationRequest,
 )
+from apps.api.app.providers.cloud import _extract_json
+from apps.api.app.providers.compatible import CompatibleWritingEvaluator
 from apps.api.app.settings import settings
 
 
@@ -141,6 +158,116 @@ SAMPLES: tuple[Sample, ...] = (
 )
 
 
+def probe() -> bool:
+    """Talk to the endpoint directly and print exactly what comes back.
+
+    Deliberately not routed through the provider. The provider's job is to
+    swallow every failure so a learner never sees one; this function's job is
+    the opposite, and using the provider here would reproduce the blindness
+    that made the first version of this script give bad advice.
+
+    Returns False when the exchange itself failed, in which case nothing the
+    provider does afterwards is worth interpreting.
+    """
+    if not isinstance(get_writing_evaluator(), CompatibleWritingEvaluator):
+        # `local` and `cloud` have their own shapes and their own defaults.
+        # Probing them would mean guessing at a URL, and a wrong guess would
+        # be reported as a broken deployment.
+        print("(probe skipped: only the `compatible` provider is probed directly)\n")
+        return True
+
+    base = CompatibleWritingEvaluator._configured_base_url()
+    if base is None:
+        print("AI_BASE_URL is not set to anything usable. See docs/TESTING.md part 4.")
+        return False
+
+    url = f"{base}/v1/chat/completions"
+    print(f"probing  : {url}")
+
+    payload = {
+        "model": settings.ai_model,
+        "temperature": 0.0,
+        "max_tokens": 1500,
+        "messages": [
+            {"role": "system", "content": 'Reply with only this JSON: {"ok": true}'},
+            {"role": "user", "content": "Reply now."},
+        ],
+    }
+
+    try:
+        response = httpx.post(
+            url,
+            json=payload,
+            headers={
+                "content-type": "application/json",
+                "authorization": f"Bearer {settings.ai_api_key}",
+            },
+            timeout=60.0,
+        )
+    except (httpx.HTTPError, OSError) as exc:
+        print(f"FAILED   : could not reach it at all -- {exc!r}")
+        return False
+
+    print(f"status   : {response.status_code}")
+
+    if response.status_code != 200:
+        # The whole reason for this stage. A 404 from a doubled path and a
+        # 429 from a spent quota are completely different problems that the
+        # provider reports identically, which is to say not at all.
+        print(f"body     : {response.text[:800]}")
+        print()
+        if response.status_code == 404:
+            print("A 404 usually means the path is wrong. Check AI_BASE_URL.")
+        elif response.status_code in (401, 403):
+            print("Check the key. It may have been revoked or mistyped.")
+        elif response.status_code == 429:
+            print("Rate limited or out of quota. Wait, or use another provider.")
+        elif response.status_code == 400:
+            print("The model rejected the request. Often an unknown model id.")
+        return False
+
+    body = response.json()
+    choice = (body.get("choices") or [{}])[0]
+    message = choice.get("message") or {}
+    content = message.get("content") or ""
+    finish = choice.get("finish_reason")
+
+    print(f"finish   : {finish}")
+    print(f"content  : {content[:300]!r}")
+
+    # Reasoning models put their working somewhere else and can spend the
+    # whole token budget on it, returning an empty `content` with a perfectly
+    # successful 200. That looks identical to a broken model from outside.
+    reasoning = message.get("reasoning")
+    if reasoning:
+        print(f"reasoning: {str(reasoning)[:200]!r} ...")
+    usage = body.get("usage") or {}
+    if usage:
+        print(f"usage    : {json.dumps(usage)}")
+
+    if not content.strip():
+        print()
+        print("The model returned 200 with empty content.")
+        if finish == "length":
+            print("`finish_reason: length` means it ran out of tokens before")
+            print("writing anything. Reasoning models spend the budget on")
+            print("thinking; raise max_tokens or choose a non-reasoning model.")
+        elif reasoning:
+            print("It put everything in a `reasoning` field. This provider")
+            print("reads `message.content`, so a reasoning-only answer is")
+            print("indistinguishable from no answer.")
+        return False
+
+    if _extract_json(content) is None:
+        print()
+        print("Content came back but no JSON object could be found in it.")
+        print("The evaluator needs a JSON object; prose alone abstains.")
+        return False
+
+    print("probe OK : the endpoint answers and the answer parses.\n")
+    return True
+
+
 def main() -> int:
     print(f"provider : {settings.ai_provider}")
     print(f"endpoint : {settings.ai_base_url or '(unset)'}")
@@ -151,6 +278,12 @@ def main() -> int:
     if settings.ai_provider == "disabled":
         print("AI_PROVIDER is 'disabled', so nothing will be called.")
         print("See docs/TESTING.md part 4.")
+        return 1
+
+    if not probe():
+        print()
+        print("Stage one failed, so the rubric samples below would tell you")
+        print("nothing beyond what you already know. Fix the above first.")
         return 1
 
     evaluator = get_writing_evaluator()
@@ -213,8 +346,10 @@ def main() -> int:
     print()
     print("How to read this:")
     print("  - Some abstention is correct. 'too short to judge' should abstain.")
-    print("  - Abstaining on everything means the model cannot hold the output")
-    print("    schema, or is inventing quotations. Try a larger model.")
+    print("  - Stage one passed, so the endpoint works and the model can")
+    print("    answer. Abstaining on everything therefore means it cannot")
+    print("    hold the *rubric* schema, or is inventing quotations -- not")
+    print("    that it is broken or too small.")
     print("  - Check the quoted text appears in the sample. If a quote looks")
     print("    plausible but is not there, the provider caught it and the")
     print("    sample shows as abstained rather than as bad feedback.")

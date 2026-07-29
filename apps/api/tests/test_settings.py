@@ -15,7 +15,20 @@ REAL_DATABASE = "postgresql+psycopg://user:pass@db:5432/fluentforge"
 
 
 def _settings(**overrides: object) -> Settings:
-    return Settings(**overrides)  # type: ignore[arg-type]
+    """A `Settings` built from the declared defaults and nothing else.
+
+    `_env_file=None` matters. Without it these tests read whatever `.env` the
+    developer happens to have, so the moment somebody configured a real AI
+    provider -- which `docs/TESTING.md` asks them to do -- the assertions
+    about defaults started failing. That is a test reaching into the
+    environment, not a product defect, and it fails in the most confusing way
+    available: a green suite turns red because of a file nobody edited in
+    this repository.
+
+    `_env_file` is a pydantic-settings init argument, so it is not part of
+    the model's own fields and does not need to be declared.
+    """
+    return Settings(_env_file=None, **overrides)  # type: ignore[arg-type,call-arg]
 
 
 def test_development_defaults_are_allowed_in_development() -> None:

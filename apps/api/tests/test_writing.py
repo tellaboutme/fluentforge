@@ -30,6 +30,7 @@ from apps.api.app.providers import (
 )
 from apps.api.app.providers.base import MIN_USABLE_CONFIDENCE, RubricDimension
 from apps.api.app.services.diagnostics import items_by_key
+from apps.api.app.settings import settings
 from apps.api.tests.helpers import register
 
 GOOD_A2 = (
@@ -194,8 +195,17 @@ def test_closed_items_stay_fully_confident_and_final() -> None:
 # --- Provider abstraction --------------------------------------------------------
 
 
-def test_default_provider_is_disabled() -> None:
-    assert isinstance(get_writing_evaluator(), DisabledWritingEvaluator)
+def test_default_provider_is_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Pinned rather than ambient: this asserts what the product ships with,
+    not what the developer's `.env` currently says. Reading the environment
+    here meant that configuring a real provider -- which the testing guide
+    asks operators to do -- broke the suite."""
+    monkeypatch.setattr(settings, "ai_provider", "disabled")
+    get_writing_evaluator.cache_clear()
+    try:
+        assert isinstance(get_writing_evaluator(), DisabledWritingEvaluator)
+    finally:
+        get_writing_evaluator.cache_clear()
 
 
 def test_disabled_provider_abstains_rather_than_failing() -> None:
