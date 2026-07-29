@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **916 Python tests**; eslint, tsc, and **337 web
+curriculum validation, **919 Python tests**; eslint, tsc, and **337 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -563,7 +563,13 @@ watch the verdict feed their profile with no way to object.
   companions in `docs/API_CONTRACTS.md` remain unimplemented — and until that
   exists, `pronunciation.segment.contrast` and `pronunciation.stress.word`
   have no honest route to evidence.
-- **A judged deployment.** Four provider modes now exist — `disabled`,
+- **A judged deployment.** The rubric path has now been run against a real
+  model (Groq, `gpt-oss-120b`) for the first time, and it found three defects
+  — a prompt that never named its own output fields, an evaluator that will
+  not abstain on two sentences, and priority feedback that corrects correct
+  English. All three are fixed. What has *not* happened is any measurement of
+  whether the judgements are good, or of more than one model. Four provider
+  modes now exist — `disabled`,
   `local`, `compatible` and `cloud` — and the default is still `disabled`, so
   writing and mediation stay provisional out of the box and every test runs
   against the no-AI path. **Nothing here has been run against a real model.**

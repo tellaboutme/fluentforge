@@ -1269,7 +1269,18 @@ def _evaluate_writing(
     rather than raising, but a provider is third-party code reached over a
     network, so the contract is enforced here rather than trusted. A learner's
     submission must never be lost to somebody else's exception.
+
+    Very short responses are never sent. The prompt asks a model to abstain
+    when there is not enough to judge, and the first run against a real one
+    showed it will not: `gpt-oss-120b` returned confidence 0.85 and an
+    accuracy score of 0.9 on "I wake up. I drink coffee." A confident verdict
+    on eight words is the specific dishonesty `docs/AI_TUTOR_BEHAVIOR.md`
+    exists to prevent, and asking a model to be humble turns out to be a
+    weaker guarantee than counting the words.
     """
+    if _too_short_to_judge(text):
+        return None
+
     chosen = evaluator or get_writing_evaluator()
     request = WritingEvaluationRequest(
         task_prompt=task.prompt,
@@ -1687,6 +1698,25 @@ def _comprehension_remedy(domain: str, question_type: str) -> _Remedy | None:
     if not candidates:
         return None
     return min(candidates, key=lambda pair: (pair[1], pair[2]))[0]
+
+
+#: Words below which no rubric judgement is requested at all.
+#:
+#: Not a quality bar -- a short answer can be a perfectly good one, and the
+#: deterministic checks still run and still record evidence. It is a bar on
+#: what can be *judged against a rubric*: four dimensions and three
+#: prioritised corrections need something to be about.
+#:
+#: Chosen against the shortest authored A1 writing task rather than picked
+#: from the air, so a learner completing the easiest real task is never
+#: refused.
+MIN_WORDS_FOR_RUBRIC = 25
+
+
+def _too_short_to_judge(text: str) -> bool:
+    return len([word for word in text.split() if any(c.isalnum() for c in word)]) < (
+        MIN_WORDS_FOR_RUBRIC
+    )
 
 
 def _skill_node(session: Session, skill_key: str) -> SkillNode | None:

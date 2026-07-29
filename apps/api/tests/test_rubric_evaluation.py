@@ -313,3 +313,42 @@ def _reset_provider_cache():
     providers.get_writing_evaluator.cache_clear()
     yield
     providers.get_writing_evaluator.cache_clear()
+
+
+# --- Too short to judge ----------------------------------------------------
+
+
+def test_a_very_short_response_is_never_sent_to_the_evaluator() -> None:
+    """Asking a model to be humble turned out to be weaker than counting.
+
+    The prompt tells the evaluator to abstain when there is not enough to
+    judge. The first run against a real one showed it will not:
+    `gpt-oss-120b` returned confidence 0.85 and an accuracy score of 0.9 on
+    "I wake up. I drink coffee." A confident verdict on eight words is the
+    specific dishonesty `docs/AI_TUTOR_BEHAVIOR.md` exists to prevent, so the
+    request is not made at all.
+    """
+    from apps.api.app.services.activities import _too_short_to_judge
+
+    assert _too_short_to_judge("I wake up. I drink coffee.") is True
+
+
+def test_the_floor_matches_the_shortest_authored_task() -> None:
+    """Derived from the content rather than picked from the air.
+
+    A learner who meets the minimum on the easiest real task must never be
+    refused a judgement, and authoring a shorter task should fail here rather
+    than silently create a band of submissions that quietly get no rubric.
+    """
+    from apps.api.app.services import activities as service
+    from apps.api.app.services.activities import MIN_WORDS_FOR_RUBRIC
+
+    shortest = min(task.requirements.min_words for task in service.writing_tasks())
+
+    assert shortest >= MIN_WORDS_FOR_RUBRIC
+
+
+def test_a_response_meeting_the_shortest_task_is_judged() -> None:
+    from apps.api.app.services.activities import _too_short_to_judge
+
+    assert _too_short_to_judge(" ".join(["word"] * 25)) is False
