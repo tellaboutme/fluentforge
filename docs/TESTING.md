@@ -82,8 +82,8 @@ That starts the API on `http://localhost:8000` and the web app on
 Health checks, if something looks wrong:
 
 ```powershell
-curl http://localhost:8000/health      # is the process alive
-curl http://localhost:8000/ready       # database + provider modes
+Invoke-RestMethod http://localhost:8000/health   # is the process alive
+Invoke-RestMethod http://localhost:8000/ready    # database + provider modes
 ```
 
 `/ready` will report `ai_provider: disabled` until you do part 4. That is the
@@ -206,19 +206,9 @@ OpenRouter, Mistral. Any endpoint ending in `/v1/chat/completions` does.
 
 1. Go to <https://console.groq.com> and sign up (Google/GitHub login works).
 2. **API Keys** → **Create API Key**. Copy it — it is shown once.
-3. Find the current model list. Model availability changes, so ask the API
-   rather than trusting a name I wrote down:
-
-   ```powershell
-   curl -H "Authorization: Bearer YOUR_KEY" https://api.groq.com/openai/v1/models
-   ```
-
-   Pick the largest general instruct model on the free tier. Something in the
-   Llama 70B or Qwen 32B class is right for this job — the evaluator has to
-   return strict JSON *and* quote the learner's text accurately, and small
-   models fail both often enough to be useless.
-
-### Configuring it
+3. Put it **straight into `.env`**. Do not paste it into a terminal or a chat
+   window: anything typed at a PowerShell prompt lands in `PSReadLine`'s
+   history file in plain text, where it stays.
 
 Create or edit `.env` in the repository root:
 
@@ -226,11 +216,32 @@ Create or edit `.env` in the repository root:
 AI_PROVIDER=compatible
 AI_BASE_URL=https://api.groq.com/openai/v1
 AI_API_KEY=gsk_your_key_here
-AI_MODEL=the-model-id-you-picked
+AI_MODEL=leave-this-blank-for-now
 ```
 
-`.env` is git-ignored. Do not put the key anywhere else — no other file in
-this repository should ever contain it.
+`.env` is git-ignored. No other file in this repository should ever contain
+the key.
+
+### Choosing a model
+
+Availability moves, so ask the API rather than trusting a name written down
+here. This reads the key back out of `.env`, so it never appears on a command
+line:
+
+```powershell
+# PowerShell's `curl` is an alias for Invoke-WebRequest, which wants -Headers
+# as a hashtable rather than a string. Use Invoke-RestMethod, or `curl.exe`
+# if you want the real curl.
+$key = (Select-String -Path .env -Pattern '^AI_API_KEY=(.+)$').Matches.Groups[1].Value
+(Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/models" `
+    -Headers @{ Authorization = "Bearer $key" }).data |
+    Select-Object id | Sort-Object id
+```
+
+Pick the largest general instruct model on the free tier — Llama 70B or Qwen
+32B class. The evaluator has to return strict JSON **and** quote the learner's
+text accurately, and small models fail both often enough to abstain on
+everything. Put the id in `AI_MODEL`.
 
 **Why `compatible` and not `local`:** `local` promises the learner's writing
 never leaves the machine, and `evaluator_id` is recorded on every attempt and
@@ -240,16 +251,25 @@ was sent to a third party. `compatible` says what actually happened.
 Restart the API, then:
 
 ```powershell
-curl http://localhost:8000/ready     # should now say ai_provider: compatible
+Invoke-RestMethod http://localhost:8000/ready    # ai_provider: compatible
 ```
 
 ### Testing it
 
 ```powershell
-# Fixture regression — the prompts against recorded cases
-make fixtures
+uv run python scripts/ai_smoke.py
+```
 
-# Then the real thing: submit a writing task through the UI and read it
+That sends six deliberately uneven writing samples — two competent, two weak,
+one off-task, one too short to judge — and prints what the model said beside
+what a competent marker would have said. It exits non-zero if everything
+abstained.
+
+Then the fixture regression and the real thing:
+
+```powershell
+make fixtures    # the versioned prompts against recorded cases
+make dev         # then submit a writing task through the UI and read it
 ```
 
 **What to look for, in order of importance:**
