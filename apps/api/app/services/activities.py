@@ -1442,7 +1442,15 @@ def _evaluate_mediation(
     The brief and every source travel in the prompt. An evaluator shown only
     the response could not tell a faithful account from an invented one,
     which is the single thing worth judging here.
+
+    Same length floor as writing, and for the same reason. Applied at both
+    call sites rather than once, because the first version guarded only
+    writing -- and a guard that protects one of the two paths that reach the
+    same evaluator is a guard somebody will trust and be wrong about.
     """
+    if _too_short_to_judge(text):
+        return None
+
     chosen = evaluator or get_writing_evaluator()
     material = "\n\n".join(
         f"SOURCE ({source.kind}) {source.title}:\n{source.text}" for source in task.sources

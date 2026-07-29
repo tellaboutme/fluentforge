@@ -59,6 +59,7 @@ from apps.api.app.providers.base import (
 )
 from apps.api.app.providers.cloud import _extract_json
 from apps.api.app.providers.compatible import CompatibleWritingEvaluator
+from apps.api.app.services.activities import MIN_WORDS_FOR_RUBRIC, _too_short_to_judge
 from apps.api.app.settings import settings
 
 
@@ -411,6 +412,7 @@ def main() -> int:
     unusable = 0
     usable = 0
     rate_limited = 0
+    not_sent = 0
 
     for index, sample in enumerate(SAMPLES):
         if index:
@@ -420,6 +422,19 @@ def main() -> int:
 
         print(f"--- {sample.label} ({sample.level}) " + "-" * (48 - len(sample.label)))
         print(f"expected: {sample.expectation}")
+
+        # The same gate the product applies. Calling the evaluator directly
+        # would report a judgement no learner could ever receive, which is
+        # the opposite of what this script is for: it exists to show what
+        # the product does, not what the model would do if asked.
+        if _too_short_to_judge(sample.text):
+            not_sent += 1
+            print(
+                f"got     : NOT SENT (under {MIN_WORDS_FOR_RUBRIC} words, so no "
+                f"rubric was requested)"
+            )
+            print()
+            continue
 
         result = evaluator.evaluate(
             WritingEvaluationRequest(
@@ -469,26 +484,36 @@ def main() -> int:
         print()
 
     total = len(SAMPLES)
-    judged = total - rate_limited
+    judged = total - rate_limited - not_sent
     print("=" * 60)
     print(f"usable   : {usable}/{judged}")
     print(f"returned but too uncertain: {unusable}/{judged}")
     if judged:
         print(f"abstained: {abstained}/{judged}  ({abstained / judged:.0%})")
+    if not_sent:
+        # Also out of the denominator. Nothing was asked, so nothing
+        # abstained -- and this is the *correct* outcome for these, not a
+        # shortfall to be explained away.
+        print(f"not sent, too short to judge: {not_sent}/{total}")
     if rate_limited:
         # Excluded from the denominator on purpose. A 429 is not a judgement
         # and counting it as one would understate the model.
         print(f"rate limited (not counted): {rate_limited}/{total}")
     print()
     print("How to read this:")
-    print("  - Some abstention is correct. 'too short to judge' should abstain.")
-    print("  - Stage one passed, so the endpoint works and the model can")
-    print("    answer. Abstaining on everything therefore means it cannot")
-    print("    hold the *rubric* schema, or is inventing quotations -- not")
-    print("    that it is broken or too small.")
-    print("  - Check the quoted text appears in the sample. If a quote looks")
-    print("    plausible but is not there, the provider caught it and the")
-    print("    sample shows as abstained rather than as bad feedback.")
+    print("  - Read the feedback, not just the counts. The failures worth")
+    print("    finding are the ones that look like success: a correction of")
+    print("    English that was already right, a comma pedantry at B1, or a")
+    print("    high score on the off-task sample.")
+    print("  - The off-task sample is the sharpest test. A model that scores")
+    print("    it well is grading language and ignoring the rubric.")
+    print("  - Every quotation must appear in the sample. Invented ones are")
+    print("    caught by the provider, so they show as abstentions rather")
+    print("    than as plausible-looking bad feedback.")
+    print("  - Watch whether `confidence` varies with sample quality. A model")
+    print("    that reports the same number for its best and worst judgement")
+    print("    is not measuring anything, and MIN_USABLE_CONFIDENCE gates")
+    print("    evidence on exactly that number.")
 
     # Every judged sample abstaining is a configuration or capability
     # failure, not a verdict about the samples. Rate-limited ones are
