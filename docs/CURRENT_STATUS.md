@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **907 Python tests**; eslint, tsc, and **337 web
+curriculum validation, **916 Python tests**; eslint, tsc, and **337 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -563,10 +563,13 @@ watch the verdict feed their profile with no way to object.
   companions in `docs/API_CONTRACTS.md` remain unimplemented — and until that
   exists, `pronunciation.segment.contrast` and `pronunciation.stress.word`
   have no honest route to evidence.
-- **A judged deployment.** All three provider modes now exist, and the
-  default is still `disabled`, so writing and mediation stay provisional out
-  of the box and every test runs against the no-AI path. Nothing here has
-  been run against a real model.
+- **A judged deployment.** Four provider modes now exist — `disabled`,
+  `local`, `compatible` and `cloud` — and the default is still `disabled`, so
+  writing and mediation stay provisional out of the box and every test runs
+  against the no-AI path. **Nothing here has been run against a real model.**
+  `docs/TESTING.md` part 4 sets that up against a free OpenAI-compatible API;
+  the number that matters and has never been measured is the abstention
+  rate.
 - **One diagnostic item still logs a legacy code.** `lexis.a1.days` asks
   which day follows Tuesday, which is a specific word rather than a
   practisable feature. The four reading items that were the bulk of this gap

@@ -1,14 +1,19 @@
 """Provider selection.
 
-Modes follow `docs/ARCHITECTURE.md`: disabled, local, and cloud, and all
-three now exist.
+Modes follow `docs/ARCHITECTURE.md`: disabled, local, cloud, and compatible.
+
+`compatible` is a fourth because using `local` for a hosted service would
+make that module's promise false. `local` says the learner's writing never
+leaves the deployment, and `evaluator_id` is stored on every attempt and
+shown to the learner -- so the provenance has to distinguish "a model on this
+machine" from "somebody else's API that happens to speak the same protocol".
 
 `disabled` is the default, and every test suite runs against it: the core
 learning loop has to work with no AI configured, so that is the path proved
 on every commit.
 
-`cloud` and `local` do the same job and differ in where the learner's text
-goes. Neither is constructed lazily or guarded at startup, because both
+`cloud`, `local` and `compatible` do the same job and differ in where the
+learner's text goes. Neither is constructed lazily or guarded at startup, because both
 abstain on their own: a missing key, an unreachable model, or a malformed
 answer degrades to the deterministic feedback the learner would have had.
 Failing at startup over an optional feature would take the whole API down
@@ -32,10 +37,11 @@ from .base import (
     WritingEvaluator,
 )
 from .cloud import CloudWritingEvaluator
+from .compatible import CompatibleWritingEvaluator
 from .disabled import DisabledWritingEvaluator
 from .local import LocalWritingEvaluator
 
-KNOWN_MODES = {"disabled", "local", "cloud"}
+KNOWN_MODES = {"disabled", "local", "cloud", "compatible"}
 
 
 class ProviderNotAvailableError(RuntimeError):
@@ -55,6 +61,12 @@ def get_writing_evaluator() -> WritingEvaluator:
         # feedback instead of failing at startup and taking the API with it.
         return CloudWritingEvaluator()
 
+    if mode == "compatible":
+        # Abstains without a key or an explicit base URL rather than raising,
+        # for the same reason as the others: a misconfigured optional feature
+        # must not take the API down.
+        return CompatibleWritingEvaluator()
+
     if mode == "local":
         # Same reasoning, and more of it: a self-hosted model that is simply
         # not running yet is the ordinary case, not an error worth refusing
@@ -69,6 +81,7 @@ def get_writing_evaluator() -> WritingEvaluator:
 __all__ = [
     "MIN_USABLE_CONFIDENCE",
     "CloudWritingEvaluator",
+    "CompatibleWritingEvaluator",
     "DisabledWritingEvaluator",
     "LocalWritingEvaluator",
     "PriorityFeedback",
