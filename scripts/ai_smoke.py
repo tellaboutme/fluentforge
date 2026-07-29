@@ -1,9 +1,17 @@
 """Point the rubric evaluator at a real model and report what it does.
 
-Nothing in this repository has ever called a language model. Every test runs
-against `AI_PROVIDER=disabled`, which is correct -- the learning loop must work
-without AI -- but it means the rubric path has been exercised only against
-stubs that answer perfectly.
+Every test in this repository runs against `AI_PROVIDER=disabled`, which is
+correct -- the learning loop must work without AI -- but it means the rubric
+path is otherwise exercised only against stubs that answer perfectly. This is
+where it meets something that does not.
+
+It has already earned its place. The first run found a prompt that never
+named its own output fields, an evaluator that returns confidence 0.85 on
+eight words, and priority feedback that "corrects" English which was already
+right. None of those were visible to any other test, because the provider
+turns each of them into an abstention and the deterministic path carries on
+regardless -- so a prompt that could never work looked exactly like a prompt
+nobody had configured.
 
 This script answers the one question that decides whether a given model is
 usable: **how often does it abstain?**

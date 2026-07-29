@@ -197,7 +197,7 @@
         "activity_key": "review:week:meaning_recognition",
         "activity_type": "review",
         "components": {
-          "due_review": 0.4,
+          "due_review": 0.400001,
           "error_follow_up": 0.0,
           "expected_gain": 0.0,
           "goal_relevance": 0.3,
@@ -212,7 +212,7 @@
         "estimated_minutes": 8,
         "explanation": "You have not spent much time on this recently.",
         "kind": "review",
-        "priority": 1.5,
+        "priority": 1.500001,
         "reason_codes": [
           "SKILL_BALANCE",
           "DUE_REVIEW",
