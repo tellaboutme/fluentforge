@@ -44,6 +44,13 @@ def main() -> int:
         **os.environ,
         "DATABASE_URL": f"sqlite+pysqlite:///{db_path.as_posix()}",
         "ALLOWED_ORIGINS": '["http://127.0.0.1:3001","http://localhost:3001"]',
+        # The suite registers dozens of accounts from one address in a few
+        # minutes, which is exactly the shape the auth limiter exists to
+        # stop. Left on, the browser tests would spend their time proving the
+        # limiter works rather than proving the product does -- and the
+        # limiter has its own tests, against the API directly, where the
+        # clock can be controlled.
+        "AUTH_RATE_LIMITS_ENABLED": "false",
     }
 
     def run(*args: str) -> None:

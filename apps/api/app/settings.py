@@ -45,6 +45,15 @@ class Settings(BaseSettings):
     ai_model: str = "claude-sonnet-4-5"
     ai_base_url: str = "https://api.anthropic.com"
     speech_provider: str = "disabled"
+
+    #: Whether the auth rate limits apply. On everywhere that matters.
+    #:
+    #: Turned off only by the Playwright launcher, which registers dozens of
+    #: accounts from one address in a few minutes -- precisely the shape the
+    #: limiter exists to stop. Leaving it on there would mean the browser
+    #: suite spent its time testing the limiter instead of the product, and
+    #: the limiter is already covered directly in the API tests.
+    auth_rate_limits_enabled: bool = True
     retention_raw_audio_days: int = Field(default=7, ge=0)
 
     @field_validator("app_env")

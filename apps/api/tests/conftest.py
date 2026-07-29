@@ -19,9 +19,23 @@ from apps.api.app.curriculum import load_curriculum
 from apps.api.app.db.base import Base
 from apps.api.app.db.session import get_session
 from apps.api.app.main import create_app
+from apps.api.app.security import rate_limit
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CURRICULUM_DIR = REPO_ROOT / "curriculum"
+
+
+@pytest.fixture(autouse=True)
+def _fresh_rate_limits() -> Iterator[None]:
+    """Rate limiters are module-level, so they outlive a test.
+
+    Autouse because the alternative is remembering: a test that registers
+    six accounts would otherwise fail depending on what ran before it, which
+    is the kind of flake that gets a whole suite ignored.
+    """
+    rate_limit.reset_all()
+    yield
+    rate_limit.reset_all()
 
 
 @pytest.fixture

@@ -35,7 +35,7 @@ learner was not present for.
 ## What works
 
 Verified by `make check` on Windows with Python 3.13: ruff, mypy strict,
-curriculum validation, **874 Python tests**; eslint, tsc, and **333 web
+curriculum validation, **891 Python tests**; eslint, tsc, and **333 web
 tests**. On Windows without `make`, `scripts/check.ps1` runs the same gate and
 stops at the first failure.
 
@@ -525,6 +525,21 @@ wrote and said.
   `user_id`.
 - **Both are reachable** from `/account`, which tells the learner to export
   before deleting — above the delete control, not after it.
+
+### Auth rate limiting (new)
+
+`docs/PRIVACY_SAFETY.md` lists rate limits under the security baseline and
+none existed; `main.py` already mapped 429 to `rate_limited`, a code nothing
+could raise.
+
+- **Sliding window, never a lockout.** A latching counter would let an
+  attacker deny service to any account whose address they know.
+- **Keyed on caller and account, checked before the lookup**, so it cannot
+  become an account-enumeration oracle.
+- **In-process, and it says so.** Behind N replicas the effective limit is
+  N times what is configured; Redis is the deployment answer.
+- **Registration is the loosest limit on purpose** — a classroom shares one
+  address, and an attacker does not.
 
 ## What is not yet implemented
 

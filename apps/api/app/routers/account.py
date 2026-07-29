@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 from ..db.types import utcnow
 from ..deps import CurrentUser, SessionDep
+from ..security import rate_limit
 from ..services import account_data
 
 router = APIRouter(prefix="/account", tags=["account"])
@@ -68,6 +69,12 @@ def delete_account(
     on `DELETE` is poorly supported by intermediaries -- an authorisation
     silently dropped in transit is the last thing this endpoint needs.
     """
+    # This re-checks the password, so it is a guessing surface -- and an
+    # irreversible one. Keyed on the account rather than the caller: the
+    # attempts that matter are the ones against *this* account, whoever is
+    # making them.
+    rate_limit.delete_by_account.check(str(user.id))
+
     if payload.confirm.strip().lower() != CONFIRM_PHRASE:
         raise account_data.NotConfirmedError(CONFIRM_PHRASE)
 
