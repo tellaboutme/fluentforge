@@ -268,10 +268,97 @@ def probe() -> bool:
     return True
 
 
+def explain(sample: Sample) -> None:
+    """Re-send one sample's real request and say why it produced nothing.
+
+    Stage one proves the endpoint answers a trivial prompt. That is a
+    different question from whether it answers *this* one, and the gap
+    between them is where the first two versions of this script left the
+    reader guessing.
+
+    The payload comes from the provider itself rather than being rebuilt
+    here. A diagnostic that constructed its own would drift and would
+    eventually explain a request nobody makes.
+    """
+    evaluator = get_writing_evaluator()
+    if not isinstance(evaluator, CompatibleWritingEvaluator):
+        return
+
+    base = CompatibleWritingEvaluator._configured_base_url()
+    if base is None:
+        return
+
+    payload = evaluator.build_payload(
+        WritingEvaluationRequest(
+            task_prompt=sample.prompt,
+            target_level=sample.level,
+            skill_key="written_production.everyday_texts",
+            response_text=sample.text,
+        )
+    )
+
+    try:
+        response = httpx.post(
+            f"{base}/v1/chat/completions",
+            json=payload,
+            headers={
+                "content-type": "application/json",
+                "authorization": f"Bearer {settings.ai_api_key}",
+            },
+            timeout=120.0,
+        )
+    except (httpx.HTTPError, OSError) as exc:
+        print(f"  why     : the request failed -- {exc!r}")
+        return
+
+    if response.status_code != 200:
+        print(f"  why     : HTTP {response.status_code} -- {response.text[:200]}")
+        return
+
+    body = response.json()
+    choice = (body.get("choices") or [{}])[0]
+    message = choice.get("message") or {}
+    content = message.get("content") or ""
+    finish = choice.get("finish_reason")
+    usage = body.get("usage") or {}
+    reasoning_tokens = (usage.get("completion_tokens_details") or {}).get("reasoning_tokens")
+
+    detail = f"finish={finish} completion={usage.get('completion_tokens')}"
+    if reasoning_tokens is not None:
+        detail += f" of which reasoning={reasoning_tokens}"
+    print(f"  why     : {detail}")
+
+    if finish == "length":
+        # The most likely cause with a reasoning model, and the one that is
+        # invisible without asking: thinking and answering share one budget.
+        budget = settings.ai_max_output_tokens
+        print(f"            The answer was cut off at AI_MAX_OUTPUT_TOKENS={budget}.")
+        if reasoning_tokens:
+            print(f"            {reasoning_tokens} of those went on reasoning, not output.")
+            print("            Raise AI_MAX_OUTPUT_TOKENS, or use a model that")
+            print("            does not think before answering.")
+        else:
+            print("            Raise AI_MAX_OUTPUT_TOKENS.")
+        return
+
+    if not content.strip():
+        print("            200 with empty content. Nothing to parse.")
+        return
+
+    raw = _extract_json(content)
+    if raw is None:
+        print(f"            No JSON object in the answer: {content[:200]!r}")
+        return
+
+    print("            JSON parsed but the rubric schema rejected it, or a")
+    print(f"            quotation was not in the learner's text. Keys: {sorted(raw)}")
+
+
 def main() -> int:
     print(f"provider : {settings.ai_provider}")
     print(f"endpoint : {settings.ai_base_url or '(unset)'}")
     print(f"model    : {settings.ai_model}")
+    print(f"max out  : {settings.ai_max_output_tokens} tokens")
     print(f"key      : {'set' if settings.ai_api_key else 'NOT SET'}")
     print()
 
@@ -306,9 +393,11 @@ def main() -> int:
 
         if result is None:
             # The provider already refused this: a timeout, a schema
-            # violation, or a quotation the learner never wrote.
+            # violation, or a quotation the learner never wrote. It cannot
+            # say which, by design, so ask the endpoint again and look.
             abstained += 1
             print("got     : ABSTAINED (no usable judgement returned)")
+            explain(sample)
             print()
             continue
 

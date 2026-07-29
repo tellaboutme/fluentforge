@@ -69,15 +69,22 @@ class LocalWritingEvaluator:
         # against a stub transport rather than mocking the class away.
         self._client = client
 
-    def evaluate(self, request: WritingEvaluationRequest) -> WritingEvaluation | None:
-        prompt, prompt_version = _prompt()
-        payload = {
+    def build_payload(self, request: WritingEvaluationRequest) -> dict[str, Any]:
+        """The exact request this provider sends.
+
+        Public so `scripts/ai_smoke.py` can replay it verbatim when
+        diagnosing an abstention. A diagnostic that rebuilt the payload by
+        hand would drift from this one and eventually explain a request
+        nobody makes.
+        """
+        prompt, _ = _prompt()
+        return {
             "model": settings.ai_model,
             # Judgement, not composition: a rubric score that changes between
             # identical submissions is not a measurement. Local runtimes
             # default to sampling, so this is stated rather than assumed.
             "temperature": 0.0,
-            "max_tokens": 1500,
+            "max_tokens": settings.ai_max_output_tokens,
             "messages": [
                 {"role": "system", "content": prompt},
                 {
@@ -93,6 +100,10 @@ class LocalWritingEvaluator:
                 },
             ],
         }
+
+    def evaluate(self, request: WritingEvaluationRequest) -> WritingEvaluation | None:
+        _, prompt_version = _prompt()
+        payload = self.build_payload(request)
 
         try:
             body = self._post(payload)

@@ -44,6 +44,19 @@ class Settings(BaseSettings):
     ai_api_key: str = ""
     ai_model: str = "claude-sonnet-4-5"
     ai_base_url: str = "https://api.anthropic.com"
+    #: Ceiling on the model's output for one rubric judgement.
+    #:
+    #: Configurable because reasoning models charge their thinking to the
+    #: same budget. A model that spends 1,200 tokens reasoning about a
+    #: rubric has 300 left to write a JSON object in, and a truncated object
+    #: parses as nothing -- which the provider correctly reports as an
+    #: abstention and which looks, from outside, exactly like a model that
+    #: cannot do the task.
+    #:
+    #: 1500 is enough for a non-reasoning instruct model. Raise it for
+    #: anything that thinks first.
+    ai_max_output_tokens: int = Field(default=1500, ge=256, le=32000)
+
     speech_provider: str = "disabled"
 
     #: Whether the auth rate limits apply. On everywhere that matters.

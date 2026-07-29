@@ -272,6 +272,25 @@ make fixtures    # the versioned prompts against recorded cases
 make dev         # then submit a writing task through the UI and read it
 ```
 
+If a sample abstains, the script re-sends that exact request and reports why:
+the finish reason, the token usage, and how many of those tokens went on
+reasoning rather than output. It uses the provider's own payload builder, so
+what it explains is what the product actually sends.
+
+**Reasoning models need a bigger budget.** Thinking and answering share one
+`max_tokens` allowance, so a model that spends 1,200 tokens reasoning about a
+rubric has 300 left to write JSON in — and a truncated JSON object parses as
+nothing, which the provider correctly reports as an abstention and which looks
+from outside exactly like a model that cannot do the task. If you see
+`finish=length`, raise it:
+
+```ini
+AI_MAX_OUTPUT_TOKENS=4000
+```
+
+Or pick a model that answers without thinking first. Both are legitimate; the
+second is cheaper and faster, the first keeps the better model.
+
 **What to look for, in order of importance:**
 
 1. **Does it abstain more than it judges?** Some abstention is correct and
