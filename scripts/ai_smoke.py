@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -72,6 +73,16 @@ class Sample:
     #: What a human marker would expect. Not asserted -- the point is to read
     #: the model's answer beside it, not to grade the model automatically.
     expectation: str
+
+
+#: Seconds to wait between samples.
+#:
+#: Free tiers meter tokens per minute, and one rubric judgement costs roughly
+#: two thousand of them. Firing six back to back exceeds Groq's 8,000 TPM
+#: before the third finishes, and the resulting 429s were being counted as
+#: abstentions -- which corrupts the single number this script exists to
+#: produce. A rate limit is not a judgement.
+PAUSE_SECONDS = 25
 
 
 SAMPLES: tuple[Sample, ...] = (
@@ -268,7 +279,7 @@ def probe() -> bool:
     return True
 
 
-def explain(sample: Sample) -> None:
+def explain(sample: Sample) -> bool:
     """Re-send one sample's real request and say why it produced nothing.
 
     Stage one proves the endpoint answers a trivial prompt. That is a
@@ -279,14 +290,18 @@ def explain(sample: Sample) -> None:
     The payload comes from the provider itself rather than being rebuilt
     here. A diagnostic that constructed its own would drift and would
     eventually explain a request nobody makes.
+
+    Returns True when the model was rate limited, so the caller can keep it
+    out of the abstention count. A 429 is not a judgement, and letting it
+    score as one understates the model.
     """
     evaluator = get_writing_evaluator()
     if not isinstance(evaluator, CompatibleWritingEvaluator):
-        return
+        return False
 
     base = CompatibleWritingEvaluator._configured_base_url()
     if base is None:
-        return
+        return False
 
     payload = evaluator.build_payload(
         WritingEvaluationRequest(
@@ -309,11 +324,16 @@ def explain(sample: Sample) -> None:
         )
     except (httpx.HTTPError, OSError) as exc:
         print(f"  why     : the request failed -- {exc!r}")
-        return
+        return False
+
+    if response.status_code == 429:
+        print("  why     : rate limited, not judged. Not counted as an abstention.")
+        print(f"            {response.text[:160]}")
+        return True
 
     if response.status_code != 200:
         print(f"  why     : HTTP {response.status_code} -- {response.text[:200]}")
-        return
+        return False
 
     body = response.json()
     choice = (body.get("choices") or [{}])[0]
@@ -339,19 +359,32 @@ def explain(sample: Sample) -> None:
             print("            does not think before answering.")
         else:
             print("            Raise AI_MAX_OUTPUT_TOKENS.")
-        return
+        return False
 
     if not content.strip():
         print("            200 with empty content. Nothing to parse.")
-        return
+        return False
 
     raw = _extract_json(content)
     if raw is None:
         print(f"            No JSON object in the answer: {content[:200]!r}")
-        return
+        return False
 
-    print("            JSON parsed but the rubric schema rejected it, or a")
-    print(f"            quotation was not in the learner's text. Keys: {sorted(raw)}")
+    expected = {"dimensions", "priority_feedback", "confidence", "abstain_reason"}
+    unexpected = sorted(set(raw) - expected)
+    missing = sorted(expected - set(raw) - {"abstain_reason"})
+    print(f"            JSON parsed. Keys: {sorted(raw)}")
+    if unexpected:
+        # The failure the first real run found. Every invented key traced
+        # back to a line of the prompt that described the output in prose
+        # instead of naming the field.
+        print(f"            Keys the schema forbids: {unexpected}")
+    if missing:
+        print(f"            Keys the schema requires and did not get: {missing}")
+    if not unexpected and not missing:
+        print("            Shape is right, so a value was out of range or a")
+        print("            quotation was not in the learner's text.")
+    return False
 
 
 def main() -> int:
@@ -377,8 +410,14 @@ def main() -> int:
     abstained = 0
     unusable = 0
     usable = 0
+    rate_limited = 0
 
-    for sample in SAMPLES:
+    for index, sample in enumerate(SAMPLES):
+        if index:
+            # Paced rather than fired in a burst. See PAUSE_SECONDS.
+            print(f"(waiting {PAUSE_SECONDS}s to stay under the token limit)")
+            time.sleep(PAUSE_SECONDS)
+
         print(f"--- {sample.label} ({sample.level}) " + "-" * (48 - len(sample.label)))
         print(f"expected: {sample.expectation}")
 
@@ -395,9 +434,11 @@ def main() -> int:
             # The provider already refused this: a timeout, a schema
             # violation, or a quotation the learner never wrote. It cannot
             # say which, by design, so ask the endpoint again and look.
-            abstained += 1
             print("got     : ABSTAINED (no usable judgement returned)")
-            explain(sample)
+            if explain(sample):
+                rate_limited += 1
+            else:
+                abstained += 1
             print()
             continue
 
@@ -428,10 +469,16 @@ def main() -> int:
         print()
 
     total = len(SAMPLES)
+    judged = total - rate_limited
     print("=" * 60)
-    print(f"usable   : {usable}/{total}")
-    print(f"returned but too uncertain: {unusable}/{total}")
-    print(f"abstained: {abstained}/{total}  ({abstained / total:.0%})")
+    print(f"usable   : {usable}/{judged}")
+    print(f"returned but too uncertain: {unusable}/{judged}")
+    if judged:
+        print(f"abstained: {abstained}/{judged}  ({abstained / judged:.0%})")
+    if rate_limited:
+        # Excluded from the denominator on purpose. A 429 is not a judgement
+        # and counting it as one would understate the model.
+        print(f"rate limited (not counted): {rate_limited}/{total}")
     print()
     print("How to read this:")
     print("  - Some abstention is correct. 'too short to judge' should abstain.")
@@ -443,9 +490,10 @@ def main() -> int:
     print("    plausible but is not there, the provider caught it and the")
     print("    sample shows as abstained rather than as bad feedback.")
 
-    # Every sample abstaining is a configuration or model-capability failure,
-    # not a verdict about the samples.
-    return 1 if abstained == total else 0
+    # Every judged sample abstaining is a configuration or capability
+    # failure, not a verdict about the samples. Rate-limited ones are
+    # excluded: nothing was judged, so nothing failed.
+    return 1 if judged and abstained == judged else 0
 
 
 if __name__ == "__main__":

@@ -78,6 +78,19 @@ def main() -> int:
 
         os.environ["DATABASE_URL"] = f"sqlite+pysqlite:///{Path(workspace) / 'fixture.db'}"
 
+        # The fixture describes the API *contract*, not the machine that
+        # captured it. Without pinning these, an operator who followed
+        # `docs/TESTING.md` and configured a real AI provider would silently
+        # re-record a different contract -- writing feedback stops being
+        # flagged provisional the moment a rubric evaluator answers, or a
+        # rate limit changes the payload between two runs of the same code.
+        # CI proves the committed copy is current by re-capturing and
+        # diffing, so a fixture that depends on `.env` cannot be current for
+        # two people at once.
+        os.environ["AI_PROVIDER"] = "disabled"
+        os.environ["SPEECH_PROVIDER"] = "disabled"
+        os.environ["AUTH_RATE_LIMITS_ENABLED"] = "false"
+
         from fastapi.testclient import TestClient
         from sqlalchemy.orm import sessionmaker
 

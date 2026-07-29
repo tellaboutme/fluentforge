@@ -26,6 +26,30 @@ CURRICULUM_DIR = REPO_ROOT / "curriculum"
 
 
 @pytest.fixture(autouse=True)
+def _shipped_provider_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Pin the AI and speech providers to the shipped defaults.
+
+    `docs/PRODUCT_SPEC.md` requires the core learning loop to work with no AI
+    configured, and this suite is what proves it -- so the whole suite must
+    run against `disabled` regardless of what the developer has in `.env`.
+
+    Without this, following `docs/TESTING.md` and configuring a real provider
+    turned the suite red in four separate places, each failing for being
+    *right* about a different configuration. Four is enough: the guarantee
+    belongs here rather than in the memory of whoever writes the next test.
+
+    A test that wants a different provider monkeypatches `settings` itself,
+    which runs after this and wins.
+    """
+    from apps.api.app.providers import get_writing_evaluator
+    from apps.api.app.settings import settings
+
+    monkeypatch.setattr(settings, "ai_provider", "disabled")
+    monkeypatch.setattr(settings, "speech_provider", "disabled")
+    get_writing_evaluator.cache_clear()
+
+
+@pytest.fixture(autouse=True)
 def _fresh_rate_limits() -> Iterator[None]:
     """Rate limiters are module-level, so they outlive a test.
 

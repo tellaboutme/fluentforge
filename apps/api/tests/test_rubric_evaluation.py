@@ -259,8 +259,24 @@ def test_a_response_too_short_is_never_sent_to_an_evaluator(
 # --- API -------------------------------------------------------------------------
 
 
-def test_the_api_reports_an_unjudged_response_as_provisional(seeded_client) -> None:
+def test_the_api_reports_an_unjudged_response_as_provisional(
+    seeded_client, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The shipped default, pinned rather than observed.
+
+    This is the third test caught reading the developer's `.env`. Once a real
+    evaluator is configured -- which `docs/TESTING.md` asks operators to do --
+    the submission gets judged and `provisional` is correctly false, so a test
+    asserting the no-AI state failed for being right about a different
+    configuration. The claim here is about what a deployment sees before an
+    evaluator is set up.
+    """
+    from apps.api.app.providers import get_writing_evaluator
+    from apps.api.app.settings import settings
     from apps.api.tests.helpers import register
+
+    monkeypatch.setattr(settings, "ai_provider", "disabled")
+    get_writing_evaluator.cache_clear()
 
     headers = register(seeded_client, "rubric1@example.com")
     task = service.tasks_by_key()[TASK]
@@ -277,6 +293,8 @@ def test_the_api_reports_an_unjudged_response_as_provisional(seeded_client) -> N
     assert body["rubric"] == []
     assert body["priority_feedback"] == []
     assert body["evaluated_by"] is None
+
+    get_writing_evaluator.cache_clear()
 
 
 def _user(session: Session) -> User:
